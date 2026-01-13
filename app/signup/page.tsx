@@ -37,7 +37,7 @@ export default function SignupPage() {
                 }
             }
             toast({
-                title: "Welcome to Hookline.io",
+                title: "Welcome to Hookory",
                 description: "Verify your email to start generating.",
             })
             router.push("/dashboard")

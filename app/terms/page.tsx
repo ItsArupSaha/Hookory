@@ -9,7 +9,7 @@ export default function TermsPage() {
                     Last updated: {new Date().toLocaleDateString()}
                 </p>
                 <p className="text-slate-300">
-                    Hookline.io is provided as a subscription SaaS product. By using this
+                    Hookory is provided as a subscription SaaS product. By using this
                     service you agree not to misuse the platform, attempt to reverse
                     engineer it, or use it to generate harmful, illegal, or abusive
                     content.

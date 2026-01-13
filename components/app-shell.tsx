@@ -236,11 +236,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <aside className="hidden w-60 border-r border-slate-200 bg-white px-4 py-6 shadow-sm sm:flex sm:flex-col">
                 <div className="mb-8">
                     <Link href="/dashboard" className="flex items-center gap-2">
-                        <span className="h-7 w-7 rounded-lg bg-indigo-600 text-center text-sm font-bold leading-7 text-white shadow-sm">
-                            H
-                        </span>
+                        <img
+                            src="/hookoryLogo.png"
+                            alt="Hookory"
+                            className="h-7 w-7 object-contain"
+                        />
                         <span className="text-sm font-semibold tracking-tight">
-                            Hookline.io
+                            Hookory
                         </span>
                     </Link>
                 </div>

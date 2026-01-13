@@ -34,12 +34,14 @@ export default function LandingPage() {
       <nav className="sticky top-0 z-20 border-b border-slate-200/70 bg-white/80 backdrop-blur-md">
         <div className="container mx-auto flex items-center justify-between px-4 py-3 md:py-4">
           <Link href="/" className="flex items-center gap-2 group">
-            <span className="h-8 w-8 rounded-xl bg-indigo-600 text-center text-sm font-bold leading-8 text-white shadow-sm transition-transform group-hover:-translate-y-0.5">
-              H
-            </span>
+            <img
+              src="/hookoryLogo.png"
+              alt="Hookory"
+              className="h-8 w-8 object-contain transition-transform group-hover:-translate-y-0.5"
+            />
             <div className="flex flex-col leading-tight">
               <span className="text-sm font-semibold tracking-tight text-slate-900">
-                Hookline.io
+                Hookory
               </span>
               <span className="text-[11px] text-slate-400">
                 LinkedIn Repurposer
@@ -192,7 +194,7 @@ export default function LandingPage() {
               <Card className="border border-indigo-200 bg-white shadow-md transition-transform duration-200 hover:-translate-y-1.5">
                 <CardHeader className="pb-3">
                   <CardTitle className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-indigo-700">
-                    After using Hookline.io
+                    After using Hookory
                     <span className="rounded-full bg-indigo-50 px-2 py-0.5 text-[10px] font-medium text-indigo-700 border border-indigo-100">
                       Generated
                     </span>
@@ -230,7 +232,7 @@ export default function LandingPage() {
                 Why this is different
               </h2>
               <p className="mt-2 max-w-2xl text-sm text-slate-600">
-                Not a generic AI writer. Hookline is tuned for LinkedIn readers,
+                Not a generic AI writer. Hookory is tuned for LinkedIn readers,
                 hooks, and human-sounding posts you can paste directly.
               </p>
             </div>
@@ -364,7 +366,7 @@ export default function LandingPage() {
         {/* Footer */}
         <footer className="mt-16 border-t border-slate-200 pt-6 text-xs text-slate-500">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <p>© {new Date().getFullYear()} Hookline.io. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} Hookory. All rights reserved.</p>
             <div className="flex gap-4">
               <Link href="/terms" className="hover:text-slate-700">
                 Terms

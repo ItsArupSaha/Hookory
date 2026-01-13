@@ -9,7 +9,7 @@ export default function PrivacyPage() {
           Last updated: {new Date().toLocaleDateString()}
         </p>
         <p className="text-slate-300">
-          Hookline.io uses Firebase Authentication and Firestore to store your
+          Hookory uses Firebase Authentication and Firestore to store your
           account data and usage information. We do not use device
           fingerprinting or third-party trackers beyond essential infrastructure
           providers.

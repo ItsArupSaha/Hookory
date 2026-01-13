@@ -6,7 +6,7 @@ import "./globals.css"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-    title: "Hookline.io - Repurpose Content for LinkedIn",
+    title: "Hookory - Repurpose Content for LinkedIn",
     description: "Turn one piece of content into multiple ready-to-post LinkedIn formats optimized for engagement",
 }
 
