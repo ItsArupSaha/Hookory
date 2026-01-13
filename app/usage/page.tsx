@@ -4,10 +4,10 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { toast } from "@/components/ui/use-toast"
 import { auth } from "@/lib/firebase/client"
-import { formatDate } from "@/lib/utils"
+import { formatDate, getLocalStoragePaymentStatus, setLocalStoragePaymentStatus } from "@/lib/utils"
 import { Loader2 } from "lucide-react"
 import { usePathname, useSearchParams } from "next/navigation"
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 
 interface MeResponse {
     plan: "free" | "creator"
@@ -25,12 +25,16 @@ export default function UsagePage() {
     const [loading, setLoading] = useState(true)
     const [upgrading, setUpgrading] = useState(false)
     const [portalLoading, setPortalLoading] = useState(false)
+    const toastShownRef = useRef<string | null>(null)
 
     const loadMe = useCallback(async () => {
         if (!auth) return null
         const user = auth.currentUser
         if (!user) return null
         try {
+            // Check localStorage first for immediate payment status (within 20 seconds)
+            const localStoragePlan = getLocalStoragePaymentStatus()
+
             const token = await user.getIdToken()
             const res = await fetch("/api/me", {
                 headers: { Authorization: `Bearer ${token}` },
@@ -39,6 +43,14 @@ export default function UsagePage() {
             if (!res.ok) {
                 throw new Error(data.error || "Failed to load usage")
             }
+
+            // If localStorage has creator status and it's within 20 seconds, override the plan
+            if (localStoragePlan === "creator") {
+                data.plan = "creator"
+                data.usageLimitMonthly = 100
+                console.log("[Usage Page] Using localStorage payment status (within 1 minute window)")
+            }
+
             console.log("[Usage Page] Received data from /api/me:", {
                 plan: data.plan,
                 usageLimitMonthly: data.usageLimitMonthly,
@@ -96,49 +108,48 @@ export default function UsagePage() {
         }
     }, [loadMe])
 
-    // Handle successful Stripe checkout redirect - automatically activate plan
-    // ONLY runs when session_id is present (after Stripe payment)
+    // Handle successful Stripe checkout redirect - store in localStorage immediately
     useEffect(() => {
         const sessionId = searchParams.get("session_id")
         if (!sessionId || !auth) return // Only proceed if session_id exists
 
+        // Prevent showing toast multiple times for the same session
+        if (toastShownRef.current === sessionId) return
+
         const user = auth.currentUser
         if (!user) return
 
-        console.log("Detected session_id after Stripe checkout:", sessionId)
+        console.log("[Usage Page] Payment successful detected, storing in localStorage:", sessionId)
+
+        // Mark this session as processed
+        toastShownRef.current = sessionId
+
+        // Immediately store payment status in localStorage
+        setLocalStoragePaymentStatus("creator")
+
+        // Update UI immediately
+        if (me) {
+            setMe({
+                ...me,
+                plan: "creator",
+                usageLimitMonthly: 100,
+            })
+        } else {
+            // If me is not loaded yet, trigger a load
+            loadMe()
+        }
 
         // Remove session_id from URL immediately
         const url = new URL(window.location.href)
         url.searchParams.delete("session_id")
         window.history.replaceState({}, "", url.toString())
 
-        // Poll for plan update (webhook should update it)
-        let attempts = 0
-        const maxAttempts = 15
-        const pollInterval = setInterval(async () => {
-            attempts++
-            console.log(`Polling for plan update (attempt ${attempts}/${maxAttempts})...`)
-            const updated = await loadMe()
-            if (updated && updated.plan === "creator") {
-                clearInterval(pollInterval)
-                console.log("Plan updated to creator!")
-                toast({
-                    title: "Upgrade successful! 🎉",
-                    description: "Your Creator plan is now active. You have 100 repurposes per month.",
-                })
-            } else if (attempts >= maxAttempts) {
-                clearInterval(pollInterval)
-                console.warn("Polling timeout - plan not updated yet")
-                toast({
-                    title: "Payment received",
-                    description: "Your plan is being activated. Please refresh the page in a moment.",
-                    duration: 5000,
-                })
-            }
-        }, 1000) // Check every second
-
-        return () => clearInterval(pollInterval)
-    }, [searchParams, loadMe, auth])
+        // Show success toast (only once per session)
+        toast({
+            title: "Upgrade successful! 🎉",
+            description: "Your Creator plan is now active. You have 100 repurposes per month.",
+        })
+    }, [searchParams, auth, me, loadMe])
 
     const usagePercent = me
         ? Math.min(100, (me.usageCount / Math.max(1, me.usageLimitMonthly)) * 100)

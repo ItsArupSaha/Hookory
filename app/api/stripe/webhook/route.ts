@@ -11,11 +11,15 @@ async function handleSubscriptionChange(subscription: any) {
   const currentPeriodEnd = subscription.current_period_end
     ? new Date(subscription.current_period_end * 1000)
     : null
+  const currentPeriodStart = subscription.current_period_start
+    ? new Date(subscription.current_period_start * 1000)
+    : null
 
   console.log("Webhook: handleSubscriptionChange", {
     subscriptionId: subscription.id,
     customerId,
     status,
+    currentPeriodStart: currentPeriodStart?.toISOString(),
     currentPeriodEnd: currentPeriodEnd?.toISOString(),
   })
 
@@ -56,7 +60,9 @@ async function handleSubscriptionChange(subscription: any) {
               stripeStatus: status,
               plan: isActive ? "creator" : "free",
               usageLimitMonthly: isActive ? 100 : 5,
+              subscriptionPeriodStart: currentPeriodStart ? Timestamp.fromDate(currentPeriodStart) : null,
               subscriptionPeriodEnd: currentPeriodEnd ? Timestamp.fromDate(currentPeriodEnd) : null,
+              planStartsAt: currentPeriodStart ? Timestamp.fromDate(currentPeriodStart) : null,
               planExpiresAt: currentPeriodEnd ? Timestamp.fromDate(currentPeriodEnd) : null,
               updatedAt: Timestamp.now(),
             })
@@ -92,7 +98,9 @@ async function handleSubscriptionChange(subscription: any) {
     stripeStatus: status,
     plan: isActive ? "creator" : "free",
     usageLimitMonthly: isActive ? 100 : 5,
+    subscriptionPeriodStart: currentPeriodStart ? Timestamp.fromDate(currentPeriodStart) : null,
     subscriptionPeriodEnd: currentPeriodEnd ? Timestamp.fromDate(currentPeriodEnd) : null,
+    planStartsAt: currentPeriodStart ? Timestamp.fromDate(currentPeriodStart) : null,
     planExpiresAt: currentPeriodEnd ? Timestamp.fromDate(currentPeriodEnd) : null,
     updatedAt: Timestamp.now(),
   })
@@ -141,10 +149,14 @@ export async function POST(req: NextRequest) {
           const customerId = session.customer as string
           const subscriptionId = session.subscription as string
           
-          // Fetch subscription to get period end date
+          // Fetch subscription to get period start and end dates
+          let subscriptionPeriodStart: Date | null = null
           let subscriptionPeriodEnd: Date | null = null
           try {
             const subscription = await stripe.subscriptions.retrieve(subscriptionId)
+            subscriptionPeriodStart = subscription.current_period_start
+              ? new Date(subscription.current_period_start * 1000)
+              : null
             subscriptionPeriodEnd = subscription.current_period_end
               ? new Date(subscription.current_period_end * 1000)
               : null
@@ -178,7 +190,9 @@ export async function POST(req: NextRequest) {
                       stripeStatus: "active",
                       plan: "creator",
                       usageLimitMonthly: 100,
+                      subscriptionPeriodStart: subscriptionPeriodStart ? Timestamp.fromDate(subscriptionPeriodStart) : null,
                       subscriptionPeriodEnd: subscriptionPeriodEnd ? Timestamp.fromDate(subscriptionPeriodEnd) : null,
+                      planStartsAt: subscriptionPeriodStart ? Timestamp.fromDate(subscriptionPeriodStart) : null,
                       planExpiresAt: subscriptionPeriodEnd ? Timestamp.fromDate(subscriptionPeriodEnd) : null,
                       updatedAt: Timestamp.now(),
                     })
@@ -198,7 +212,9 @@ export async function POST(req: NextRequest) {
               stripeStatus: "active",
               plan: "creator",
               usageLimitMonthly: 100,
+              subscriptionPeriodStart: subscriptionPeriodStart ? Timestamp.fromDate(subscriptionPeriodStart) : null,
               subscriptionPeriodEnd: subscriptionPeriodEnd ? Timestamp.fromDate(subscriptionPeriodEnd) : null,
+              planStartsAt: subscriptionPeriodStart ? Timestamp.fromDate(subscriptionPeriodStart) : null,
               planExpiresAt: subscriptionPeriodEnd ? Timestamp.fromDate(subscriptionPeriodEnd) : null,
               updatedAt: Timestamp.now(),
             })

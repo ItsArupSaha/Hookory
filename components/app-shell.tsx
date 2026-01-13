@@ -2,13 +2,14 @@
 
 import { Button } from "@/components/ui/button"
 import { toast } from "@/components/ui/use-toast"
-import { auth } from "@/lib/firebase/client"
-import { cn } from "@/lib/utils"
+import { auth, db } from "@/lib/firebase/client"
+import { clearLocalStoragePaymentStatus, cn, getLocalStoragePaymentStatus, setLocalStoragePaymentStatus } from "@/lib/utils"
 import { onAuthStateChanged, signOut, User } from "firebase/auth"
+import { doc, onSnapshot } from "firebase/firestore"
 import { Loader2 } from "lucide-react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 
 interface MeResponse {
     plan: "free" | "creator"
@@ -27,10 +28,15 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     const [loading, setLoading] = useState(true)
     const [upgrading, setUpgrading] = useState(false)
     const [portalLoading, setPortalLoading] = useState(false)
+    const realtimeListenerRef = useRef<(() => void) | null>(null)
+    const localStorageTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
     const refreshUserData = useCallback(async () => {
         if (!auth || !firebaseUser) return
         try {
+            // Check localStorage first for immediate payment status (within 1 minute)
+            const localStoragePlan = getLocalStoragePaymentStatus()
+
             const token = await firebaseUser.getIdToken()
             const res = await fetch("/api/me", {
                 headers: {
@@ -41,6 +47,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 throw new Error("Failed to load account data")
             }
             const data = (await res.json()) as MeResponse
+
+            // If localStorage has creator status and it's within 1 minute, override the plan
+            if (localStoragePlan === "creator") {
+                data.plan = "creator"
+                data.usageLimitMonthly = 100
+                console.log("[AppShell] Using localStorage payment status (within 1 minute window)")
+            }
+
             console.log("[AppShell] Loaded plan data:", data.plan, "usageLimit:", data.usageLimitMonthly)
             setMe(data)
         } catch (err: any) {
@@ -70,6 +84,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                         setLoading(false)
                         // Load user data
                         try {
+                            // Check localStorage first for immediate payment status
+                            const localStoragePlan = getLocalStoragePaymentStatus()
+
                             const token = await currentUser.getIdToken()
                             const res = await fetch("/api/me", {
                                 headers: {
@@ -80,6 +97,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                                 throw new Error("Failed to load account data")
                             }
                             const data = (await res.json()) as MeResponse
+
+                            // If localStorage has creator status and it's within 1 minute, override the plan
+                            if (localStoragePlan === "creator") {
+                                data.plan = "creator"
+                                data.usageLimitMonthly = 100
+                            }
+
                             setMe(data)
                         } catch (err: any) {
                             console.error(err)
@@ -109,27 +133,80 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         return () => unsub()
     }, [router, pathname])
 
-    // Refresh user data when returning from Stripe (check for session_id in URL)
+    // Handle successful payment: store in localStorage and set up real-time listener
     useEffect(() => {
-        if (typeof window !== "undefined" && firebaseUser) {
-            const urlParams = new URLSearchParams(window.location.search)
-            if (urlParams.get("session_id")) {
-                // Wait a moment for webhook/sync to process, then refresh
-                setTimeout(async () => {
-                    await refreshUserData()
-                    // Continue refreshing every 2 seconds for up to 10 seconds
-                    let attempts = 0
-                    const refreshInterval = setInterval(async () => {
-                        attempts++
-                        await refreshUserData()
-                        if (me?.plan === "creator" || attempts >= 5) {
-                            clearInterval(refreshInterval)
+        if (typeof window === "undefined" || !firebaseUser || !db) return
+
+        const urlParams = new URLSearchParams(window.location.search)
+        const sessionId = urlParams.get("session_id")
+
+        if (sessionId) {
+            console.log("[AppShell] Payment successful detected, storing in localStorage")
+
+            // Immediately store payment status in localStorage
+            setLocalStoragePaymentStatus("creator")
+
+            // Update UI immediately
+            if (me) {
+                setMe({
+                    ...me,
+                    plan: "creator",
+                    usageLimitMonthly: 100,
+                })
+            }
+
+            // Remove session_id from URL
+            const url = new URL(window.location.href)
+            url.searchParams.delete("session_id")
+            window.history.replaceState({}, "", url.toString())
+
+            // Set up Firebase real-time listener after 1 minute
+            localStorageTimeoutRef.current = setTimeout(() => {
+                console.log("[AppShell] 1 minute passed, setting up Firebase real-time listener")
+                clearLocalStoragePaymentStatus()
+
+                // Set up real-time listener for user document
+                if (db) {
+                    const userDocRef = doc(db, "users", firebaseUser.uid)
+                    const unsubscribe = onSnapshot(userDocRef, (docSnapshot) => {
+                        if (docSnapshot.exists()) {
+                            const userData = docSnapshot.data()
+                            const planFromFirebase = userData.plan as "free" | "creator" | undefined
+                            const planExpiresAt = userData.planExpiresAt?.toDate?.() || userData.subscriptionPeriodEnd?.toDate?.() || null
+
+                            // Check if plan has expired
+                            const now = new Date()
+                            const isExpired = planExpiresAt ? planExpiresAt <= now : false
+                            const effectivePlan = planFromFirebase === "creator" && !isExpired ? "creator" : "free"
+
+                            // Refresh user data to get latest from API
+                            refreshUserData()
                         }
-                    }, 2000)
-                }, 1500)
+                    }, (error) => {
+                        console.error("[AppShell] Firebase real-time listener error:", error)
+                    })
+
+                    realtimeListenerRef.current = unsubscribe
+                }
+            }, 60000) // 1 minute
+        }
+
+        return () => {
+            if (localStorageTimeoutRef.current) {
+                clearTimeout(localStorageTimeoutRef.current)
             }
         }
-    }, [pathname, firebaseUser])
+    }, [pathname, firebaseUser, db, me, refreshUserData])
+
+    // Clean up real-time listener on unmount
+    useEffect(() => {
+        return () => {
+            if (realtimeListenerRef.current) {
+                realtimeListenerRef.current()
+                realtimeListenerRef.current = null
+            }
+        }
+    }, [])
 
     // Load user data once when firebaseUser is available (no unnecessary refreshes)
     useEffect(() => {

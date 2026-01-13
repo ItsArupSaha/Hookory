@@ -22,3 +22,61 @@ export function getNextMonthStart(): Date {
   nextMonth.setUTCHours(0, 0, 0, 0)
   return nextMonth
 }
+
+/**
+ * Check localStorage for payment status within 20-second window
+ * Returns the plan status if payment was completed within last 20 seconds, null otherwise
+ */
+export function getLocalStoragePaymentStatus(): "creator" | null {
+  if (typeof window === "undefined") return null
+  
+  try {
+    const stored = localStorage.getItem("stripePaymentStatus")
+    if (!stored) return null
+    
+    const { plan, timestamp } = JSON.parse(stored)
+    const now = Date.now()
+    const elapsed = now - timestamp
+    
+    // If within 1 minute (60000ms), return the stored plan
+    if (elapsed < 60000 && plan === "creator") {
+      return "creator"
+    } else {
+      // Clear expired status
+      localStorage.removeItem("stripePaymentStatus")
+      return null
+    }
+  } catch (err) {
+    console.error("Error reading localStorage payment status:", err)
+    return null
+  }
+}
+
+/**
+ * Store payment status in localStorage for 1-minute window
+ */
+export function setLocalStoragePaymentStatus(plan: "creator"): void {
+  if (typeof window === "undefined") return
+  
+  try {
+    localStorage.setItem("stripePaymentStatus", JSON.stringify({
+      plan,
+      timestamp: Date.now()
+    }))
+  } catch (err) {
+    console.error("Error storing localStorage payment status:", err)
+  }
+}
+
+/**
+ * Clear payment status from localStorage
+ */
+export function clearLocalStoragePaymentStatus(): void {
+  if (typeof window === "undefined") return
+  
+  try {
+    localStorage.removeItem("stripePaymentStatus")
+  } catch (err) {
+    console.error("Error clearing localStorage payment status:", err)
+  }
+}

@@ -12,6 +12,7 @@ export async function GET(req: NextRequest) {
   // Read from Firebase - this is now the source of truth
   // Webhooks update Firebase immediately when subscription changes
   const planFromFirebase = userDoc.plan as "free" | "creator" | undefined
+  const planStartsAt = userDoc.planStartsAt?.toDate() || userDoc.subscriptionPeriodStart?.toDate() || null
   const planExpiresAt = userDoc.planExpiresAt?.toDate() || userDoc.subscriptionPeriodEnd?.toDate() || null
   const stripeStatus = userDoc.stripeStatus as string | null | undefined
   
@@ -40,6 +41,7 @@ export async function GET(req: NextRequest) {
     usageLimitMonthly,
     usageResetAt: userDoc.usageResetAt?.toDate().toISOString() || new Date().toISOString(),
     stripeStatus: stripeStatus || null,
+    subscriptionPeriodStart: planStartsAt?.toISOString() || null,
     subscriptionPeriodEnd: planExpiresAt?.toISOString() || null,
   })
 }
