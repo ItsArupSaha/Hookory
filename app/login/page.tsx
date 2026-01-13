@@ -27,6 +27,12 @@ export default function LoginPage() {
         setLoadingGoogle(true)
         try {
             const provider = new GoogleAuthProvider()
+            // Customize OAuth flow
+            provider.setCustomParameters({
+                prompt: "select_account",
+            })
+            provider.addScope("email")
+            provider.addScope("profile")
             await signInWithPopup(auth, provider)
             router.push("/dashboard")
         } catch (err: any) {

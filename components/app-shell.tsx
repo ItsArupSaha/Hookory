@@ -359,13 +359,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                             <button
                                 type="button"
                                 onClick={() => setProfileOpen((open) => !open)}
-                                className="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-2 py-1 hover:bg-slate-50"
+                                className="flex items-center justify-center rounded-full border border-slate-200 bg-white p-1 hover:bg-slate-50"
                             >
                                 <span className="flex h-7 w-7 items-center justify-center rounded-full bg-indigo-600 text-[11px] font-semibold text-white">
                                     {initials}
-                                </span>
-                                <span className="max-w-[140px] truncate text-[11px]">
-                                    {firebaseUser.email ?? "Account"}
                                 </span>
                             </button>
                             {profileOpen && (

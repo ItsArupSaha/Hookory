@@ -8,6 +8,10 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
     title: "Hookory - Repurpose Content for LinkedIn",
     description: "Turn one piece of content into multiple ready-to-post LinkedIn formats optimized for engagement",
+    icons: {
+        icon: "/hookoryLogo.png",
+        apple: "/hookoryLogo.png",
+    },
 }
 
 export default function RootLayout({
@@ -17,6 +21,10 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en">
+            <head>
+                <link rel="icon" href="/hookoryLogo.png" type="image/png" />
+                <link rel="apple-touch-icon" href="/hookoryLogo.png" />
+            </head>
             <body className={inter.className}>
                 {children}
                 <Toaster />

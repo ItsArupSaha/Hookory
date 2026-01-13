@@ -117,12 +117,6 @@ export default function LandingPage() {
                       <ArrowRight className="h-4 w-4" />
                     </Link>
                   </Button>
-                  <button
-                    type="button"
-                    className="text-sm font-medium text-indigo-600 underline-offset-2 hover:underline"
-                  >
-                    See example
-                  </button>
                   <div className="flex flex-col text-xs text-slate-500">
                     <span>No credit card required</span>
                     <span>Google login · Email login · Cancel anytime</span>
