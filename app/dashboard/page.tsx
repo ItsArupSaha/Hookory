@@ -70,6 +70,13 @@ export default function NewRepurposePage() {
         loadMe()
     }, [])
 
+    // If free user is on URL tab, switch to text tab
+    useEffect(() => {
+        if (plan === "free" && tab === "url") {
+            setTab("text")
+        }
+    }, [plan, tab])
+
     const selectedFormats = (Object.keys(formats) as FormatKey[]).filter(
         (k) => formats[k]
     )
@@ -325,11 +332,27 @@ export default function NewRepurposePage() {
                                 <button
                                     className={`rounded-full px-3 py-1 text-[11px] ${tab === "url"
                                         ? "bg-orange-500 text-white"
-                                        : "bg-slate-100 text-slate-700"
+                                        : plan === "free"
+                                            ? "bg-slate-100 text-slate-400 cursor-not-allowed opacity-60"
+                                            : "bg-slate-100 text-slate-700"
                                         } border border-slate-200`}
-                                    onClick={() => setTab("url")}
+                                    onClick={() => {
+                                        if (plan === "free") {
+                                            toast({
+                                                title: "Upgrade required",
+                                                description: "URL input is available on the Creator plan. Upgrade to unlock.",
+                                                variant: "destructive",
+                                            })
+                                            return
+                                        }
+                                        setTab("url")
+                                    }}
+                                    disabled={plan === "free"}
                                 >
                                     Paste URL
+                                    {plan === "free" && (
+                                        <span className="ml-1 text-[10px]">(Creator only)</span>
+                                    )}
                                 </button>
                             </div>
 
@@ -351,6 +374,24 @@ export default function NewRepurposePage() {
                                     <p className="text-[11px] text-slate-500">
                                         {inputText.length}/{MAX_INPUT_LENGTH} characters
                                     </p>
+                                </div>
+                            ) : plan === "free" ? (
+                                <div className="space-y-3 rounded-lg border-2 border-red-200 bg-red-50 p-4 text-center">
+                                    <div className="space-y-2">
+                                        <p className="text-sm font-semibold text-red-900">
+                                            URL input is available on the Creator plan
+                                        </p>
+                                        <p className="text-xs text-red-700">
+                                            Upgrade to unlock URL extraction and other premium features.
+                                        </p>
+                                        <Button
+                                            size="sm"
+                                            className="mt-2 text-xs"
+                                            onClick={() => router.push("/usage")}
+                                        >
+                                            Upgrade to Creator
+                                        </Button>
+                                    </div>
                                 </div>
                             ) : (
                                 <div className="space-y-2">

@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { toast } from "@/components/ui/use-toast"
 import { auth } from "@/lib/firebase/client"
 import { formatDate } from "@/lib/utils"
-import { useRouter } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
 interface JobSummary {
@@ -28,48 +28,88 @@ interface JobsResponse {
 
 export default function HistoryPage() {
     const router = useRouter()
+    const pathname = usePathname()
     const [loading, setLoading] = useState(true)
     const [plan, setPlan] = useState<"free" | "creator" | null>(null)
     const [jobs, setJobs] = useState<JobSummary[]>([])
     const [selectedJob, setSelectedJob] = useState<JobDetail | null>(null)
 
-    useEffect(() => {
-        async function load() {
-            if (!auth) return
-            const user = auth.currentUser
-            if (!user) {
-                router.push("/login")
-                return
-            }
-            try {
-                const token = await user.getIdToken()
-                const res = await fetch("/api/jobs", {
-                    headers: { Authorization: `Bearer ${token}` },
-                })
-                const data = await res.json()
-                if (res.status === 403 && data.plan === "free") {
+    async function loadHistory() {
+        if (!auth) return
+        const user = auth.currentUser
+        if (!user) {
+            router.push("/login")
+            return
+        }
+        try {
+            const token = await user.getIdToken()
+            const res = await fetch("/api/jobs", {
+                headers: { Authorization: `Bearer ${token}` },
+            })
+
+            if (!res.ok) {
+                // Try to parse error response
+                let errorData
+                try {
+                    errorData = await res.json()
+                } catch {
+                    errorData = { error: `Server error: ${res.status}` }
+                }
+
+                if (res.status === 403 && errorData.plan === "free") {
                     setPlan("free")
                     setJobs([])
-                } else if (res.ok) {
-                    const payload = data as JobsResponse
-                    setPlan(payload.plan)
-                    setJobs(payload.jobs)
-                } else {
-                    throw new Error(data.error || "Failed to load history")
+                    setLoading(false)
+                    return
                 }
-            } catch (err: any) {
-                console.error(err)
-                toast({
-                    title: "Error",
-                    description: err?.message || "Failed to load history.",
-                    variant: "destructive",
-                })
-            } finally {
-                setLoading(false)
+                throw new Error(errorData.error || "Failed to load history")
+            }
+
+            const data = await res.json() as JobsResponse
+            setPlan(data.plan)
+            setJobs(data.jobs)
+        } catch (err: any) {
+            console.error("History load error:", err)
+            toast({
+                title: "Error",
+                description: err?.message || "Failed to load history.",
+                variant: "destructive",
+            })
+            setPlan("free")
+            setJobs([])
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    // Refresh on mount and when pathname changes (navigation)
+    useEffect(() => {
+        loadHistory()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [pathname])
+
+    // Refresh data when page becomes visible or window gains focus
+    useEffect(() => {
+        const handleVisibilityChange = () => {
+            if (document.visibilityState === "visible") {
+                loadHistory()
             }
         }
-        load()
-    }, [router])
+
+        const handleFocus = () => {
+            loadHistory()
+        }
+
+        // Refresh when page becomes visible or window gains focus
+        document.addEventListener("visibilitychange", handleVisibilityChange)
+        window.addEventListener("focus", handleFocus)
+
+        return () => {
+            document.removeEventListener("visibilitychange", handleVisibilityChange)
+            window.removeEventListener("focus", handleFocus)
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
 
     async function openJob(id: string) {
         if (!auth) return
@@ -123,7 +163,7 @@ export default function HistoryPage() {
                         </ul>
                         <Button
                             className="mt-2 w-full"
-                            onClick={() => router.push("/app/usage")}
+                            onClick={() => router.push("/usage")}
                         >
                             Upgrade to Creator
                         </Button>

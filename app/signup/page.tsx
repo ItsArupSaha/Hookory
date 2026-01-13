@@ -40,7 +40,7 @@ export default function SignupPage() {
                 title: "Welcome to Hookline.io",
                 description: "Verify your email to start generating.",
             })
-            router.push("/app/new")
+            router.push("/dashboard")
         } catch (err: any) {
             console.error(err)
             toast({
@@ -68,7 +68,7 @@ export default function SignupPage() {
                 title: "Account created",
                 description: "Check your inbox and verify your email before generating.",
             })
-            router.push("/app/new")
+            router.push("/dashboard")
         } catch (err: any) {
             console.error(err)
             toast({

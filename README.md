@@ -18,25 +18,25 @@ Hookline.io turns one piece of content into multiple ready-to-post LinkedIn form
 - Auth pages:
   - `/login`: Google + email/password login.
   - `/signup`: Google + email/password signup with email verification.
-- Protected app shell under `/app/*`:
-  - Sidebar: New Repurpose, History (paid), Usage, Settings.
+- Protected routes with app shell:
+  - Sidebar: Dashboard, History (paid), Usage, Settings.
   - Top bar: plan badge, upgrade / manage billing, user menu and logout.
-- **New Repurpose** (`/app/new`):
+- **Dashboard** (`/dashboard`):
   - Tabs: Paste Text / Paste URL (URL is Creator-only).
   - Context: target audience, goal, style, emoji toggle, tone preset (Creator-only).
   - Format selection: thought leadership, story-based, educational/carousel, short viral hook.
   - Generate button with cooldown and disabled states.
   - Outputs per format: editable textarea, copy button, character count.
   - History + regenerate behaviour wired server-side (regenerate counts as a usage action; UI currently focuses on primary generate).
-- **History** (`/app/history` – Creator-only):
+- **History** (`/history` – Creator-only):
   - List of past jobs with date/time and formats.
   - Detail view with input and per-format outputs.
   - Free users see an upgrade paywall.
-- **Usage** (`/app/usage`):
+- **Usage** (`/usage`):
   - Monthly usage count and limit.
   - Usage bar + reset date.
   - Plan info and upgrade / billing portal buttons.
-- **Settings** (`/app/settings`):
+- **Settings** (`/settings`):
   - Account email and verification status.
   - Resend verification email.
   - Soft-delete account (clears subscription metadata, marks deleted; no hard delete).
@@ -212,7 +212,7 @@ On cancellation / failure:
 
 - Client auth: Firebase Auth; Google is primary, email/password as secondary.
 - Server verification: Firebase Admin in `lib/auth-server.ts` reads ID token from `Authorization: Bearer <token>`.
-- `/app/*` is protected at the React level via `AppShell`:
+- Protected routes (`/dashboard`, `/usage`, `/history`, `/settings`) are wrapped with `AppShell`:
   - Redirects to `/login` if not authenticated.
   - Fetches `/api/me` to show plan + usage.
 - `/api/generate`:

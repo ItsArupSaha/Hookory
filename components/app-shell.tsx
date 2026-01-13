@@ -29,49 +29,117 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     const [upgrading, setUpgrading] = useState(false)
     const [portalLoading, setPortalLoading] = useState(false)
 
+    async function refreshUserData() {
+        if (!auth || !firebaseUser) return
+        setCheckingMe(true)
+        try {
+            const token = await firebaseUser.getIdToken()
+            const res = await fetch("/api/me", {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            })
+            if (!res.ok) {
+                throw new Error("Failed to load account data")
+            }
+            const data = (await res.json()) as MeResponse
+            setMe(data)
+        } catch (err: any) {
+            console.error(err)
+            toast({
+                title: "Error",
+                description: err?.message || "Failed to load account data",
+                variant: "destructive",
+            })
+        } finally {
+            setCheckingMe(false)
+        }
+    }
+
     useEffect(() => {
         if (!auth) return
 
+        let isInitialCheck = true
+
+        // Listen for auth state changes
         const unsub = onAuthStateChanged(auth, async (user) => {
             if (!user) {
+                // On initial load, give Firebase a moment to restore session from localStorage
+                if (isInitialCheck) {
+                    isInitialCheck = false
+                    await new Promise((resolve) => setTimeout(resolve, 200))
+
+                    // Check again after the delay - Firebase might have restored the session
+                    if (!auth) return
+                    const currentUser = auth.currentUser
+                    if (currentUser) {
+                        setFirebaseUser(currentUser)
+                        setLoading(false)
+                        // Use the currentUser directly for refreshUserData
+                        setCheckingMe(true)
+                        try {
+                            const token = await currentUser.getIdToken()
+                            const res = await fetch("/api/me", {
+                                headers: {
+                                    Authorization: `Bearer ${token}`,
+                                },
+                            })
+                            if (!res.ok) {
+                                throw new Error("Failed to load account data")
+                            }
+                            const data = (await res.json()) as MeResponse
+                            setMe(data)
+                        } catch (err: any) {
+                            console.error(err)
+                        } finally {
+                            setCheckingMe(false)
+                        }
+                        return
+                    }
+                }
+
+                // No user found - redirect to login
                 setFirebaseUser(null)
                 setMe(null)
                 setLoading(false)
                 // Only redirect if we're not already on a public page
-                if (!pathname?.startsWith("/login") && !pathname?.startsWith("/signup") && !pathname?.startsWith("/terms") && !pathname?.startsWith("/privacy")) {
+                const publicRoutes = ["/login", "/signup", "/terms", "/privacy", "/"]
+                if (!publicRoutes.some(route => pathname === route || pathname?.startsWith(route + "/"))) {
                     router.push("/login")
                 }
                 return
             }
+
+            isInitialCheck = false
             setFirebaseUser(user)
             setLoading(false)
-            setCheckingMe(true)
-            try {
-                const token = await user.getIdToken()
-                const res = await fetch("/api/me", {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                })
-                if (!res.ok) {
-                    throw new Error("Failed to load account data")
-                }
-                const data = (await res.json()) as MeResponse
-                setMe(data)
-            } catch (err: any) {
-                console.error(err)
-                toast({
-                    title: "Error",
-                    description: err?.message || "Failed to load account data",
-                    variant: "destructive",
-                })
-            } finally {
-                setCheckingMe(false)
-            }
+            await refreshUserData()
         })
 
         return () => unsub()
     }, [router, pathname])
+
+    // Refresh user data when returning from Stripe (check for session_id in URL)
+    useEffect(() => {
+        if (typeof window !== "undefined" && firebaseUser) {
+            const urlParams = new URLSearchParams(window.location.search)
+            if (urlParams.get("session_id")) {
+                // Wait a moment for webhook/sync to process, then refresh
+                setTimeout(async () => {
+                    await refreshUserData()
+                    // Continue refreshing every 2 seconds for up to 10 seconds
+                    let attempts = 0
+                    const refreshInterval = setInterval(async () => {
+                        attempts++
+                        await refreshUserData()
+                        if (me?.plan === "creator" || attempts >= 5) {
+                            clearInterval(refreshInterval)
+                        }
+                    }, 2000)
+                }, 1500)
+            }
+        }
+    }, [pathname, firebaseUser])
 
     const isActive = (href: string) => pathname?.startsWith(href)
 
@@ -168,7 +236,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             {/* Sidebar */}
             <aside className="hidden w-60 border-r border-slate-200 bg-white px-4 py-6 shadow-sm sm:flex sm:flex-col">
                 <div className="mb-8">
-                    <Link href="/app/new" className="flex items-center gap-2">
+                    <Link href="/dashboard" className="flex items-center gap-2">
                         <span className="h-7 w-7 rounded-lg bg-indigo-600 text-center text-sm font-bold leading-7 text-white shadow-sm">
                             H
                         </span>
@@ -179,42 +247,42 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 </div>
                 <nav className="flex flex-1 flex-col gap-1 text-sm">
                     <Link
-                        href="/app/new"
+                        href="/dashboard"
                         className={cn(
                             "rounded-md px-3 py-2 text-slate-700 hover:bg-orange-50 hover:text-orange-700",
-                            isActive("/app/new") && "bg-orange-50 text-orange-700 font-medium"
+                            isActive("/dashboard") && "bg-orange-50 text-orange-700 font-medium"
                         )}
                     >
                         New Repurpose
                     </Link>
                     <Link
-                        href="/app/history"
+                        href="/history"
                         className={cn(
                             "rounded-md px-3 py-2 text-slate-600 hover:bg-orange-50 hover:text-orange-700",
-                            isActive("/app/history") && "bg-orange-50 text-orange-700 font-medium"
+                            isActive("/history") && "bg-orange-50 text-orange-700 font-medium"
                         )}
                     >
                         History
-                        {me?.plan === "free" && (
+                        {(!me || me.plan === "free") && (
                             <span className="ml-2 rounded-full bg-orange-100 px-1.5 text-[10px] uppercase tracking-wide text-orange-700">
                                 Pro
                             </span>
                         )}
                     </Link>
                     <Link
-                        href="/app/usage"
+                        href="/usage"
                         className={cn(
                             "rounded-md px-3 py-2 text-slate-600 hover:bg-orange-50 hover:text-orange-700",
-                            isActive("/app/usage") && "bg-orange-50 text-orange-700 font-medium"
+                            isActive("/usage") && "bg-orange-50 text-orange-700 font-medium"
                         )}
                     >
                         Usage
                     </Link>
                     <Link
-                        href="/app/settings"
+                        href="/settings"
                         className={cn(
                             "rounded-md px-3 py-2 text-slate-600 hover:bg-orange-50 hover:text-orange-700",
-                            isActive("/app/settings") && "bg-orange-50 text-orange-700 font-medium"
+                            isActive("/settings") && "bg-orange-50 text-orange-700 font-medium"
                         )}
                     >
                         Settings

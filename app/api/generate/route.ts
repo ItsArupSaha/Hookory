@@ -2,6 +2,7 @@ import { generateLinkedInFormat, type LinkedInFormat } from "@/lib/ai"
 import { getUserFromRequest } from "@/lib/auth-server"
 import { computeCacheKey, getCachedOutput, setCachedOutput } from "@/lib/cache"
 import { adminDb } from "@/lib/firebase/admin"
+import { checkStripeSubscriptionStatus, syncStripeToFirestore } from "@/lib/stripe-helpers"
 import { extractTextFromUrl } from "@/lib/url-extractor"
 import { checkAndResetUsage, checkCooldown, incrementUsage } from "@/lib/usage"
 import { Timestamp } from "firebase-admin/firestore"
@@ -64,8 +65,15 @@ export async function POST(req: NextRequest) {
     )
   }
 
-  // Plan restrictions
-  const isPaid = userDoc.plan === "creator"
+  // Plan restrictions - ALWAYS check Stripe directly (source of truth)
+  const subscriptionStatus = await checkStripeSubscriptionStatus(userDoc.stripeCustomerId)
+  
+  // Sync to Firestore in background (non-blocking)
+  syncStripeToFirestore(uid, subscriptionStatus).catch((err) => {
+    console.error("Background sync failed:", err)
+  })
+
+  const isPaid = subscriptionStatus.hasCreatorAccess
   if (!isPaid) {
     if (inputType === "url") {
       return NextResponse.json(
@@ -73,12 +81,13 @@ export async function POST(req: NextRequest) {
         { status: 403 }
       )
     }
-    if (context.tonePreset) {
-      return NextResponse.json(
-        { error: "Tone presets are available on the Creator plan. Upgrade to unlock." },
-        { status: 403 }
-      )
-    }
+    // Allow tone presets for free users - it's just a UI preference
+    // if (context.tonePreset) {
+    //   return NextResponse.json(
+    //     { error: "Tone presets are available on the Creator plan. Upgrade to unlock." },
+    //     { status: 403 }
+    //   )
+    // }
     if (regenerate) {
       return NextResponse.json(
         { error: "Regenerate is available on the Creator plan. Upgrade to unlock." },
@@ -118,7 +127,15 @@ export async function POST(req: NextRequest) {
       if (!url) {
         return NextResponse.json({ error: "URL is required." }, { status: 400 })
       }
-      finalInputText = await extractTextFromUrl(url)
+      try {
+        finalInputText = await extractTextFromUrl(url)
+      } catch (extractError: any) {
+        console.error("URL extraction failed:", extractError)
+        return NextResponse.json(
+          { error: extractError.message || "Failed to extract content from URL. Please try copying the content directly." },
+          { status: 400 }
+        )
+      }
     } else {
       if (!rawInputText || rawInputText.trim().length === 0) {
         return NextResponse.json({ error: "Input text is required." }, { status: 400 })

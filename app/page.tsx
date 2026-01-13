@@ -1,9 +1,32 @@
+"use client"
+
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { auth } from "@/lib/firebase/client"
+import { onAuthStateChanged, User } from "firebase/auth"
 import { ArrowRight } from "lucide-react"
 import Link from "next/link"
+import { useEffect, useState } from "react"
 
 export default function LandingPage() {
+  const [user, setUser] = useState<User | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    if (!auth) {
+      setLoading(false)
+      return
+    }
+
+    // Check auth state
+    const unsub = onAuthStateChanged(auth, (user) => {
+      setUser(user)
+      setLoading(false)
+    })
+
+    return () => unsub()
+  }, [])
+
   return (
     <main className="min-h-screen bg-slate-50 text-slate-900">
 
@@ -24,18 +47,31 @@ export default function LandingPage() {
             </div>
           </Link>
           <div className="flex items-center gap-3 md:gap-4">
-            <Link
-              href="/login"
-              className="text-sm text-slate-600 transition-colors hover:text-slate-900"
-            >
-              Log in
-            </Link>
-            <Button size="sm" asChild>
-              <Link href="/signup" className="flex items-center gap-1">
-                Try free
-                <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
-            </Button>
+            {loading ? (
+              <div className="h-8 w-20 animate-pulse rounded bg-slate-200" />
+            ) : user ? (
+              <Button size="sm" asChild>
+                <Link href="/dashboard" className="flex items-center gap-1">
+                  Dashboard
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              </Button>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  className="text-sm text-slate-600 transition-colors hover:text-slate-900"
+                >
+                  Log in
+                </Link>
+                <Button size="sm" asChild>
+                  <Link href="/signup" className="flex items-center gap-1">
+                    Try free
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </nav>
@@ -64,22 +100,33 @@ export default function LandingPage() {
             </div>
 
             <div className="flex flex-wrap items-center gap-4">
-              <Button size="lg" asChild>
-                <Link href="/signup" className="flex items-center gap-2">
-                  Try free (5 repurposes)
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-              </Button>
-              <button
-                type="button"
-                className="text-sm font-medium text-indigo-600 underline-offset-2 hover:underline"
-              >
-                See example
-              </button>
-              <div className="flex flex-col text-xs text-slate-500">
-                <span>No credit card required</span>
-                <span>Google login · Email login · Cancel anytime</span>
-              </div>
+              {user ? (
+                <Button size="lg" asChild>
+                  <Link href="/dashboard" className="flex items-center gap-2">
+                    Go to Dashboard
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </Button>
+              ) : (
+                <>
+                  <Button size="lg" asChild>
+                    <Link href="/signup" className="flex items-center gap-2">
+                      Try free (5 repurposes)
+                      <ArrowRight className="h-4 w-4" />
+                    </Link>
+                  </Button>
+                  <button
+                    type="button"
+                    className="text-sm font-medium text-indigo-600 underline-offset-2 hover:underline"
+                  >
+                    See example
+                  </button>
+                  <div className="flex flex-col text-xs text-slate-500">
+                    <span>No credit card required</span>
+                    <span>Google login · Email login · Cancel anytime</span>
+                  </div>
+                </>
+              )}
             </div>
 
             <div className="grid gap-3 text-xs text-slate-500 sm:grid-cols-3">
@@ -121,11 +168,6 @@ export default function LandingPage() {
 
           {/* Before / After card stack – example-driven */}
           <div className="relative">
-            <div className="absolute -top-6 right-6 hidden items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-[11px] font-medium text-emerald-700 shadow-sm sm:flex">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-              Live usage limits &amp; billing built-in
-            </div>
-
             <div className="relative mx-auto max-w-md space-y-4">
               <Card className="border-slate-200 bg-white/90 shadow-sm transition-transform duration-200 hover:-translate-y-1">
                 <CardHeader className="pb-3">

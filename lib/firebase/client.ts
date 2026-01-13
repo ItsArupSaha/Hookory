@@ -24,9 +24,15 @@ if (typeof window !== "undefined") {
 
   auth = getAuth(app)
   // Explicitly set persistence to LOCAL so auth state persists across browser sessions
-  setPersistence(auth, browserLocalPersistence).catch((error) => {
-    console.error("Failed to set auth persistence:", error)
-  })
+  // This ensures the user stays logged in even after page refresh or server restart
+  setPersistence(auth, browserLocalPersistence)
+    .then(() => {
+      // Persistence set successfully - auth state will be restored from localStorage
+      console.log("Firebase Auth persistence set to localStorage")
+    })
+    .catch((error) => {
+      console.error("Failed to set auth persistence:", error)
+    })
   db = getFirestore(app)
 }
 

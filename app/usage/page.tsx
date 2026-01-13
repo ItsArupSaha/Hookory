@@ -6,7 +6,8 @@ import { toast } from "@/components/ui/use-toast"
 import { auth } from "@/lib/firebase/client"
 import { formatDate } from "@/lib/utils"
 import { Loader2 } from "lucide-react"
-import { useEffect, useState } from "react"
+import { usePathname, useSearchParams } from "next/navigation"
+import { useCallback, useEffect, useState } from "react"
 
 interface MeResponse {
     plan: "free" | "creator"
@@ -18,39 +19,126 @@ interface MeResponse {
 }
 
 export default function UsagePage() {
+    const searchParams = useSearchParams()
+    const pathname = usePathname()
     const [me, setMe] = useState<MeResponse | null>(null)
     const [loading, setLoading] = useState(true)
     const [upgrading, setUpgrading] = useState(false)
     const [portalLoading, setPortalLoading] = useState(false)
 
+    const loadMe = useCallback(async () => {
+        if (!auth) return null
+        const user = auth.currentUser
+        if (!user) return null
+        try {
+            const token = await user.getIdToken()
+            const res = await fetch("/api/me", {
+                headers: { Authorization: `Bearer ${token}` },
+            })
+            const data = await res.json()
+            if (!res.ok) {
+                throw new Error(data.error || "Failed to load usage")
+            }
+            console.log("[Usage Page] Received data from /api/me:", {
+                plan: data.plan,
+                usageLimitMonthly: data.usageLimitMonthly,
+                stripeStatus: data.stripeStatus,
+                subscriptionPeriodEnd: data.subscriptionPeriodEnd,
+            })
+            // Ensure plan and usageLimitMonthly are consistent
+            if (data.plan === "free" && data.usageLimitMonthly !== 5) {
+                console.warn("[Usage Page] Mismatch: plan is free but usageLimitMonthly is", data.usageLimitMonthly)
+                data.usageLimitMonthly = 5
+            }
+            if (data.plan === "creator" && data.usageLimitMonthly !== 100) {
+                console.warn("[Usage Page] Mismatch: plan is creator but usageLimitMonthly is", data.usageLimitMonthly)
+                data.usageLimitMonthly = 100
+            }
+            setMe(data as MeResponse)
+            return data as MeResponse
+        } catch (err: any) {
+            console.error(err)
+            toast({
+                title: "Error",
+                description: err?.message || "Failed to load usage.",
+                variant: "destructive",
+            })
+            return null
+        } finally {
+            setLoading(false)
+        }
+    }, [auth])
+
+    // Refresh on mount and when pathname changes (navigation)
     useEffect(() => {
-        async function load() {
-            if (!auth) return
-            const user = auth.currentUser
-            if (!user) return
-            try {
-                const token = await user.getIdToken()
-                const res = await fetch("/api/me", {
-                    headers: { Authorization: `Bearer ${token}` },
-                })
-                const data = await res.json()
-                if (!res.ok) {
-                    throw new Error(data.error || "Failed to load usage")
-                }
-                setMe(data as MeResponse)
-            } catch (err: any) {
-                console.error(err)
-                toast({
-                    title: "Error",
-                    description: err?.message || "Failed to load usage.",
-                    variant: "destructive",
-                })
-            } finally {
-                setLoading(false)
+        loadMe()
+    }, [pathname, loadMe])
+
+    // Refresh data when page becomes visible or window gains focus
+    useEffect(() => {
+        const handleVisibilityChange = () => {
+            if (document.visibilityState === "visible") {
+                loadMe()
             }
         }
-        load()
-    }, [])
+
+        const handleFocus = () => {
+            loadMe()
+        }
+
+        // Refresh when page becomes visible or window gains focus
+        document.addEventListener("visibilitychange", handleVisibilityChange)
+        window.addEventListener("focus", handleFocus)
+
+        return () => {
+            document.removeEventListener("visibilitychange", handleVisibilityChange)
+            window.removeEventListener("focus", handleFocus)
+        }
+    }, [loadMe])
+
+    // Handle successful Stripe checkout redirect - automatically activate plan
+    // ONLY runs when session_id is present (after Stripe payment)
+    useEffect(() => {
+        const sessionId = searchParams.get("session_id")
+        if (!sessionId || !auth) return // Only proceed if session_id exists
+
+        const user = auth.currentUser
+        if (!user) return
+
+        console.log("Detected session_id after Stripe checkout:", sessionId)
+
+        // Remove session_id from URL immediately
+        const url = new URL(window.location.href)
+        url.searchParams.delete("session_id")
+        window.history.replaceState({}, "", url.toString())
+
+        // Poll for plan update (webhook should update it)
+        let attempts = 0
+        const maxAttempts = 15
+        const pollInterval = setInterval(async () => {
+            attempts++
+            console.log(`Polling for plan update (attempt ${attempts}/${maxAttempts})...`)
+            const updated = await loadMe()
+            if (updated && updated.plan === "creator") {
+                clearInterval(pollInterval)
+                console.log("Plan updated to creator!")
+                toast({
+                    title: "Upgrade successful! 🎉",
+                    description: "Your Creator plan is now active. You have 100 repurposes per month.",
+                })
+            } else if (attempts >= maxAttempts) {
+                clearInterval(pollInterval)
+                console.warn("Polling timeout - plan not updated yet")
+                toast({
+                    title: "Payment received",
+                    description: "Your plan is being activated. Please refresh the page in a moment.",
+                    duration: 5000,
+                })
+            }
+        }, 1000) // Check every second
+
+        return () => clearInterval(pollInterval)
+    }, [searchParams, loadMe, auth])
 
     const usagePercent = me
         ? Math.min(100, (me.usageCount / Math.max(1, me.usageLimitMonthly)) * 100)

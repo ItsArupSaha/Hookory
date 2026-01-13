@@ -195,7 +195,9 @@ async function generateWithGemini(options: GenerateOptions): Promise<string> {
   validateInput(options.inputText)
 
   const genAI = new GoogleGenerativeAI(apiKey)
-  const model = genAI.getGenerativeModel({ model: "gemini-pro" })
+  // Use gemini-1.5-flash for faster, cost-effective generation
+  // Alternative: "gemini-1.5-pro" for higher quality (slower, more expensive)
+  const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" })
 
   const systemPrompt = getSystemPrompt()
   const instructionPrompt = getInstructionPrompt(

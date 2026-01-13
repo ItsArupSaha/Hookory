@@ -52,8 +52,8 @@ export async function POST(req: NextRequest) {
           quantity: 1,
         },
       ],
-      success_url: `${origin}/app/usage?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/app/usage`,
+      success_url: `${origin}/usage?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${origin}/usage`,
       allow_promotion_codes: true,
     })
 

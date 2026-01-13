@@ -17,6 +17,7 @@ export interface UserDoc {
   stripeCustomerId?: string
   stripeSubscriptionId?: string
   stripeStatus?: string
+  subscriptionPeriodEnd?: Timestamp | null
   createdAt: Timestamp
   updatedAt: Timestamp
 }

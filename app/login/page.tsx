@@ -28,7 +28,7 @@ export default function LoginPage() {
         try {
             const provider = new GoogleAuthProvider()
             await signInWithPopup(auth, provider)
-            router.push("/app/new")
+            router.push("/dashboard")
         } catch (err: any) {
             console.error(err)
             toast({
@@ -47,7 +47,7 @@ export default function LoginPage() {
         setLoadingEmail(true)
         try {
             await signInWithEmailAndPassword(auth, email, password)
-            router.push("/app/new")
+            router.push("/dashboard")
         } catch (err: any) {
             console.error(err)
             toast({
