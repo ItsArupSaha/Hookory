@@ -26,7 +26,7 @@ const AI_PROVIDER = (process.env.AI_PROVIDER || "gemini") as "gemini" | "openai"
 
 // Input length guard
 const MAX_INPUT_CHARS = 10000
-const MAX_OUTPUT_CHARS = 3000
+const MAX_OUTPUT_CHARS = 2000
 
 function normalizeInput(inputText: string): string {
   // Trim whitespace
@@ -138,7 +138,7 @@ function getInstructionPrompt(
   const audienceText = targetAudience ? `Target audience: ${targetAudience}. ` : ""
 
   const emojiInstruction = emojiOn
-    ? "Use 1-3 relevant emojis strategically placed (not excessive)."
+    ? "Use 1-3 relevant emojis strategically placed in a moderate and professional way. Emojis should enhance the message, not distract from it. Place them naturally within the content where they add value."
     : "Do not use emojis."
 
   const variationHint = regenerate
@@ -160,9 +160,12 @@ ${audienceText}${emojiInstruction}
 ${variationHint}
 
 LinkedIn formatting rules:
+- CRITICAL: LinkedIn does NOT support markdown formatting. Do NOT use asterisks (*) for bold, underscores (_) for italic, or any markdown symbols. These will appear as literal characters and look unprofessional. You CAN use lists (numbered or bulleted with plain text), double quotes, and line breaks - these are all plain text formatting that works on LinkedIn.
 - Strong hook in first 2 lines (must grab attention immediately)
 - Short lines with strategic whitespace (2-3 sentences per paragraph max)
-- No hashtags OR maximum 3 relevant hashtags at the end
+- Use line breaks to create visual separation (LinkedIn's only formatting option)
+- Lists are allowed: Use numbered lists (1. 2. 3.) or dashes (-) for bullet points - these are plain text and work perfectly on LinkedIn
+- Hashtags (if used): Maximum 3 hashtags at the end. Choose hashtags based ONLY on the actual content topics and themes, NOT based on the selected options (goal, style, format). Use the most popular and relevant hashtags that match the content's core topics. For example, if the content is about AI, use #AI or #ArtificialIntelligence, not generic hashtags like #Leadership or #Business unless the content specifically discusses those topics.
 - Clear CTA at the end
 - Avoid filler words and fluff
 - Be authentic and human

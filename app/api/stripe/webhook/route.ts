@@ -57,7 +57,8 @@ async function handleSubscriptionChange(subscription: any) {
               plan: isActive ? "creator" : "free",
               usageLimitMonthly: isActive ? 100 : 5,
               subscriptionPeriodEnd: currentPeriodEnd ? Timestamp.fromDate(currentPeriodEnd) : null,
-              updatedAt: new Date(),
+              planExpiresAt: currentPeriodEnd ? Timestamp.fromDate(currentPeriodEnd) : null,
+              updatedAt: Timestamp.now(),
             })
             console.log("Webhook: User updated via metadata fallback")
             return
@@ -91,8 +92,9 @@ async function handleSubscriptionChange(subscription: any) {
     stripeStatus: status,
     plan: isActive ? "creator" : "free",
     usageLimitMonthly: isActive ? 100 : 5,
-    subscriptionPeriodEnd: currentPeriodEnd || null,
-    updatedAt: new Date(),
+    subscriptionPeriodEnd: currentPeriodEnd ? Timestamp.fromDate(currentPeriodEnd) : null,
+    planExpiresAt: currentPeriodEnd ? Timestamp.fromDate(currentPeriodEnd) : null,
+    updatedAt: Timestamp.now(),
   })
   
   console.log("Webhook: User updated successfully")
@@ -177,7 +179,8 @@ export async function POST(req: NextRequest) {
                       plan: "creator",
                       usageLimitMonthly: 100,
                       subscriptionPeriodEnd: subscriptionPeriodEnd ? Timestamp.fromDate(subscriptionPeriodEnd) : null,
-                      updatedAt: new Date(),
+                      planExpiresAt: subscriptionPeriodEnd ? Timestamp.fromDate(subscriptionPeriodEnd) : null,
+                      updatedAt: Timestamp.now(),
                     })
                     console.log("Webhook: User updated via metadata fallback")
                     break
@@ -195,8 +198,9 @@ export async function POST(req: NextRequest) {
               stripeStatus: "active",
               plan: "creator",
               usageLimitMonthly: 100,
-              subscriptionPeriodEnd: subscriptionPeriodEnd || null,
-              updatedAt: new Date(),
+              subscriptionPeriodEnd: subscriptionPeriodEnd ? Timestamp.fromDate(subscriptionPeriodEnd) : null,
+              planExpiresAt: subscriptionPeriodEnd ? Timestamp.fromDate(subscriptionPeriodEnd) : null,
+              updatedAt: Timestamp.now(),
             })
             console.log("Webhook: User updated successfully")
           }
@@ -221,9 +225,20 @@ export async function POST(req: NextRequest) {
           .limit(1)
           .get()
         if (!usersSnap.empty) {
-          await usersSnap.docs[0].ref.update({
+          const userRef = usersSnap.docs[0].ref
+          const userDoc = await userRef.get()
+          const userData = userDoc.data()
+          const now = new Date()
+          
+          // If subscription period has ended, downgrade to free
+          const subscriptionPeriodEnd = userData?.subscriptionPeriodEnd?.toDate()
+          const shouldDowngrade = !subscriptionPeriodEnd || subscriptionPeriodEnd <= now
+          
+          await userRef.update({
             stripeStatus: "past_due",
-            updatedAt: new Date(),
+            plan: shouldDowngrade ? "free" : userData?.plan || "free",
+            usageLimitMonthly: shouldDowngrade ? 5 : (userData?.usageLimitMonthly || 5),
+            updatedAt: Timestamp.now(),
           })
         }
         break

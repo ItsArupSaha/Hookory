@@ -2,7 +2,6 @@ import { generateLinkedInFormat, type LinkedInFormat } from "@/lib/ai"
 import { getUserFromRequest } from "@/lib/auth-server"
 import { computeCacheKey, getCachedOutput, setCachedOutput } from "@/lib/cache"
 import { adminDb } from "@/lib/firebase/admin"
-import { checkStripeSubscriptionStatus, syncStripeToFirestore } from "@/lib/stripe-helpers"
 import { extractTextFromUrl } from "@/lib/url-extractor"
 import { checkAndResetUsage, checkCooldown, incrementUsage } from "@/lib/usage"
 import { Timestamp } from "firebase-admin/firestore"
@@ -65,15 +64,16 @@ export async function POST(req: NextRequest) {
     )
   }
 
-  // Plan restrictions - ALWAYS check Stripe directly (source of truth)
-  const subscriptionStatus = await checkStripeSubscriptionStatus(userDoc.stripeCustomerId)
+  // Plan restrictions - Read from Firebase (source of truth, updated by webhooks)
+  const planFromFirebase = userDoc.plan as "free" | "creator" | undefined
+  const planExpiresAt = (userDoc.planExpiresAt as any)?.toDate?.() || userDoc.subscriptionPeriodEnd?.toDate() || null
   
-  // Sync to Firestore in background (non-blocking)
-  syncStripeToFirestore(uid, subscriptionStatus).catch((err) => {
-    console.error("Background sync failed:", err)
-  })
-
-  const isPaid = subscriptionStatus.hasCreatorAccess
+  // Check if plan has expired
+  const now = new Date()
+  const isExpired = planExpiresAt ? planExpiresAt <= now : false
+  
+  // Determine if user has paid plan access
+  const isPaid = planFromFirebase === "creator" && !isExpired
   if (!isPaid) {
     if (inputType === "url") {
       return NextResponse.json(
@@ -155,8 +155,19 @@ export async function POST(req: NextRequest) {
     )
   }
 
+  // Default targetAudience if empty
+  const targetAudience = context.targetAudience?.trim() || "General LinkedIn users"
+  
   const emojiOn = !!context.emojiOn
-  const tonePreset = context.tonePreset
+  // Default to professional tone if not provided
+  const tonePreset = context.tonePreset || "professional"
+
+  // Create resolved context with defaults for AI
+  const resolvedContext = {
+    ...context,
+    targetAudience,
+    tonePreset,
+  }
 
   const outputs: Record<string, string> = {}
   const fromCache: Record<string, boolean> = {}
@@ -164,7 +175,7 @@ export async function POST(req: NextRequest) {
   for (const format of formats) {
     const cacheKey = computeCacheKey(
       finalInputText,
-      context,
+      resolvedContext,
       format,
       emojiOn,
       tonePreset
@@ -178,7 +189,7 @@ export async function POST(req: NextRequest) {
     }
 
     try {
-      output = await generateLinkedInFormat(format, finalInputText, context, regenerate)
+      output = await generateLinkedInFormat(format, finalInputText, resolvedContext, regenerate)
       outputs[format] = output
       fromCache[format] = false
 

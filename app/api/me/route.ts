@@ -1,5 +1,4 @@
 import { getUserFromRequest } from "@/lib/auth-server"
-import { checkStripeSubscriptionStatus, syncStripeToFirestore } from "@/lib/stripe-helpers"
 import { NextRequest, NextResponse } from "next/server"
 
 export async function GET(req: NextRequest) {
@@ -10,43 +9,38 @@ export async function GET(req: NextRequest) {
 
   const { uid, userDoc } = authed
 
-  // ALWAYS check Stripe directly - this is the source of truth
-  console.log(`[API /me] Checking Stripe for user ${uid}, customerId=${userDoc.stripeCustomerId || "none"}`)
-  const subscriptionStatus = await checkStripeSubscriptionStatus(userDoc.stripeCustomerId)
-  console.log(`[API /me] Stripe check result: hasCreatorAccess=${subscriptionStatus.hasCreatorAccess}, status=${subscriptionStatus.status}`)
+  // Read from Firebase - this is now the source of truth
+  // Webhooks update Firebase immediately when subscription changes
+  const planFromFirebase = userDoc.plan as "free" | "creator" | undefined
+  const planExpiresAt = userDoc.planExpiresAt?.toDate() || userDoc.subscriptionPeriodEnd?.toDate() || null
+  const stripeStatus = userDoc.stripeStatus as string | null | undefined
   
-  // Sync to Firestore in background (non-blocking)
-  syncStripeToFirestore(uid, subscriptionStatus).catch((err) => {
-    console.error("[API /me] Background sync failed:", err)
-  })
-
-  const effectivePlan: "free" | "creator" = subscriptionStatus.hasCreatorAccess ? "creator" : "free"
+  // Determine effective plan
+  // Trust the plan field in Firebase - webhooks keep it updated
+  // Only check expiration if expiration date exists
+  let effectivePlan: "free" | "creator" = planFromFirebase === "creator" ? "creator" : "free"
+  
+  // If plan is creator and expiration date exists, check if expired
+  if (effectivePlan === "creator" && planExpiresAt) {
+    const now = new Date()
+    if (planExpiresAt <= now) {
+      // Plan has expired, downgrade to free
+      effectivePlan = "free"
+    }
+  }
+  
   const usageLimitMonthly = effectivePlan === "creator" ? 100 : 5
   
-  console.log(`[API /me] Returning plan: ${effectivePlan}, usageLimitMonthly: ${usageLimitMonthly}, stripeStatus: ${subscriptionStatus.status}`)
-  
-  // Double-check: if stripeStatus is null or there's no valid subscription, force free plan
-  if (!subscriptionStatus.status && effectivePlan === "creator") {
-    console.warn(`[API /me] WARNING: No stripeStatus but plan is creator, forcing free plan`)
-    return NextResponse.json({
-      plan: "free",
-      emailVerified: userDoc.emailVerified,
-      usageCount: userDoc.usageCount,
-      usageLimitMonthly: 5,
-      usageResetAt: userDoc.usageResetAt.toDate().toISOString(),
-      stripeStatus: null,
-      subscriptionPeriodEnd: null,
-    })
-  }
+  console.log(`[API /me] Firebase data: plan=${planFromFirebase}, expiresAt=${planExpiresAt?.toISOString()}, stripeStatus=${stripeStatus}, effectivePlan=${effectivePlan}`)
 
   return NextResponse.json({
     plan: effectivePlan,
     emailVerified: userDoc.emailVerified,
-    usageCount: userDoc.usageCount,
+    usageCount: userDoc.usageCount || 0,
     usageLimitMonthly,
-    usageResetAt: userDoc.usageResetAt.toDate().toISOString(),
-    stripeStatus: subscriptionStatus.status,
-    subscriptionPeriodEnd: subscriptionStatus.periodEnd?.toISOString() || null,
+    usageResetAt: userDoc.usageResetAt?.toDate().toISOString() || new Date().toISOString(),
+    stripeStatus: stripeStatus || null,
+    subscriptionPeriodEnd: planExpiresAt?.toISOString() || null,
   })
 }
 

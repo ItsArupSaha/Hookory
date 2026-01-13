@@ -8,7 +8,7 @@ import { onAuthStateChanged, signOut, User } from "firebase/auth"
 import { Loader2 } from "lucide-react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 
 interface MeResponse {
     plan: "free" | "creator"
@@ -25,13 +25,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     const [firebaseUser, setFirebaseUser] = useState<User | null>(null)
     const [me, setMe] = useState<MeResponse | null>(null)
     const [loading, setLoading] = useState(true)
-    const [checkingMe, setCheckingMe] = useState(false)
     const [upgrading, setUpgrading] = useState(false)
     const [portalLoading, setPortalLoading] = useState(false)
 
-    async function refreshUserData() {
+    const refreshUserData = useCallback(async () => {
         if (!auth || !firebaseUser) return
-        setCheckingMe(true)
         try {
             const token = await firebaseUser.getIdToken()
             const res = await fetch("/api/me", {
@@ -43,18 +41,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 throw new Error("Failed to load account data")
             }
             const data = (await res.json()) as MeResponse
+            console.log("[AppShell] Loaded plan data:", data.plan, "usageLimit:", data.usageLimitMonthly)
             setMe(data)
         } catch (err: any) {
-            console.error(err)
-            toast({
-                title: "Error",
-                description: err?.message || "Failed to load account data",
-                variant: "destructive",
-            })
-        } finally {
-            setCheckingMe(false)
+            console.error("[AppShell] Failed to load user data:", err)
+            // Don't show toast for non-critical errors - just log
         }
-    }
+    }, [firebaseUser])
 
     useEffect(() => {
         if (!auth) return
@@ -75,8 +68,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                     if (currentUser) {
                         setFirebaseUser(currentUser)
                         setLoading(false)
-                        // Use the currentUser directly for refreshUserData
-                        setCheckingMe(true)
+                        // Load user data
                         try {
                             const token = await currentUser.getIdToken()
                             const res = await fetch("/api/me", {
@@ -91,8 +83,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                             setMe(data)
                         } catch (err: any) {
                             console.error(err)
-                        } finally {
-                            setCheckingMe(false)
                         }
                         return
                     }
@@ -140,6 +130,15 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             }
         }
     }, [pathname, firebaseUser])
+
+    // Load user data once when firebaseUser is available (no unnecessary refreshes)
+    useEffect(() => {
+        if (firebaseUser && !me) {
+            // Only load if we don't have data yet - load once and keep the state
+            refreshUserData()
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [firebaseUser]) // Only depend on firebaseUser - don't re-run when me or refreshUserData changes
 
     const isActive = (href: string) => pathname?.startsWith(href)
 
@@ -312,15 +311,15 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                         <span className="inline-flex items-center rounded-full border border-indigo-100 bg-indigo-50 px-2 py-0.5 text-xs font-medium text-indigo-700">
                             Plan:{" "}
                             <span className="ml-1 rounded-full bg-indigo-600 text-white px-1.5">
-                                {me?.plan === "creator" ? "Creator" : "Free"}
+                                {me ? (me.plan === "creator" ? "Creator" : "Free") : "..."}
                             </span>
                         </span>
-                        {checkingMe && (
-                            <span className="text-xs text-slate-500">Syncing billing…</span>
-                        )}
                     </div>
                     <div className="flex items-center gap-3">
-                        {me?.plan === "creator" ? (
+                        {!me ? (
+                            // Show nothing while loading to avoid flickering
+                            <div className="min-w-[100px] h-8" />
+                        ) : me.plan === "creator" ? (
                             <Button
                                 variant="outline"
                                 size="sm"

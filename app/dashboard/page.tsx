@@ -18,7 +18,7 @@ type FormatKey =
     | "educational-carousel"
     | "short-viral-hook"
 
-const MAX_INPUT_LENGTH = 6000
+const MAX_INPUT_LENGTH = 5000
 
 export default function NewRepurposePage() {
     const router = useRouter()
@@ -26,9 +26,8 @@ export default function NewRepurposePage() {
     const [inputText, setInputText] = useState("")
     const [url, setUrl] = useState("")
     const [targetAudience, setTargetAudience] = useState("")
-    const [audiencePreset, setAudiencePreset] = useState("")
-    const [goal, setGoal] = useState<"engagement" | "leads" | "authority" | "">("engagement")
-    const [style, setStyle] = useState<"thought-leader" | "storyteller" | "educator" | "">("thought-leader")
+    const [goal, setGoal] = useState<"engagement" | "leads" | "authority" | "">("engagement") // Default: "Start conversations"
+    const [style, setStyle] = useState<"thought-leader" | "storyteller" | "educator" | "">("thought-leader") // Default: "Opinion & insight"
     const [emojiOn, setEmojiOn] = useState(false)
     const [tonePreset, setTonePreset] = useState<
         "professional" | "conversational" | "storytelling" | "educational" | ""
@@ -48,6 +47,8 @@ export default function NewRepurposePage() {
         "short-viral-hook": "",
     })
     const [plan, setPlan] = useState<"free" | "creator" | null>(null)
+    const [usageCount, setUsageCount] = useState<number | null>(null)
+    const [usageLimitMonthly, setUsageLimitMonthly] = useState<number | null>(null)
 
     useEffect(() => {
         async function loadMe() {
@@ -62,6 +63,8 @@ export default function NewRepurposePage() {
                 const data = await res.json()
                 if (res.ok) {
                     setPlan(data.plan as "free" | "creator")
+                    setUsageCount(data.usageCount ?? 0)
+                    setUsageLimitMonthly(data.usageLimitMonthly ?? 5)
                 }
             } catch {
                 // non-critical
@@ -81,12 +84,15 @@ export default function NewRepurposePage() {
         (k) => formats[k]
     )
 
+    const isLimitReached = usageCount !== null && usageLimitMonthly !== null && usageCount >= usageLimitMonthly
+
     const canGenerate =
         selectedFormats.length > 0 &&
         (tab === "text"
             ? inputText.trim().length > 0
             : url.trim().length > 0) &&
-        !loading
+        !loading &&
+        !isLimitReached
 
     async function getUserAndToken(): Promise<{ user: User; token: string } | null> {
         if (!auth) return null
@@ -117,7 +123,7 @@ export default function NewRepurposePage() {
                     inputText,
                     url,
                     context: {
-                        targetAudience: targetAudience || undefined,
+                        targetAudience: targetAudience.trim() || undefined,
                         goal: (goal || undefined) as any,
                         style: (style || undefined) as any,
                         emojiOn,
@@ -132,11 +138,19 @@ export default function NewRepurposePage() {
             const data = await res.json()
             if (!res.ok) {
                 if (res.status === 402) {
-                    toast({
-                        title: "Limit reached",
-                        description: data.error || "Upgrade to keep generating.",
-                        variant: "destructive",
-                    })
+                    // Limit reached - button is already disabled and message is shown at top
+                    // Refresh usage data to update the UI
+                    const userInfo = await getUserAndToken()
+                    if (userInfo) {
+                        const meRes = await fetch("/api/me", {
+                            headers: { Authorization: `Bearer ${userInfo.token}` },
+                        })
+                        if (meRes.ok) {
+                            const meData = await meRes.json()
+                            setUsageCount(meData.usageCount ?? 0)
+                            setUsageLimitMonthly(meData.usageLimitMonthly ?? 5)
+                        }
+                    }
                     return
                 }
                 if (res.status === 403 || res.status === 429) {
@@ -162,6 +176,17 @@ export default function NewRepurposePage() {
                 title: "Generated",
                 description: "Your LinkedIn formats are ready.",
             })
+            // Refresh usage data after successful generation
+            if (userInfo) {
+                const meRes = await fetch("/api/me", {
+                    headers: { Authorization: `Bearer ${userInfo.token}` },
+                })
+                if (meRes.ok) {
+                    const meData = await meRes.json()
+                    setUsageCount(meData.usageCount ?? 0)
+                    setUsageLimitMonthly(meData.usageLimitMonthly ?? 5)
+                }
+            }
             setCooldown(45)
             const interval = setInterval(() => {
                 setCooldown((prev) => {
@@ -200,7 +225,7 @@ export default function NewRepurposePage() {
                     inputText,
                     url,
                     context: {
-                        targetAudience: targetAudience || undefined,
+                        targetAudience: targetAudience.trim() || undefined,
                         goal: (goal || undefined) as any,
                         style: (style || undefined) as any,
                         emojiOn,
@@ -215,11 +240,18 @@ export default function NewRepurposePage() {
             const data = await res.json()
             if (!res.ok) {
                 if (res.status === 402) {
-                    toast({
-                        title: "Limit reached",
-                        description: data.error || "Upgrade to keep generating.",
-                        variant: "destructive",
-                    })
+                    // Limit reached - button is already disabled and message is shown at top
+                    // Refresh usage data to update the UI
+                    if (userInfo) {
+                        const meRes = await fetch("/api/me", {
+                            headers: { Authorization: `Bearer ${userInfo.token}` },
+                        })
+                        if (meRes.ok) {
+                            const meData = await meRes.json()
+                            setUsageCount(meData.usageCount ?? 0)
+                            setUsageLimitMonthly(meData.usageLimitMonthly ?? 5)
+                        }
+                    }
                     return
                 }
                 if (res.status === 403 || res.status === 429) {
@@ -245,6 +277,17 @@ export default function NewRepurposePage() {
                 title: "Regenerated",
                 description: "Updated LinkedIn format is ready.",
             })
+            // Refresh usage data after successful regeneration
+            if (userInfo) {
+                const meRes = await fetch("/api/me", {
+                    headers: { Authorization: `Bearer ${userInfo.token}` },
+                })
+                if (meRes.ok) {
+                    const meData = await meRes.json()
+                    setUsageCount(meData.usageCount ?? 0)
+                    setUsageLimitMonthly(meData.usageLimitMonthly ?? 5)
+                }
+            }
             setCooldown(45)
             const interval = setInterval(() => {
                 setCooldown((prev) => {
@@ -293,6 +336,27 @@ export default function NewRepurposePage() {
 
     return (
         <div className="space-y-6 text-slate-900">
+            {isLimitReached && (
+                <div className="rounded-lg border-2 border-orange-200 bg-orange-50 p-4">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                        <div className="space-y-1">
+                            <p className="text-sm font-semibold text-orange-900">
+                                Monthly limit reached
+                            </p>
+                            <p className="text-xs text-orange-700">
+                                You&apos;ve used {usageCount} of {usageLimitMonthly} generations this month. Upgrade to increase your limit and keep generating.
+                            </p>
+                        </div>
+                        <Button
+                            size="sm"
+                            className="text-xs"
+                            onClick={() => router.push("/usage")}
+                        >
+                            Upgrade Now
+                        </Button>
+                    </div>
+                </div>
+            )}
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                     <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">
@@ -427,97 +491,59 @@ export default function NewRepurposePage() {
                                     htmlFor="targetAudience"
                                     className="text-xs text-slate-700"
                                 >
-                                    Target audience
+                                    Who is this post for?
                                 </Label>
-                                <div className="flex gap-2">
-                                    <Select
-                                        value={audiencePreset}
-                                        onValueChange={(v) => {
-                                            setAudiencePreset(v)
-                                            setTargetAudience(v)
-                                        }}
-                                    >
-                                        <SelectTrigger className="h-8 w-44 text-xs">
-                                            <SelectValue placeholder="Common audiences" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="Freelancers">
-                                                Freelancers
-                                            </SelectItem>
-                                            <SelectItem value="Consultants">
-                                                Consultants
-                                            </SelectItem>
-                                            <SelectItem value="Job seekers">
-                                                Job seekers
-                                            </SelectItem>
-                                            <SelectItem value="Founders">
-                                                Founders
-                                            </SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                    <Input
-                                        id="targetAudience"
-                                        value={targetAudience}
-                                        onChange={(e) => setTargetAudience(e.target.value)}
-                                        placeholder="e.g. B2B SaaS founders, senior product marketers…"
-                                        className="flex-1"
-                                    />
-                                </div>
+                                <Input
+                                    id="targetAudience"
+                                    value={targetAudience}
+                                    onChange={(e) => setTargetAudience(e.target.value)}
+                                    placeholder="e.g. Founders, HR leaders, Recruiters, Developers"
+                                    className="w-full"
+                                />
                             </div>
 
                             <div className="space-y-2">
-                                <Label className="text-xs text-slate-700">Goal</Label>
+                                <Label className="text-xs text-slate-700">What&apos;s your goal?</Label>
                                 <Select
                                     value={goal}
                                     onValueChange={(v) => setGoal(v as any)}
                                 >
-                                    <SelectTrigger className="[&>span:first-child]:flex-1 [&>span:first-child]:text-center">
-                                        <SelectValue placeholder="Select goal" />
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="What's your goal?" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="engagement" className="text-center">
-                                            <div className="flex flex-col items-center">
-                                                <span>Engagement</span>
-                                                <span className="text-[10px] text-slate-500">
-                                                    (Likes, Comments, Saves)
-                                                </span>
-                                            </div>
+                                        <SelectItem value="engagement">
+                                            Start conversations (likes, comments, saves)
                                         </SelectItem>
-                                        <SelectItem value="authority" className="text-center">
-                                            <div className="flex flex-col items-center">
-                                                <span>Authority</span>
-                                                <span className="text-[10px] text-slate-500">
-                                                    (Thought leadership, Expertise, Credibility)
-                                                </span>
-                                            </div>
+                                        <SelectItem value="authority">
+                                            Build credibility (show expertise & insight)
                                         </SelectItem>
-                                        <SelectItem value="leads" className="text-center">
-                                            <div className="flex flex-col items-center">
-                                                <span>Leads</span>
-                                                <span className="text-[10px] text-slate-500">
-                                                    (Soft CTA, Curiosity-driven, Non-pushy)
-                                                </span>
-                                            </div>
+                                        <SelectItem value="leads">
+                                            Attract opportunities (clients, roles, inbound leads)
                                         </SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
 
                             <div className="space-y-2">
-                                <Label className="text-xs text-slate-700">Style</Label>
+                                <Label className="text-xs text-slate-700">Post style</Label>
                                 <Select
                                     value={style}
                                     onValueChange={(v) => setStyle(v as any)}
                                 >
                                     <SelectTrigger>
-                                        <SelectValue placeholder="Select style" />
+                                        <SelectValue placeholder="Post style" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="thought-leader">
-                                            Thought leader
+                                            Opinion & insight (strong point of view)
                                         </SelectItem>
-                                        <SelectItem value="storyteller">Storyteller</SelectItem>
-                                        <SelectItem value="educator">Educator</SelectItem>
+                                        <SelectItem value="storyteller">
+                                            Personal story (experience → lesson)
+                                        </SelectItem>
+                                        <SelectItem value="educator">
+                                            Teach something useful (tips, steps, frameworks)
+                                        </SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
@@ -542,47 +568,27 @@ export default function NewRepurposePage() {
 
                             <div className="space-y-2">
                                 <Label className="text-xs text-slate-700">
-                                    Tone preset
+                                    Writing tone
                                 </Label>
                                 <Select
                                     value={tonePreset}
                                     onValueChange={(v) => setTonePreset(v as any)}
                                 >
                                     <SelectTrigger>
-                                        <SelectValue placeholder="Select tone" />
+                                        <SelectValue placeholder="Writing tone" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="professional">
-                                            <div className="flex flex-col">
-                                                <span>Professional</span>
-                                                <span className="text-[10px] text-slate-500">
-                                                    (Calm, Confident, Clean, Neutral authority)
-                                                </span>
-                                            </div>
+                                            Professional (clear, confident, neutral)
                                         </SelectItem>
                                         <SelectItem value="conversational">
-                                            <div className="flex flex-col">
-                                                <span>Conversational</span>
-                                                <span className="text-[10px] text-slate-500">
-                                                    (Friendly, Natural, Approachable)
-                                                </span>
-                                            </div>
+                                            Friendly (conversational, approachable)
                                         </SelectItem>
                                         <SelectItem value="storytelling">
-                                            <div className="flex flex-col">
-                                                <span>Storytelling</span>
-                                                <span className="text-[10px] text-slate-500">
-                                                    (Personal, Narrative-driven, Relatable)
-                                                </span>
-                                            </div>
+                                            Story-driven (personal, reflective)
                                         </SelectItem>
                                         <SelectItem value="educational">
-                                            <div className="flex flex-col">
-                                                <span>Educational</span>
-                                                <span className="text-[10px] text-slate-500">
-                                                    (Clear, Structured, Insight-driven)
-                                                </span>
-                                            </div>
+                                            Instructional (clear, structured, practical)
                                         </SelectItem>
                                     </SelectContent>
                                 </Select>
@@ -594,16 +600,16 @@ export default function NewRepurposePage() {
                     <Card className="border-slate-200 bg-white">
                         <CardHeader>
                             <CardTitle className="text-sm font-semibold text-slate-900">
-                                LinkedIn formats
+                                What should we generate?
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="grid gap-3 sm:grid-cols-2">
                             {(
                                 [
-                                    ["thought-leadership", "Thought leadership"],
-                                    ["story-based", "Story-based"],
-                                    ["educational-carousel", "Educational / carousel"],
-                                    ["short-viral-hook", "Short viral hook"],
+                                    ["thought-leadership", "Main LinkedIn post"],
+                                    ["story-based", "Story-style post"],
+                                    ["educational-carousel", "Educational / carousel text"],
+                                    ["short-viral-hook", "Short hook post (scroll-stopping)"],
                                 ] as [FormatKey, string][]
                             ).map(([key, label]) => (
                                 <button
@@ -629,9 +635,11 @@ export default function NewRepurposePage() {
                         >
                             {loading
                                 ? "Generating…"
-                                : cooldown > 0
-                                    ? `Cooldown (${cooldown}s)`
-                                    : "Generate"}
+                                : isLimitReached
+                                    ? "Limit Reached"
+                                    : cooldown > 0
+                                        ? `Cooldown (${cooldown}s)`
+                                        : "Generate"}
                         </Button>
                     </div>
                 </div>
@@ -648,10 +656,10 @@ export default function NewRepurposePage() {
                     ) : (
                         selectedFormats.map((key) => {
                             const titleMap: Record<FormatKey, string> = {
-                                "thought-leadership": "Thought leadership",
-                                "story-based": "Story-based",
-                                "educational-carousel": "Educational / carousel",
-                                "short-viral-hook": "Short viral hook",
+                                "thought-leadership": "Main LinkedIn post",
+                                "story-based": "Story-style post",
+                                "educational-carousel": "Educational / carousel text",
+                                "short-viral-hook": "Short hook post",
                             }
                             const value = results[key] || ""
                             const charCount = value.length
@@ -669,7 +677,8 @@ export default function NewRepurposePage() {
                                             <button
                                                 type="button"
                                                 onClick={() => handleCopy(value)}
-                                                className="rounded-md border border-slate-200 px-2 py-1 text-[11px] hover:border-orange-300 hover:bg-orange-50/70"
+                                                disabled={!value || value.trim().length === 0}
+                                                className="rounded-md border border-slate-200 px-2 py-1 text-[11px] hover:border-orange-300 hover:bg-orange-50/70 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:border-slate-200 disabled:hover:bg-transparent"
                                             >
                                                 Copy
                                             </button>
@@ -677,7 +686,8 @@ export default function NewRepurposePage() {
                                                 <button
                                                     type="button"
                                                     onClick={() => handleRegenerate(key)}
-                                                    className="rounded-md border border-slate-200 px-2 py-1 text-[10px] text-slate-700 hover:border-orange-300 hover:bg-orange-50/70"
+                                                    disabled={!value || value.trim().length === 0}
+                                                    className="rounded-md border border-slate-200 px-2 py-1 text-[10px] text-slate-700 hover:border-orange-300 hover:bg-orange-50/70 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:border-slate-200 disabled:hover:bg-transparent"
                                                 >
                                                     Regenerate
                                                 </button>
