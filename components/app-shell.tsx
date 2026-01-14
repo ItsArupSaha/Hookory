@@ -29,6 +29,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     const [loading, setLoading] = useState(true)
     const [upgrading, setUpgrading] = useState(false)
     const [portalLoading, setPortalLoading] = useState(false)
+    const [loggingOut, setLoggingOut] = useState(false)
     const realtimeListenerRef = useRef<(() => void) | null>(null)
     const localStorageTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
@@ -113,14 +114,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                     }
                 }
 
-                // No user found - redirect to login
+                // No user found - redirect to public landing page
                 setFirebaseUser(null)
                 setMe(null)
                 setLoading(false)
                 // Only redirect if we're not already on a public page
                 const publicRoutes = ["/login", "/signup", "/terms", "/privacy", "/"]
                 if (!publicRoutes.some(route => pathname === route || pathname?.startsWith(route + "/"))) {
-                    router.push("/login")
+                    router.push("/")
                 }
                 return
             }
@@ -287,9 +288,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     }
 
     async function handleLogout() {
-        if (!auth) return
+        if (!auth || loggingOut) return
+        setLoggingOut(true)
+        // Slightly longer fade-out before redirecting to landing for smoother feel
+        await new Promise((resolve) => setTimeout(resolve, 400))
         await signOut(auth)
-        router.push("/")
+        // Redirect is handled by the auth state listener, which now sends users to "/"
     }
 
     const initials =
@@ -309,7 +313,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     }
 
     return (
-        <div className="flex min-h-screen bg-slate-50 text-slate-900">
+        <div
+            className={`flex min-h-screen bg-slate-50 text-slate-900 transition-all duration-300 ease-out ${loggingOut ? "opacity-50 scale-[0.99]" : "opacity-100 scale-100"
+                }`}
+        >
             {/* Sidebar */}
             <aside className="hidden w-60 border-r border-slate-200 bg-white px-4 py-6 shadow-sm sm:flex sm:flex-col">
                 <div className="mb-8">
