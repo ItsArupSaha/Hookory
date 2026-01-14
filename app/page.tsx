@@ -18,6 +18,8 @@ export default function LandingPage() {
   const stepsRef = useRef<HTMLDivElement>(null)
   const isVisibleRef = useRef(false)
   const animationTimeoutRef = useRef<NodeJS.Timeout[]>([])
+  const typingIntervalRef = useRef<NodeJS.Timeout | null>(null)
+  const processingIntervalRef = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
     if (!auth) {
@@ -36,10 +38,17 @@ export default function LandingPage() {
 
   // Realistic simulation animation - loops continuously
   useEffect(() => {
-    let typingInterval: NodeJS.Timeout | null = null
-    let processingInterval: NodeJS.Timeout | null = null
-
     const runAnimation = () => {
+      // Clear any existing intervals before starting new animation
+      if (typingIntervalRef.current) {
+        clearInterval(typingIntervalRef.current)
+        typingIntervalRef.current = null
+      }
+      if (processingIntervalRef.current) {
+        clearInterval(processingIntervalRef.current)
+        processingIntervalRef.current = null
+      }
+
       // Reset state
       setAnimationState('step1')
       setTypingText('')
@@ -49,12 +58,15 @@ export default function LandingPage() {
       const urlToType = 'https://example.com/blog-post'
       let charIndex = 0
 
-      typingInterval = setInterval(() => {
+      typingIntervalRef.current = setInterval(() => {
         if (charIndex < urlToType.length) {
           setTypingText(urlToType.slice(0, charIndex + 1))
           charIndex++
         } else {
-          if (typingInterval) clearInterval(typingInterval)
+          if (typingIntervalRef.current) {
+            clearInterval(typingIntervalRef.current)
+            typingIntervalRef.current = null
+          }
           // Move to step 2 after typing completes
           const timeout1 = setTimeout(() => {
             setAnimationState('step2')
@@ -62,11 +74,14 @@ export default function LandingPage() {
 
             // Simulate AI processing with progress
             let progress = 0
-            processingInterval = setInterval(() => {
+            processingIntervalRef.current = setInterval(() => {
               progress += 2
               setProcessingProgress(progress)
               if (progress >= 100) {
-                if (processingInterval) clearInterval(processingInterval)
+                if (processingIntervalRef.current) {
+                  clearInterval(processingIntervalRef.current)
+                  processingIntervalRef.current = null
+                }
                 // Move to step 3
                 const timeout2 = setTimeout(() => {
                   setAnimationState('step3')
@@ -108,6 +123,15 @@ export default function LandingPage() {
             isVisibleRef.current = false
             // Reset when leaving viewport so it can restart when coming back
             hasStarted = false
+            // Clear intervals when leaving viewport
+            if (typingIntervalRef.current) {
+              clearInterval(typingIntervalRef.current)
+              typingIntervalRef.current = null
+            }
+            if (processingIntervalRef.current) {
+              clearInterval(processingIntervalRef.current)
+              processingIntervalRef.current = null
+            }
           }
         })
       },
@@ -119,10 +143,18 @@ export default function LandingPage() {
     }
 
     return () => {
-      if (typingInterval) clearInterval(typingInterval)
-      if (processingInterval) clearInterval(processingInterval)
+      // Cleanup: clear all intervals and timeouts
+      if (typingIntervalRef.current) {
+        clearInterval(typingIntervalRef.current)
+        typingIntervalRef.current = null
+      }
+      if (processingIntervalRef.current) {
+        clearInterval(processingIntervalRef.current)
+        processingIntervalRef.current = null
+      }
       animationTimeoutRef.current.forEach(timeout => clearTimeout(timeout))
       animationTimeoutRef.current = []
+      // Keep observer active - don't unobserve so animation can restart on scroll
       if (stepsRef.current) {
         observer.unobserve(stepsRef.current)
       }
