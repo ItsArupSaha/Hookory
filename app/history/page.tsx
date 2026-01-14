@@ -36,6 +36,8 @@ export default function HistoryPage() {
     const [selectedJob, setSelectedJob] = useState<JobDetail | null>(null)
     const [loadingJobId, setLoadingJobId] = useState<string | null>(null)
     const [deletingJobId, setDeletingJobId] = useState<string | null>(null)
+    const [loadingProgress, setLoadingProgress] = useState(0)
+    const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
 
     async function loadHistory() {
         if (!auth) return
@@ -122,6 +124,17 @@ export default function HistoryPage() {
         // Set loading state immediately for smooth UX
         setLoadingJobId(id)
         setSelectedJob(null) // Clear previous job to show loading
+        setLoadingProgress(0) // Reset progress
+
+        // Animate progress bar (simulated, but smooth)
+        const progressInterval = setInterval(() => {
+            setLoadingProgress((prev) => {
+                if (prev >= 90) return prev // Stop at 90% until API completes
+                // Slow down as it approaches 90% for realistic feel
+                const increment = prev < 50 ? 8 : prev < 80 ? 4 : 2
+                return Math.min(prev + increment, 90)
+            })
+        }, 100)
 
         try {
             const token = await user.getIdToken()
@@ -132,30 +145,46 @@ export default function HistoryPage() {
             if (!res.ok) {
                 throw new Error(data.error || "Failed to load job")
             }
-            setSelectedJob(data as JobDetail)
+
+            // Complete the progress bar
+            setLoadingProgress(100)
+            // Small delay to show 100% before switching to content
+            setTimeout(() => {
+                setSelectedJob(data as JobDetail)
+                setLoadingJobId(null)
+                setLoadingProgress(0)
+            }, 200)
         } catch (err: any) {
+            clearInterval(progressInterval)
+            setLoadingJobId(null)
+            setLoadingProgress(0)
             toast({
                 title: "Error",
                 description: err?.message || "Failed to open job.",
                 variant: "destructive",
             })
         } finally {
-            setLoadingJobId(null)
+            clearInterval(progressInterval)
         }
     }
 
-    async function deleteJob(id: string, e: React.MouseEvent) {
+    function handleDeleteClick(id: string, e: React.MouseEvent) {
         e.stopPropagation() // Prevent opening the job when clicking delete
+        setConfirmDeleteId(id) // Show confirmation modal
+    }
 
+    function cancelDelete() {
+        setConfirmDeleteId(null)
+    }
+
+    async function confirmDelete() {
+        if (!confirmDeleteId) return
         if (!auth) return
         const user = auth.currentUser
         if (!user) return
 
-        // Confirm deletion
-        if (!confirm("Are you sure you want to delete this history item?")) {
-            return
-        }
-
+        const id = confirmDeleteId
+        setConfirmDeleteId(null) // Close modal
         setDeletingJobId(id)
         try {
             const token = await user.getIdToken()
@@ -191,6 +220,7 @@ export default function HistoryPage() {
             setDeletingJobId(null)
         }
     }
+
 
     if (loading) {
         return (
@@ -267,7 +297,7 @@ export default function HistoryPage() {
                                 </button>
                                 <button
                                     type="button"
-                                    onClick={(e) => deleteJob(job.id, e)}
+                                    onClick={(e) => handleDeleteClick(job.id, e)}
                                     disabled={deletingJobId === job.id}
                                     className="mr-2 rounded p-1.5 text-slate-400 opacity-0 transition-opacity hover:text-red-500 group-hover:opacity-100 disabled:opacity-50"
                                     title="Delete this history item"
@@ -289,11 +319,27 @@ export default function HistoryPage() {
                     Details
                 </h2>
                 {loadingJobId ? (
-                    <div className="flex flex-col items-center justify-center py-12">
-                        <Loader2 className="h-8 w-8 animate-spin text-orange-500" />
-                        <p className="mt-4 text-xs text-slate-500">
-                            Loading history details...
-                        </p>
+                    <div className="space-y-4 rounded-lg border border-slate-200 bg-white p-6">
+                        <div className="space-y-2">
+                            <div className="flex items-center justify-between text-xs">
+                                <span className="font-medium text-slate-700">
+                                    Loading history details...
+                                </span>
+                                <span className="text-slate-500">
+                                    {loadingProgress}%
+                                </span>
+                            </div>
+                            <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
+                                <div
+                                    className="h-full rounded-full bg-gradient-to-r from-orange-400 to-orange-500 transition-all duration-300 ease-out"
+                                    style={{ width: `${loadingProgress}%` }}
+                                />
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-2 text-[10px] text-slate-400">
+                            <Loader2 className="h-3 w-3 animate-spin" />
+                            <span>Fetching your content...</span>
+                        </div>
                     </div>
                 ) : !selectedJob ? (
                     <p className="text-xs text-slate-500">
@@ -343,6 +389,42 @@ export default function HistoryPage() {
                     </div>
                 )}
             </div>
+
+            {/* Delete Confirmation Modal */}
+            {confirmDeleteId && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+                    <Card className="w-full max-w-md border-slate-200 bg-white shadow-lg">
+                        <CardHeader>
+                            <CardTitle className="text-sm font-semibold text-slate-900">
+                                Delete History Item
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <p className="text-xs text-slate-600">
+                                Are you sure you want to delete this history item? This action cannot be undone.
+                            </p>
+                            <div className="flex gap-2">
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={cancelDelete}
+                                    className="flex-1 text-xs"
+                                >
+                                    Cancel
+                                </Button>
+                                <Button
+                                    type="button"
+                                    variant="destructive"
+                                    onClick={confirmDelete}
+                                    className="flex-1 text-xs"
+                                >
+                                    Delete
+                                </Button>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+            )}
         </div>
     )
 }
