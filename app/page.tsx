@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { auth } from "@/lib/firebase/client"
 import { onAuthStateChanged, User } from "firebase/auth"
 import { ArrowRight } from "lucide-react"
+import Image from "next/image"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 
@@ -34,9 +35,11 @@ export default function LandingPage() {
       <nav className="sticky top-0 z-20 border-b border-slate-200/70 bg-white/80 backdrop-blur-md">
         <div className="container mx-auto flex items-center justify-between px-4 py-3 md:py-4">
           <Link href="/" className="flex items-center gap-2 group">
-            <img
+            <Image
               src="/hookoryLogo.png"
               alt="Hookory"
+              width={32}
+              height={32}
               className="h-8 w-8 object-contain transition-transform group-hover:-translate-y-0.5"
             />
             <div className="flex flex-col leading-tight">

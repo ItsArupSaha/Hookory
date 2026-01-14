@@ -79,7 +79,7 @@ export default function UsagePage() {
         } finally {
             setLoading(false)
         }
-    }, [auth])
+    }, [])
 
     // Refresh on mount and when pathname changes (navigation)
     useEffect(() => {
@@ -149,7 +149,7 @@ export default function UsagePage() {
             title: "Upgrade successful! 🎉",
             description: "Your Creator plan is now active. You have 100 repurposes per month.",
         })
-    }, [searchParams, auth, me, loadMe])
+    }, [searchParams, me, loadMe])
 
     const usagePercent = me
         ? Math.min(100, (me.usageCount / Math.max(1, me.usageLimitMonthly)) * 100)

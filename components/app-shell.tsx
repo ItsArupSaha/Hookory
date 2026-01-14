@@ -7,6 +7,7 @@ import { clearLocalStoragePaymentStatus, cn, getLocalStoragePaymentStatus, setLo
 import { onAuthStateChanged, signOut, User } from "firebase/auth"
 import { doc, onSnapshot } from "firebase/firestore"
 import { Loader2 } from "lucide-react"
+import Image from "next/image"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { useCallback, useEffect, useRef, useState } from "react"
@@ -313,9 +314,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <aside className="hidden w-60 border-r border-slate-200 bg-white px-4 py-6 shadow-sm sm:flex sm:flex-col">
                 <div className="mb-8">
                     <Link href="/dashboard" className="flex items-center gap-2">
-                        <img
+                        <Image
                             src="/hookoryLogo.png"
                             alt="Hookory"
+                            width={28}
+                            height={28}
                             className="h-7 w-7 object-contain"
                         />
                         <span className="text-sm font-semibold tracking-tight">
