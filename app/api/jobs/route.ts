@@ -3,6 +3,9 @@ import { adminDb } from "@/lib/firebase/admin"
 import { checkStripeSubscriptionStatus, syncStripeToFirestore } from "@/lib/stripe-helpers"
 import { NextRequest, NextResponse } from "next/server"
 
+// Force dynamic rendering since we access request headers for authentication
+export const dynamic = 'force-dynamic'
+
 export async function GET(req: NextRequest) {
   try {
     const authed = await getUserFromRequest(req)
