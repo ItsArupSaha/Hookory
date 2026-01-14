@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { toast } from "@/components/ui/use-toast"
 import { auth } from "@/lib/firebase/client"
 import { formatDate } from "@/lib/utils"
+import { Loader2, Trash2 } from "lucide-react"
 import { usePathname, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
@@ -33,6 +34,8 @@ export default function HistoryPage() {
     const [plan, setPlan] = useState<"free" | "creator" | null>(null)
     const [jobs, setJobs] = useState<JobSummary[]>([])
     const [selectedJob, setSelectedJob] = useState<JobDetail | null>(null)
+    const [loadingJobId, setLoadingJobId] = useState<string | null>(null)
+    const [deletingJobId, setDeletingJobId] = useState<string | null>(null)
 
     async function loadHistory() {
         if (!auth) return
@@ -115,6 +118,11 @@ export default function HistoryPage() {
         if (!auth) return
         const user = auth.currentUser
         if (!user) return
+
+        // Set loading state immediately for smooth UX
+        setLoadingJobId(id)
+        setSelectedJob(null) // Clear previous job to show loading
+
         try {
             const token = await user.getIdToken()
             const res = await fetch(`/api/jobs/${id}`, {
@@ -131,6 +139,56 @@ export default function HistoryPage() {
                 description: err?.message || "Failed to open job.",
                 variant: "destructive",
             })
+        } finally {
+            setLoadingJobId(null)
+        }
+    }
+
+    async function deleteJob(id: string, e: React.MouseEvent) {
+        e.stopPropagation() // Prevent opening the job when clicking delete
+
+        if (!auth) return
+        const user = auth.currentUser
+        if (!user) return
+
+        // Confirm deletion
+        if (!confirm("Are you sure you want to delete this history item?")) {
+            return
+        }
+
+        setDeletingJobId(id)
+        try {
+            const token = await user.getIdToken()
+            const res = await fetch(`/api/jobs/${id}`, {
+                method: "DELETE",
+                headers: { Authorization: `Bearer ${token}` },
+            })
+
+            if (!res.ok) {
+                const data = await res.json()
+                throw new Error(data.error || "Failed to delete job")
+            }
+
+            // Remove from local state
+            setJobs((prev) => prev.filter((job) => job.id !== id))
+
+            // Clear selected job if it was the deleted one
+            if (selectedJob?.id === id) {
+                setSelectedJob(null)
+            }
+
+            toast({
+                title: "Deleted",
+                description: "History item deleted successfully.",
+            })
+        } catch (err: any) {
+            toast({
+                title: "Error",
+                description: err?.message || "Failed to delete job.",
+                variant: "destructive",
+            })
+        } finally {
+            setDeletingJobId(null)
         }
     }
 
@@ -191,19 +249,36 @@ export default function HistoryPage() {
                 ) : (
                     <div className="space-y-2">
                         {jobs.map((job) => (
-                            <button
+                            <div
                                 key={job.id}
-                                type="button"
-                                onClick={() => openJob(job.id)}
-                                className="flex w-full flex-col items-start rounded-md border border-slate-200 bg-white px-3 py-2 text-left text-xs shadow-sm hover:border-orange-300 hover:bg-orange-50/60"
+                                className="group relative flex w-full items-center gap-2 rounded-md border border-slate-200 bg-white shadow-sm hover:border-orange-300 hover:bg-orange-50/60"
                             >
-                                <span className="font-medium text-slate-900">
-                                    {formatDate(job.createdAt)}
-                                </span>
-                                <span className="mt-0.5 text-[11px] text-slate-500">
-                                    {job.formatsSelected.join(", ")}
-                                </span>
-                            </button>
+                                <button
+                                    type="button"
+                                    onClick={() => openJob(job.id)}
+                                    className="flex flex-1 flex-col items-start px-3 py-2 text-left text-xs"
+                                >
+                                    <span className="font-medium text-slate-900">
+                                        {formatDate(job.createdAt)}
+                                    </span>
+                                    <span className="mt-0.5 text-[11px] text-slate-500">
+                                        {job.formatsSelected.join(", ")}
+                                    </span>
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={(e) => deleteJob(job.id, e)}
+                                    disabled={deletingJobId === job.id}
+                                    className="mr-2 rounded p-1.5 text-slate-400 opacity-0 transition-opacity hover:text-red-500 group-hover:opacity-100 disabled:opacity-50"
+                                    title="Delete this history item"
+                                >
+                                    {deletingJobId === job.id ? (
+                                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                    ) : (
+                                        <Trash2 className="h-3.5 w-3.5" />
+                                    )}
+                                </button>
+                            </div>
                         ))}
                     </div>
                 )}
@@ -213,7 +288,14 @@ export default function HistoryPage() {
                 <h2 className="text-sm font-semibold text-slate-900">
                     Details
                 </h2>
-                {!selectedJob ? (
+                {loadingJobId ? (
+                    <div className="flex flex-col items-center justify-center py-12">
+                        <Loader2 className="h-8 w-8 animate-spin text-orange-500" />
+                        <p className="mt-4 text-xs text-slate-500">
+                            Loading history details...
+                        </p>
+                    </div>
+                ) : !selectedJob ? (
                     <p className="text-xs text-slate-500">
                         Select a repurpose from the left to view inputs and outputs.
                     </p>
