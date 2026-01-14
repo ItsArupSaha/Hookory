@@ -1,5 +1,4 @@
 import { GoogleGenerativeAI } from "@google/generative-ai"
-import OpenAI from "openai"
 
 export type LinkedInFormat =
   | "thought-leadership"
@@ -22,22 +21,19 @@ export interface GenerateOptions {
   regenerate?: boolean
 }
 
-const AI_PROVIDER = (process.env.AI_PROVIDER || "gemini") as "gemini" | "openai"
 
 // Input length guard
-const MAX_INPUT_CHARS = 10000
-const MAX_OUTPUT_CHARS = 2000
+// Set to 20,000 to safely support Premium users (10k chars) + buffer
+// Enforce the specific 5k vs 10k limits in route.ts before calling this
+const MAX_INPUT_CHARS = 20000
+const MAX_OUTPUT_CHARS = 2900
 
 function normalizeInput(inputText: string): string {
-  // Trim whitespace
   let normalized = inputText.trim()
-  
-  // Collapse excessive newlines (more than 2 consecutive newlines → 2 newlines)
-  normalized = normalized.replace(/\n{3,}/g, "\n\n")
-  
-  // Collapse excessive spaces (more than 2 consecutive spaces → 2 spaces)
-  normalized = normalized.replace(/ {3,}/g, "  ")
-  
+  // Replace multiple spaces/tabs with single space (but keep newlines)
+  normalized = normalized.replace(/[ \t]+/g, " ")
+  // Ensure max 2 newlines (paragraph breaks)
+  normalized = normalized.replace(/\n\s*\n/g, "\n\n")
   return normalized
 }
 
@@ -48,7 +44,7 @@ function validateInput(inputText: string): void {
   
   // Check for meaningful content (not just whitespace/special chars)
   const meaningfulContent = inputText.replace(/[\s\n\r\t]/g, "")
-  if (meaningfulContent.length < 10) {
+  if (meaningfulContent.length < 50) {
     throw new Error("Input text is too short. Please provide more content to repurpose.")
   }
   
@@ -58,47 +54,26 @@ function validateInput(inputText: string): void {
 }
 
 function getSystemPrompt(): string {
-  return `You are a LinkedIn content strategist who specializes in writing high-performing, human-sounding LinkedIn posts.
+  return `### SYSTEM ROLE
+You are an expert LinkedIn Ghostwriter and Content Strategist. 
+You specialize in taking long-form content and condensing it into high-viral, scroll-stopping LinkedIn posts. 
+You understand the "broetry" style, the importance of whitespace, and how to hook a reader in the first 2 lines.
 
-Your expertise:
-- Crafting posts that feel authentic and written by a real person
-- Avoiding generic AI phrasing and corporate jargon
-- Writing in a conversational, engaging style that builds trust
-- Creating content that drives real engagement, not just vanity metrics`
+### NEGATIVE CONSTRAINTS (CRITICAL)
+- Do NOT use generic AI intro phrases like "In today's landscape," "Unlock the potential," "Delve into," "Game-changer," "Tapestry," "Leverage," "Harness," "Unveil," "Navigate," "Embark on a journey," "In the realm of," "Master the art of," "Transform your," "Elevate your," "Unlock the power of," "Dive deep," "Let's explore," "Revolutionary," or "In today's fast-paced world."
+- Do NOT use hashtags in the middle of sentences.
+- Do NOT summarize the whole blog; focus only on the core value proposition.
+- Do NOT use emojis excessively; use them sparingly as bullet points or emphasis only.
+- Do NOT use markdown bolding (like **text**) because LinkedIn does not support it. Use "quotes" for emphasis instead.
+- Write like a real LinkedIn creator would write. Use natural, conversational language.`
 }
 
 function getFormatRules(format: LinkedInFormat, emojiOn: boolean): string {
   const rules: Record<LinkedInFormat, string> = {
-    "thought-leadership": `Format: Thought Leadership Post
-- Start with a bold insight or contrarian take (first 2 lines must grab attention)
-- Support with data, experience, or reasoning
-- Use 8-12 short lines total (not essay-like)
-- Strategic whitespace between paragraphs (2-3 sentences per paragraph max)
-- End with a question or call to action that invites discussion
-- Professional tone, authoritative voice
-- Target length: 800-1200 characters`,
-    "story-based": `Format: Story-Based Post
-- Open with a personal story, anecdote, or narrative hook (first 2 lines must grab attention)
-- Use a narrative arc: setup → conflict/insight → resolution/lesson
-- Make it relatable and human
-- Use 10-15 short lines total
-- End with a reflection or actionable takeaway
-- Target length: 1000-1500 characters`,
-    "educational-carousel": `Format: Educational/Carousel Text
-- Structure as numbered points or steps (maximum 6 points)
-- Each point should be clear and actionable
-- Use formatting like "${emojiOn ? "1️⃣" : "1."}", "${emojiOn ? "2️⃣" : "2."}" for each point
-- Start with why this matters
-- End with a summary and CTA
-- Optimize for carousel format (each point can be a slide)
-- Target length: 1200-1800 characters`,
-    "short-viral-hook": `Format: Short Viral Hook Version
-- Maximum 500 characters (strict limit)
-- Ultra-engaging hook in first line
-- One key insight or takeaway
-- Strong CTA
-- Keep it to 5-7 short lines (LinkedIn rewards restraint)
-- Designed for maximum engagement in minimal space`,
+    "thought-leadership": `Target: 800-1200 characters. Structure: Strong/Contrarian hook → Support → Question/CTA.`,
+    "story-based": `Target: 1000-1500 characters. Structure: Personal hook → Narrative arc (setup/conflict/resolution) → Takeaway.`,
+    "educational-carousel": `Target: 1200-1800 characters. Structure: Numbered points (max 6) with ${emojiOn ? "emojis" : "numbers"}. Each point = one slide.`,
+    "short-viral-hook": `Target: Under 500 characters. Structure: One hook line → One insight → One CTA.`,
   }
   return rules[format]
 }
@@ -110,83 +85,69 @@ function getInstructionPrompt(
 ): string {
   const { targetAudience, goal, style, emojiOn, tonePreset } = context
 
+  // Map internal values to readable strings for the prompt
   const goalText =
-    goal === "engagement"
-      ? "maximize likes, comments, and shares"
-      : goal === "leads"
-      ? "drive qualified leads and inquiries with soft CTAs"
-      : "establish thought leadership and authority"
+    goal === "leads"
+      ? "Get leads/sales"
+      : goal === "authority"
+      ? "Build Authority"
+      : "Get viral engagement"
+  
+  const toneText = tonePreset || "Professional yet conversational"
+  const audienceText = targetAudience || "General Professionals"
 
-  const styleText =
-    style === "thought-leader"
-      ? "authoritative, insightful, forward-thinking"
-      : style === "storyteller"
-      ? "narrative-driven, personal, relatable"
-      : "clear, educational, value-driven"
-
-  const toneText =
-    tonePreset === "professional"
-      ? "professional and polished"
-      : tonePreset === "conversational"
-      ? "conversational and approachable, still professional"
-      : tonePreset === "storytelling"
-      ? "narrative and engaging"
-      : tonePreset === "educational"
-      ? "clear and instructive"
-      : "balanced and engaging"
-
-  const audienceText = targetAudience ? `Target audience: ${targetAudience}. ` : ""
+  const formatSpecificRules = getFormatRules(format, !!emojiOn)
+  
+  const regenerationInstruction = regenerate 
+    ? "CRITICAL: This is a retry. The previous output was rejected. You MUST write a completely different hook and angle."
+    : ""
 
   const emojiInstruction = emojiOn
     ? "Use 1-3 relevant emojis strategically placed in a moderate and professional way. Emojis should enhance the message, not distract from it. Place them naturally within the content where they add value."
     : "Do not use emojis."
 
-  const variationHint = regenerate
-    ? `CRITICAL - This is a regenerated version. You MUST create a noticeably different post:
-- Use a completely different opening hook (different angle, different phrasing)
-- Change the sentence rhythm and structure
-- Avoid reusing any phrasing from earlier versions
-- Present the same core idea but from a fresh perspective
-- This should feel like a different angle, not just a rewrite`
-    : ""
+  return `### INPUT DATA
+**Target Audience:** ${audienceText}
+**Primary Goal:** ${goalText}
+**Post Style:** ${style || "Engaging"}
+**Tone:** ${toneText}
+**Output Format:** ${format.replace(/-/g, " ")}
+**Emojis:** ${emojiInstruction}
 
-  return `Write a ${format.replace(/-/g, " ")} LinkedIn post.
+${regenerationInstruction}
 
-Goal: ${goalText}
-Tone: ${toneText}
-Style: ${styleText}
-${audienceText}${emojiInstruction}
+### INSTRUCTIONS
+Your task is to repurpose the SOURCE CONTENT provided by the user into a LinkedIn post based strictly on the INPUT DATA above.
 
-${variationHint}
+Follow these execution steps:
+1. **Analyze:** Read the source content and identify the single most valuable insight that aligns with the Audience's pain points.
+2. **The Hook:** Write a "scroll-stopping" first line. It must be punchy, under 15 words, and create immediate curiosity.
+3. **Drafting:** Write the post body.
+   - Use short, punchy sentences.
+   - Use line breaks between almost every sentence (mobile optimization).
+   - Remove fluff. If a sentence doesn't add value, delete it.
+4. **Formatting:** Apply the specific rules below:
+${formatSpecificRules}
+5. **Call to Action (CTA):** End with a specific question or instruction that drives the Goal.
 
-LinkedIn formatting rules:
-- CRITICAL: LinkedIn does NOT support markdown formatting. Do NOT use asterisks (*) for bold, underscores (_) for italic, or any markdown symbols. These will appear as literal characters and look unprofessional. You CAN use lists (numbered or bulleted with plain text), double quotes, and line breaks - these are all plain text formatting that works on LinkedIn.
-- Strong hook in first 2 lines (must grab attention immediately)
-- Short lines with strategic whitespace (2-3 sentences per paragraph max)
-- Use line breaks to create visual separation (LinkedIn's only formatting option)
-- Lists are allowed: Use numbered lists (1. 2. 3.) or dashes (-) for bullet points - these are plain text and work perfectly on LinkedIn
-- Hashtags (if used): Maximum 3 hashtags at the end. Choose hashtags based ONLY on the actual content topics and themes, NOT based on the selected options (goal, style, format). Use the most popular and relevant hashtags that match the content's core topics. For example, if the content is about AI, use #AI or #ArtificialIntelligence, not generic hashtags like #Leadership or #Business unless the content specifically discusses those topics.
-- Clear CTA at the end
-- Avoid filler words and fluff
-- Be authentic and human
-- Character limit: ${MAX_OUTPUT_CHARS} characters
+### FORMATTING RULES (STRICT)
+- CRITICAL: LinkedIn does NOT support markdown formatting. Do NOT use asterisks (*) for bold, underscores (_) for italic, or any markdown symbols. These will appear as literal characters and look unprofessional.
+- You CAN use lists (numbered or bulleted with plain text), double quotes, and line breaks - these are all plain text formatting that works on LinkedIn.
+- Hashtags (if used): Maximum 3 hashtags at the end. Choose hashtags based ONLY on the actual content topics and themes, NOT based on the selected options (goal, style, format). Use the most popular and relevant hashtags that match the content's core topics.
+- Character limit: Maximum ${MAX_OUTPUT_CHARS} characters (including spaces and newlines). Keep it under this limit.
 
-CRITICAL: Avoid phrases commonly used by AI such as:
-"delve into", "unlock", "in today's fast-paced world", "revolutionary", 
-"game-changer", "let's explore", "dive deep", "leverage", "harness",
-"unlock the power of", "transform your", "elevate your", "navigate",
-"embark on a journey", "in the realm of", "unveil", "master the art of".
-
-Write like a real LinkedIn creator would write. Use natural, conversational language.
-
-${getFormatRules(format, !!emojiOn)}`
+### FINAL OUTPUT
+Generate ONLY the LinkedIn post text. Do not include the "Hook variations" or analysis in the final output, just the final ready-to-post content.`
 }
 
 function getUserPrompt(inputText: string): string {
   // Input is already normalized before this function is called
-  const truncated = inputText.substring(0, MAX_INPUT_CHARS)
-  return `Original content to repurpose:
-${truncated}`
+  // Prevent user from breaking out of the content block by escaping triple quotes
+  const safeInput = inputText.replace(/"""/g, "'''")
+  return `### SOURCE CONTENT
+"""
+${safeInput}
+"""`
 }
 
 async function generateWithGemini(options: GenerateOptions): Promise<string> {
@@ -198,11 +159,13 @@ async function generateWithGemini(options: GenerateOptions): Promise<string> {
   validateInput(options.inputText)
 
   const genAI = new GoogleGenerativeAI(apiKey)
-  // Use gemini-1.5-flash for faster, cost-effective generation
-  // Alternative: "gemini-1.5-pro" for higher quality (slower, more expensive)
-  const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" })
+  // Use gemini-2.5-flash for faster, cost-effective generation
+  // Alternative: "gemini-2.5-pro" for higher quality (slower, more expensive)
+  const model = genAI.getGenerativeModel({ 
+    model: "gemini-2.5-flash",
+    systemInstruction: getSystemPrompt() // Use native systemInstruction for better adherence
+  } as any) // Type assertion needed as types may not be fully up to date
 
-  const systemPrompt = getSystemPrompt()
   const instructionPrompt = getInstructionPrompt(
     options.format,
     options.context,
@@ -210,10 +173,8 @@ async function generateWithGemini(options: GenerateOptions): Promise<string> {
   )
   const userPrompt = getUserPrompt(options.inputText)
 
-  // Combine prompts for Gemini (Gemini doesn't have separate system/user roles like OpenAI)
-  const fullPrompt = `${systemPrompt}
-
-${instructionPrompt}
+  // Combine instruction and user prompts (system prompt is handled via systemInstruction)
+  const fullPrompt = `${instructionPrompt}
 
 ${userPrompt}`
 
@@ -226,78 +187,18 @@ ${userPrompt}`
       throw new Error("Empty response from AI")
     }
 
-    // Guard against overly long outputs
-    const trimmed = text.trim()
-    if (trimmed.length > MAX_OUTPUT_CHARS) {
-      return trimmed.substring(0, MAX_OUTPUT_CHARS).trim()
-    }
-
-    return trimmed
+    // Return FULL content - never trim or cut off
+    // AI is instructed to stay under MAX_OUTPUT_CHARS, but we show complete response
+    // The app waits for full AI response before displaying
+    return text.trim() // Only trim leading/trailing whitespace, never cut content
   } catch (error: any) {
     console.error("Gemini generation error:", error)
-    // Return user-safe error messages
-    if (error.message?.includes("quota") || error.message?.includes("rate limit")) {
-      throw new Error("AI service is temporarily unavailable. Please try again in a moment.")
+    // User-friendly error mapping
+    if (error.message?.includes("quota") || error.message?.includes("429") || error.message?.includes("rate limit")) {
+      throw new Error("AI service is busy (Rate Limit). Please try again in a moment.")
     }
-    if (error.message?.includes("timeout") || error.message?.includes("deadline")) {
-      throw new Error("Request timed out. Please try again.")
-    }
-    throw new Error("AI generation failed. Please try again.")
-  }
-}
-
-async function generateWithOpenAI(options: GenerateOptions): Promise<string> {
-  const apiKey = process.env.OPENAI_API_KEY
-  if (!apiKey) {
-    throw new Error("OPENAI_API_KEY not set")
-  }
-
-  validateInput(options.inputText)
-
-  const openai = new OpenAI({ apiKey })
-
-  const systemPrompt = getSystemPrompt()
-  const instructionPrompt = getInstructionPrompt(
-    options.format,
-    options.context,
-    options.regenerate || false
-  )
-  const userPrompt = getUserPrompt(options.inputText)
-
-  try {
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4-turbo-preview",
-      messages: [
-        {
-          role: "system",
-          content: systemPrompt,
-        },
-        {
-          role: "user",
-          content: `${instructionPrompt}\n\n${userPrompt}`,
-        },
-      ],
-      max_tokens: 2000,
-      temperature: options.regenerate ? 0.8 : 0.7, // Slightly higher temperature for regenerate
-    })
-
-    const text = completion.choices[0]?.message?.content
-    if (!text || text.trim().length === 0) {
-      throw new Error("Empty response from AI")
-    }
-
-    // Guard against overly long outputs
-    const trimmed = text.trim()
-    if (trimmed.length > MAX_OUTPUT_CHARS) {
-      return trimmed.substring(0, MAX_OUTPUT_CHARS).trim()
-    }
-
-    return trimmed
-  } catch (error: any) {
-    console.error("OpenAI generation error:", error)
-    // Return user-safe error messages
-    if (error.message?.includes("quota") || error.message?.includes("rate limit")) {
-      throw new Error("AI service is temporarily unavailable. Please try again in a moment.")
+    if (error.message?.includes("candidate") || error.message?.includes("safety")) {
+      throw new Error("The content could not be processed due to safety guidelines.")
     }
     if (error.message?.includes("timeout") || error.message?.includes("deadline")) {
       throw new Error("Request timed out. Please try again.")
@@ -312,13 +213,19 @@ export async function generateLinkedInFormat(
   context: GenerateContext,
   regenerate?: boolean
 ): Promise<string> {
-  // Normalize and validate input before processing
   const normalized = normalizeInput(inputText)
+  
+  // We check length here to protect the Engine.
+  // NOTE: Your route.ts MUST check the 5k/10k limit before calling this!
+  if (normalized.length > MAX_INPUT_CHARS) {
+    throw new Error(`Input text is too long (${normalized.length} chars). Max allowed is ${MAX_INPUT_CHARS}.`)
+  }
+
   validateInput(normalized)
 
   const options: GenerateOptions = {
     format,
-    inputText: normalized.substring(0, MAX_INPUT_CHARS), // Truncate after normalization
+    inputText: normalized, // Don't truncate - route.ts handles limits
     context,
     regenerate,
   }
@@ -328,10 +235,7 @@ export async function generateLinkedInFormat(
     setTimeout(() => reject(new Error("AI generation timeout")), 60000) // 60s timeout
   })
 
-  const generationPromise =
-    AI_PROVIDER === "gemini"
-      ? generateWithGemini(options)
-      : generateWithOpenAI(options)
+  const generationPromise = generateWithGemini(options)
 
   try {
     return await Promise.race([generationPromise, timeoutPromise])

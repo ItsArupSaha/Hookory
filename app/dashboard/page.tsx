@@ -18,7 +18,8 @@ type FormatKey =
     | "educational-carousel"
     | "short-viral-hook"
 
-const MAX_INPUT_LENGTH = 5000
+const MAX_INPUT_LENGTH_FREE = 5000
+const MAX_INPUT_LENGTH_CREATOR = 10000
 
 export default function NewRepurposePage() {
     const router = useRouter()
@@ -428,15 +429,16 @@ export default function NewRepurposePage() {
                                     <Textarea
                                         id="inputText"
                                         value={inputText}
-                                        onChange={(e) =>
-                                            setInputText(e.target.value.slice(0, MAX_INPUT_LENGTH))
-                                        }
+                                        onChange={(e) => {
+                                            const maxLength = plan === "creator" ? MAX_INPUT_LENGTH_CREATOR : MAX_INPUT_LENGTH_FREE
+                                            setInputText(e.target.value.slice(0, maxLength))
+                                        }}
                                         rows={8}
-                                        maxLength={MAX_INPUT_LENGTH}
+                                        maxLength={plan === "creator" ? MAX_INPUT_LENGTH_CREATOR : MAX_INPUT_LENGTH_FREE}
                                         placeholder="Paste your article, newsletter, or long-form content here…"
                                     />
                                     <p className="text-[11px] text-slate-500">
-                                        {inputText.length}/{MAX_INPUT_LENGTH} characters
+                                        {inputText.length}/{plan === "creator" ? MAX_INPUT_LENGTH_CREATOR : MAX_INPUT_LENGTH_FREE} characters
                                     </p>
                                 </div>
                             ) : plan === "free" ? (
@@ -696,7 +698,7 @@ export default function NewRepurposePage() {
                                     </CardHeader>
                                     <CardContent>
                                         <Textarea
-                                            rows={7}
+                                            rows={Math.max(7, Math.ceil(charCount / 80))}
                                             value={value}
                                             onChange={(e) =>
                                                 setResults((prev) => ({
@@ -704,6 +706,8 @@ export default function NewRepurposePage() {
                                                     [key]: e.target.value,
                                                 }))
                                             }
+                                            className="min-h-[120px] resize-y"
+                                            style={{ overflowY: 'auto' }}
                                         />
                                         <p className="mt-1 text-[10px] text-slate-500">
                                             Regenerate and save to history are Creator features.

@@ -247,7 +247,13 @@ export default function HistoryPage() {
                                         </CardTitle>
                                     </CardHeader>
                                     <CardContent>
-                                        <Textarea rows={6} value={text} readOnly />
+                                        <Textarea
+                                            rows={Math.max(6, Math.ceil(text.length / 80))}
+                                            value={text}
+                                            readOnly
+                                            className="min-h-[120px] resize-y"
+                                            style={{ overflowY: 'auto' }}
+                                        />
                                     </CardContent>
                                 </Card>
                             ))}

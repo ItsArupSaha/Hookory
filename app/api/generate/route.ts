@@ -7,7 +7,8 @@ import { checkAndResetUsage, checkCooldown, incrementUsage } from "@/lib/usage"
 import { Timestamp } from "firebase-admin/firestore"
 import { NextRequest, NextResponse } from "next/server"
 
-const MAX_INPUT_LENGTH = 6000
+const MAX_INPUT_LENGTH_FREE = 5000
+const MAX_INPUT_LENGTH_CREATOR = 10000
 
 interface GenerateBody {
   inputType: "text" | "url"
@@ -74,6 +75,8 @@ export async function POST(req: NextRequest) {
   
   // Determine if user has paid plan access
   const isPaid = planFromFirebase === "creator" && !isExpired
+  const maxInputLength = isPaid ? MAX_INPUT_LENGTH_CREATOR : MAX_INPUT_LENGTH_FREE
+  
   if (!isPaid) {
     if (inputType === "url") {
       return NextResponse.json(
@@ -140,9 +143,9 @@ export async function POST(req: NextRequest) {
       if (!rawInputText || rawInputText.trim().length === 0) {
         return NextResponse.json({ error: "Input text is required." }, { status: 400 })
       }
-      if (rawInputText.length > MAX_INPUT_LENGTH) {
+      if (rawInputText.length > maxInputLength) {
         return NextResponse.json(
-          { error: `Input too long. Maximum ${MAX_INPUT_LENGTH} characters.` },
+          { error: `Input too long. Maximum ${maxInputLength} characters for ${isPaid ? "Creator" : "Free"} plan. Upgrade to Creator plan for ${MAX_INPUT_LENGTH_CREATOR} characters.` },
           { status: 400 }
         )
       }
@@ -196,7 +199,7 @@ export async function POST(req: NextRequest) {
       await setCachedOutput(
         cacheKey,
         output,
-        process.env.AI_PROVIDER || "gemini"
+        "gemini"
       )
     } catch (err: any) {
       return NextResponse.json(
@@ -215,7 +218,7 @@ export async function POST(req: NextRequest) {
     const now = Timestamp.now()
     await jobRef.set({
       userId: uid,
-      inputText: finalInputText.length > 6000 ? finalInputText.slice(0, 6000) : finalInputText,
+      inputText: finalInputText.length > maxInputLength ? finalInputText.slice(0, maxInputLength) : finalInputText,
       context,
       formatsSelected: formats,
       outputs,

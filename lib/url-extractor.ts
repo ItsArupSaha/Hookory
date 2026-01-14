@@ -1,6 +1,7 @@
+import { Readability } from "@mozilla/readability"
 import { JSDOM } from "jsdom"
 
-const MAX_EXTRACTED_LENGTH = 10000
+const MAX_EXTRACTED_LENGTH = 50000
 
 export async function extractTextFromUrl(url: string): Promise<string> {
   try {
@@ -52,44 +53,49 @@ export async function extractTextFromUrl(url: string): Promise<string> {
     }
 
     const html = await response.text()
-    const dom = new JSDOM(html)
+    const dom = new JSDOM(html, { url })
     const document = dom.window.document
 
-    // Remove script and style elements
-    const scripts = document.querySelectorAll("script, style, noscript")
-    scripts.forEach((el) => el.remove())
+    // Use Readability to extract clean article content
+    const reader = new Readability(document)
+    const article = reader.parse()
 
-    // Try to find main content
     let text = ""
-    
-    // Try common content selectors
-    const contentSelectors = [
-      "article",
-      "[role='article']",
-      ".post-content",
-      ".article-content",
-      ".content",
-      "main",
-      ".main-content",
-    ]
-
-    let contentElement: Element | null = null
-    for (const selector of contentSelectors) {
-      contentElement = document.querySelector(selector)
-      if (contentElement) break
-    }
-
-    if (contentElement) {
-      text = contentElement.textContent || ""
+    if (article && article.textContent) {
+      // Readability provides clean, extracted article text
+      text = article.textContent
     } else {
-      // Fallback: get body text
-      text = document.body?.textContent || ""
+      // Fallback: try common content selectors if Readability fails
+      const contentSelectors = [
+        "article",
+        "[role='article']",
+        ".post-content",
+        ".article-content",
+        ".content",
+        "main",
+        ".main-content",
+      ]
+
+      let contentElement: Element | null = null
+      for (const selector of contentSelectors) {
+        contentElement = document.querySelector(selector)
+        if (contentElement) break
+      }
+
+      if (contentElement) {
+        text = contentElement.textContent || ""
+      } else {
+        // Final fallback: get body text
+        text = document.body?.textContent || ""
+      }
     }
 
     // Clean up text
     text = text
-      .replace(/\s+/g, " ") // Normalize whitespace
-      .replace(/\n\s*\n/g, "\n\n") // Normalize line breaks
+      // 1. Replace multiple spaces/tabs with a single space (but keep newlines)
+      .replace(/[ \t]+/g, " ") 
+      // 2. Replace 3+ newlines with just 2 (to preserve paragraph breaks)
+      .replace(/\n\s*\n/g, "\n\n") 
       .trim()
 
     // Truncate if too long
