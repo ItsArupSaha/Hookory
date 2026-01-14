@@ -323,7 +323,7 @@ export default function UsagePage() {
                                             <span>Redirecting...</span>
                                         </span>
                                     ) : (
-                                        "Upgrade to Creator – $15/mo"
+                                        "Upgrade to Creator – $9.99/mo"
                                     )}
                                 </Button>
                             </>

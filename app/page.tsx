@@ -338,7 +338,7 @@ export default function LandingPage() {
               </CardHeader>
               <CardContent className="space-y-3 text-sm text-orange-900">
                 <p className="text-2xl font-semibold text-slate-900">
-                  $15{" "}
+                  $9.99{" "}
                   <span className="text-xs font-normal text-orange-700/80">
                     / month
                   </span>

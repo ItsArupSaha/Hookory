@@ -78,7 +78,7 @@ Create a **Service Account** key in Firebase, then:
 - `STRIPE_SECRET_KEY` – Secret key from Stripe dashboard.
 - `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` – Publishable key.
 - `STRIPE_WEBHOOK_SECRET` – Webhook signing secret for the endpoint `/api/stripe/webhook`.
-- `STRIPE_PRICE_ID_CREATOR` – Price ID for the `$15/mo` “Creator” subscription.
+- `STRIPE_PRICE_ID_CREATOR` – Price ID for the `$9.99/mo` "Creator" subscription.
 
 Configure a recurring product in Stripe and copy the price ID.
 
