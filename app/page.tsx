@@ -138,8 +138,9 @@ export default function LandingPage() {
       { threshold: 0.2 }
     )
 
-    if (stepsRef.current) {
-      observer.observe(stepsRef.current)
+    const currentElement = stepsRef.current
+    if (currentElement) {
+      observer.observe(currentElement)
     }
 
     return () => {
@@ -154,10 +155,9 @@ export default function LandingPage() {
       }
       animationTimeoutRef.current.forEach(timeout => clearTimeout(timeout))
       animationTimeoutRef.current = []
-      // Keep observer active - don't unobserve so animation can restart on scroll
-      if (stepsRef.current) {
-        observer.unobserve(stepsRef.current)
-      }
+      // Keep observer active during component lifetime - only disconnect on unmount
+      // This allows animation to restart when scrolling back into view
+      observer.disconnect()
     }
   }, [])
 
@@ -558,14 +558,14 @@ export default function LandingPage() {
         </section >
 
         {/* Who it's for */}
-        < section className="mt-16 space-y-3" >
-          <h2 className="text-xl font-semibold text-slate-900">Who it's for</h2>
+        <section className="mt-16 space-y-3">
+          <h2 className="text-xl font-semibold text-slate-900">Who it&apos;s for</h2>
           <ul className="list-disc space-y-1 pl-5 text-sm text-slate-600">
             <li>Creators building personal brands on LinkedIn</li>
             <li>Freelancers &amp; consultants who post to get clients</li>
             <li>Founders sharing ideas and building in public</li>
           </ul>
-        </section >
+        </section>
 
         {/* Social Proof Substitute */}
         < section className="mt-20 py-12 bg-slate-50 border-y border-slate-200" >
