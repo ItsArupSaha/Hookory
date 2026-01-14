@@ -55,6 +55,20 @@ export async function POST(req: NextRequest) {
       success_url: `${origin}/usage?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/usage`,
       allow_promotion_codes: true,
+      // Professional branding
+      custom_text: {
+        submit: {
+          message: "You'll be redirected back to Hookory after payment.",
+        },
+      },
+      metadata: {
+        firebaseUid: uid,
+        appName: "Hookory",
+      },
+      // Use custom domain if configured (set STRIPE_CUSTOM_DOMAIN env var)
+      ...(process.env.STRIPE_CUSTOM_DOMAIN && {
+        custom_domain: process.env.STRIPE_CUSTOM_DOMAIN,
+      }),
     })
 
     return NextResponse.json({ url: session.url })
