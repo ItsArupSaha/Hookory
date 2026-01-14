@@ -132,7 +132,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         })
 
         return () => unsub()
-    }, [router, pathname])
+    }, [router, pathname, refreshUserData])
 
     // Handle successful payment: store in localStorage and set up real-time listener
     useEffect(() => {
@@ -197,7 +197,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 clearTimeout(localStorageTimeoutRef.current)
             }
         }
-    }, [pathname, firebaseUser, db, me, refreshUserData])
+    }, [pathname, firebaseUser, me, refreshUserData])
 
     // Clean up real-time listener on unmount
     useEffect(() => {
