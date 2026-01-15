@@ -1,5 +1,6 @@
 "use client"
 
+import SiteFooter from "@/components/site-footer"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { auth } from "@/lib/firebase/client"
@@ -888,23 +889,7 @@ export default function LandingPage() {
           </div>
         </section >
 
-        {/* Footer */}
-        <footer className="mt-16 border-t border-stone-200 pt-6 px-4 md:px-6 lg:px-8 text-xs text-stone-500">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <p>© {new Date().getFullYear()} Hookory. All rights reserved.</p>
-            <div className="flex gap-4">
-              <Link href="/terms" className="hover:text-stone-700">
-                Terms
-              </Link>
-              <Link href="/privacy" className="hover:text-stone-700">
-                Privacy
-              </Link>
-              <Link href="/refund" className="hover:text-stone-700">
-                Refund
-              </Link>
-            </div>
-          </div>
-        </footer>
+        <SiteFooter />
       </div >
     </main >
   )
