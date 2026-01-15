@@ -12,6 +12,7 @@ import { User } from "firebase/auth"
 import { Loader2 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
+import { LinkedInPostPreview } from "@/components/linkedin-post-preview"
 
 type FormatKey =
     | "thought-leadership"
@@ -24,6 +25,7 @@ const MAX_INPUT_LENGTH_CREATOR = 10000
 
 export default function NewRepurposePage() {
     const router = useRouter()
+    const [user, setUser] = useState<User | null>(null)
     const [tab, setTab] = useState<"text" | "url">("text")
     const [inputText, setInputText] = useState("")
     const [url, setUrl] = useState("")
@@ -40,6 +42,9 @@ export default function NewRepurposePage() {
         "educational-carousel": false,
         "short-viral-hook": false,
     })
+    // Track which formats are in "Edit Mode"
+    const [editingFormats, setEditingFormats] = useState<Record<string, boolean>>({})
+
     const [loading, setLoading] = useState(false)
     const [cooldown, setCooldown] = useState(0)
     const [results, setResults] = useState<Record<FormatKey, string>>({
@@ -55,10 +60,11 @@ export default function NewRepurposePage() {
     useEffect(() => {
         async function loadMe() {
             if (!auth) return
-            const user = auth.currentUser
-            if (!user) return
+            const currentUser = auth.currentUser
+            if (!currentUser) return
+            setUser(currentUser)
             try {
-                const token = await user.getIdToken()
+                const token = await currentUser.getIdToken()
                 const res = await fetch("/api/me", {
                     headers: { Authorization: `Bearer ${token}` },
                 })
@@ -113,6 +119,7 @@ export default function NewRepurposePage() {
         try {
             const userInfo = await getUserAndToken()
             if (!userInfo) return
+            setUser(userInfo.user)
 
             const res = await fetch("/api/generate", {
                 method: "POST",
@@ -134,6 +141,8 @@ export default function NewRepurposePage() {
                     formats: selectedFormats,
                     regenerate: false,
                     saveHistory: true,
+                    // If we want the preview to be the initial state, we don't need to do anything special here
+                    // as editingFormats defaults to false (preview mode)
                 }),
             })
 
@@ -309,6 +318,13 @@ export default function NewRepurposePage() {
         } finally {
             setLoading(false)
         }
+    }
+
+    function toggleEdit(key: string) {
+        setEditingFormats((prev) => ({
+            ...prev,
+            [key]: !prev[key],
+        }))
     }
 
     function toggleFormat(key: FormatKey) {
@@ -662,25 +678,18 @@ export default function NewRepurposePage() {
                             }
                             const value = results[key] || ""
                             const charCount = value.length
+
+                            // Don't show anything for this format if no content generated yet
+                            if (!value) return null
+
                             return (
-                                <Card
-                                    key={key}
-                                    className="border-stone-200 bg-white/80 backdrop-blur-xl shadow-lg shadow-stone-200/50 rounded-[2rem] overflow-hidden transition-all hover:shadow-xl"
-                                >
-                                    <CardHeader className="flex flex-row items-center justify-between space-y-0 border-b border-stone-100 bg-white/50 px-6 py-4">
-                                        <CardTitle className="text-sm font-bold text-stone-800">
+                                <div key={key} className="space-y-2">
+                                    <div className="flex items-center justify-between px-2">
+                                        <h3 className="text-sm font-bold text-stone-800">
                                             {titleMap[key]}
-                                        </CardTitle>
+                                        </h3>
                                         <div className="flex items-center gap-2">
                                             <span className="text-[10px] font-medium text-stone-400 mr-2">{charCount} chars</span>
-                                            <button
-                                                type="button"
-                                                onClick={() => handleCopy(value)}
-                                                disabled={!value || value.trim().length === 0}
-                                                className="rounded-lg border border-stone-200 bg-white px-3 py-1.5 text-[11px] font-medium text-stone-600 shadow-sm transition-all hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700 disabled:opacity-50"
-                                            >
-                                                Copy
-                                            </button>
                                             {plan === "creator" && (
                                                 <button
                                                     type="button"
@@ -692,27 +701,49 @@ export default function NewRepurposePage() {
                                                 </button>
                                             )}
                                         </div>
-                                    </CardHeader>
-                                    <CardContent className="p-0">
-                                        <Textarea
-                                            rows={Math.max(7, Math.ceil(charCount / 80))}
-                                            value={value}
-                                            onChange={(e) =>
-                                                setResults((prev) => ({
-                                                    ...prev,
-                                                    [key]: e.target.value,
-                                                }))
-                                            }
-                                            className="min-h-[160px] w-full resize-y border-0 bg-transparent p-6 text-sm text-stone-700 focus:ring-0 leading-relaxed"
-                                            style={{ overflowY: 'auto' }}
-                                            placeholder="Generated content will appear here..."
-                                        />
-                                        <div className="bg-stone-50/50 px-6 py-2 text-[10px] text-stone-400 border-t border-stone-100 flex justify-between">
-                                            <span>Markdown supported</span>
-                                            <span>Hookory writer</span>
+                                    </div>
+
+                                    {editingFormats[key] ? (
+                                        <Card className="border-stone-200 bg-white/80 backdrop-blur-xl shadow-lg shadow-stone-200/50 rounded-[2rem] overflow-hidden transition-all hover:shadow-xl">
+                                            <CardHeader className="flex flex-row items-center justify-between space-y-0 border-b border-stone-100 bg-white/50 px-6 py-4">
+                                                <CardTitle className="text-sm font-bold text-stone-800">
+                                                    Edit Content
+                                                </CardTitle>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => toggleEdit(key)}
+                                                    className="rounded-lg border border-stone-200 bg-emerald-600 px-3 py-1.5 text-[11px] font-medium text-white shadow-sm transition-all hover:bg-emerald-700"
+                                                >
+                                                    Done
+                                                </button>
+                                            </CardHeader>
+                                            <CardContent className="p-0">
+                                                <Textarea
+                                                    rows={Math.max(7, Math.ceil(charCount / 80))}
+                                                    value={value}
+                                                    onChange={(e) =>
+                                                        setResults((prev) => ({
+                                                            ...prev,
+                                                            [key]: e.target.value,
+                                                        }))
+                                                    }
+                                                    className="min-h-[160px] w-full resize-y border-0 bg-transparent p-6 text-sm text-stone-700 focus:ring-0 leading-relaxed"
+                                                    style={{ overflowY: 'auto' }}
+                                                    placeholder="Generated content will appear here..."
+                                                />
+                                            </CardContent>
+                                        </Card>
+                                    ) : (
+                                        <div className="flex justify-center py-2">
+                                            <LinkedInPostPreview
+                                                content={value}
+                                                user={user}
+                                                onEdit={() => toggleEdit(key)}
+                                                onCopy={() => handleCopy(value)}
+                                            />
                                         </div>
-                                    </CardContent>
-                                </Card>
+                                    )}
+                                </div>
                             )
                         })
                     )}
