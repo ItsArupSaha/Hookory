@@ -17,8 +17,11 @@ export default function TermsPage() {
                     Last updated: {new Date().toLocaleDateString()}
                 </p>
                 <p className="text-slate-300">
-                    These Terms and Conditions govern your use of Hookory. By using
-                    the service, you agree to these terms.
+                    Legal business name: Hookory.
+                </p>
+                <p className="text-slate-300">
+                    These Terms and Conditions govern the use of Hookory. By using
+                    the service, the user agrees to these terms.
                 </p>
 
                 <section className="space-y-2">
@@ -26,9 +29,9 @@ export default function TermsPage() {
                         Eligibility and Account
                     </h2>
                     <p className="text-slate-300">
-                        You must provide accurate information and keep your account
-                        secure. You are responsible for all activity that occurs under
-                        your account.
+                        The user must provide accurate information and keep the
+                        account secure. The user is responsible for all activity
+                        that occurs under the account.
                     </p>
                 </section>
 
@@ -37,8 +40,8 @@ export default function TermsPage() {
                         Service Description
                     </h2>
                     <p className="text-slate-300">
-                        Hookory provides AI-assisted content repurposing tools. We
-                        may update or change features over time.
+                        Hookory provides AI-assisted content repurposing tools.
+                        Features may be updated or changed over time.
                     </p>
                 </section>
 
@@ -48,8 +51,8 @@ export default function TermsPage() {
                     </h2>
                     <p className="text-slate-300">
                         Paid plans are billed on a recurring basis until canceled.
-                        Taxes may apply based on your location. You can manage or
-                        cancel your subscription in your account settings.
+                        Taxes may apply based on location. Subscriptions can be
+                        managed or canceled in account settings.
                     </p>
                 </section>
 
@@ -68,9 +71,9 @@ export default function TermsPage() {
                         Content Ownership
                     </h2>
                     <p className="text-slate-300">
-                        You own the content you submit and the outputs generated for
-                        you. Hookory may temporarily store content to provide history,
-                        caching, and service improvements.
+                        The user owns the content submitted and the outputs
+                        generated. Hookory may temporarily store content to
+                        provide history, caching, and service improvements.
                     </p>
                 </section>
 
@@ -79,9 +82,9 @@ export default function TermsPage() {
                         Prohibited Use
                     </h2>
                     <p className="text-slate-300">
-                        You agree not to misuse the platform, attempt to reverse
-                        engineer it, or use it to generate harmful, illegal, or
-                        abusive content.
+                        The user agrees not to misuse the platform, attempt to
+                        reverse engineer it, or use it to generate harmful, illegal,
+                        or abusive content.
                     </p>
                 </section>
 
@@ -91,8 +94,8 @@ export default function TermsPage() {
                     </h2>
                     <p className="text-slate-300">
                         The service is provided on an &quot;as is&quot; basis without
-                        warranties of any kind. We do not guarantee uninterrupted or
-                        error-free operation.
+                        warranties of any kind. Uninterrupted or error-free
+                        operation is not guaranteed.
                     </p>
                 </section>
 
@@ -101,9 +104,9 @@ export default function TermsPage() {
                         Limitation of Liability
                     </h2>
                     <p className="text-slate-300">
-                        To the maximum extent permitted by law, Hookory is not liable
-                        for indirect, incidental, or consequential damages arising
-                        from your use of the service.
+                        To the maximum extent permitted by law, Hookory is not
+                        liable for indirect, incidental, or consequential damages
+                        arising from use of the service.
                     </p>
                 </section>
 
@@ -112,8 +115,9 @@ export default function TermsPage() {
                         Changes to These Terms
                     </h2>
                     <p className="text-slate-300">
-                        We may update these terms from time to time. We will update
-                        the &quot;Last updated&quot; date at the top of this page.
+                        These terms may be updated from time to time. The
+                        &quot;Last updated&quot; date at the top of this page will
+                        reflect the latest changes.
                     </p>
                 </section>
             </div>

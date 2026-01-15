@@ -18,12 +18,12 @@ export default function PrivacyPage() {
         </p>
         <p className="text-slate-300">
           This Privacy Policy explains how Hookory collects, uses, and protects
-          your information when you use our website and services.
+          information when the website and services are used.
         </p>
 
         <section className="space-y-2">
           <h2 className="text-base font-semibold text-slate-100">
-            Information We Collect
+            Information Collected
           </h2>
           <ul className="space-y-2 text-slate-300">
             <li>
@@ -34,19 +34,20 @@ export default function PrivacyPage() {
               Usage data (such as plan, usage counters, and feature activity).
             </li>
             <li>
-              Content you submit to Hookory and the generated outputs, which may
+              Content submitted to Hookory and the generated outputs, which may
               be temporarily stored to provide history and improve quality.
             </li>
             <li>
-              Billing metadata from our payment provider (such as customer and
-              subscription IDs). We do not store full payment card details.
+              Billing metadata from the payment provider (such as customer and
+              subscription IDs). Hookory does not store full payment card
+              details.
             </li>
           </ul>
         </section>
 
         <section className="space-y-2">
           <h2 className="text-base font-semibold text-slate-100">
-            How We Use Information
+            How Information Is Used
           </h2>
           <ul className="space-y-2 text-slate-300">
             <li>Provide, operate, and improve the Hookory service.</li>
@@ -61,9 +62,9 @@ export default function PrivacyPage() {
             Sharing and Disclosure
           </h2>
           <p className="text-slate-300">
-            We only share data with trusted service providers that help us run
-            Hookory (for example, hosting, authentication, and payments). We do
-            not sell your personal data.
+            Hookory only shares data with trusted service providers that help
+            run the service (for example, hosting, authentication, and
+            payments). Hookory does not sell personal data.
           </p>
         </section>
 
@@ -72,9 +73,8 @@ export default function PrivacyPage() {
             Data Retention
           </h2>
           <p className="text-slate-300">
-            We retain data for as long as your account is active or as needed to
-            provide the service. You can request deletion of your account and
-            associated data at any time.
+            Data is retained for as long as an account is active or as needed to
+            provide the service. Account deletion can be requested at any time.
           </p>
         </section>
 
@@ -83,8 +83,8 @@ export default function PrivacyPage() {
             Security
           </h2>
           <p className="text-slate-300">
-            We use reasonable technical and organizational measures to protect
-            your information. No method of transmission or storage is 100%
+            Hookory uses reasonable technical and organizational measures to
+            protect information. No method of transmission or storage is 100%
             secure.
           </p>
         </section>
@@ -94,8 +94,8 @@ export default function PrivacyPage() {
             Children&apos;s Privacy
           </h2>
           <p className="text-slate-300">
-            Hookory is not intended for children under 13. We do not knowingly
-            collect personal information from children.
+            Hookory is not intended for children under 13. Hookory does not
+            knowingly collect personal information from children.
           </p>
         </section>
 
@@ -104,8 +104,9 @@ export default function PrivacyPage() {
             Changes to This Policy
           </h2>
           <p className="text-slate-300">
-            We may update this policy from time to time. We will update the
-            &quot;Last updated&quot; date at the top of this page.
+            This policy may be updated from time to time. The
+            &quot;Last updated&quot; date at the top of this page will reflect the
+            latest changes.
           </p>
         </section>
       </div>
