@@ -11,15 +11,15 @@ export default function SiteFooter() {
             <p className="text-sm font-medium text-stone-700">Contact</p>
             <div className="space-y-1">
               <p className="text-stone-700">Hookory</p>
-              <p>[Your House Number], [Road Number/Name]</p>
-              <p>[Area], Sylhet, Bangladesh</p>
+              <p>Mohini-160</p>
+              <p>Shibganj, Sylhet, Bangladesh</p>
               <p>
                 Email:{" "}
                 <a
-                  href="mailto:support@hookory.com"
+                  href="mailto:growwitharup@gmail.com"
                   className="text-emerald-700 hover:text-emerald-800"
                 >
-                  support@hookory.com
+                  growwitharup@gmail.com
                 </a>
               </p>
             </div>

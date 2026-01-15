@@ -64,17 +64,29 @@
 @keyframes page-fade {
   0% {
     opacity: 0;
-    transform: translateY(6px);
   }
 
   100% {
     opacity: 1;
-    transform: translateY(0);
   }
 }
 
 .page-transition {
   animation: page-fade 240ms ease-out;
+}
+
+@keyframes page-leave {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+.page-transition.page-leave {
+  animation: page-leave 180ms ease-in forwards;
 }
 
 @keyframes marquee {

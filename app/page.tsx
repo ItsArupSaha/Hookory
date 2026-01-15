@@ -17,7 +17,15 @@ export default function LandingPage() {
   const router = useRouter()
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
-  const [navLoading, setNavLoading] = useState<null | "login" | "signup">(null)
+  const [navLoading, setNavLoading] = useState<null | "login" | "signup" | "dashboard">(null)
+
+  const navigateWithFade = async (href: string) => {
+    if (typeof window === "undefined") return
+    const container = document.querySelector(".page-transition")
+    container?.classList.add("page-leave")
+    await new Promise((resolve) => setTimeout(resolve, 180))
+    router.push(href)
+  }
 
   const handleScrollToPricing = () => {
     if (typeof window === "undefined") return
@@ -216,7 +224,16 @@ export default function LandingPage() {
               <div className="h-8 w-20 animate-pulse rounded bg-slate-200" />
             ) : user ? (
               <Button size="sm" asChild className="rounded-full bg-emerald-600 hover:bg-emerald-700 text-white border-0 shadow-md">
-                <Link href="/dashboard" className="flex items-center gap-1">
+                <Link
+                  href="/dashboard"
+                  className="flex items-center gap-1"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    if (navLoading) return
+                    setNavLoading("dashboard")
+                    navigateWithFade("/dashboard")
+                  }}
+                >
                   Dashboard
                   <ArrowRight className="h-3.5 w-3.5" />
                 </Link>
@@ -298,7 +315,16 @@ export default function LandingPage() {
               <div className="flex flex-wrap items-center justify-center gap-4 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
                 {user ? (
                   <Button size="lg" asChild className="bg-white text-emerald-900 hover:bg-white/90 border-0 shadow-lg">
-                    <Link href="/dashboard" className="flex items-center gap-2">
+                    <Link
+                      href="/dashboard"
+                      className="flex items-center gap-2"
+                      onClick={(e) => {
+                        e.preventDefault()
+                        if (navLoading) return
+                        setNavLoading("dashboard")
+                        navigateWithFade("/dashboard")
+                      }}
+                    >
                       Go to Dashboard
                       <ArrowRight className="h-4 w-4" />
                     </Link>
