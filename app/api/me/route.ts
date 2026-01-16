@@ -14,13 +14,13 @@ export async function GET(req: NextRequest) {
   const planFromFirebase = userDoc.plan as "free" | "creator" | undefined
   const planStartsAt = userDoc.planStartsAt?.toDate() || userDoc.subscriptionPeriodStart?.toDate() || null
   const planExpiresAt = userDoc.planExpiresAt?.toDate() || userDoc.subscriptionPeriodEnd?.toDate() || null
-  const stripeStatus = userDoc.stripeStatus as string | null | undefined
-  
+  const lemonSqueezyStatus = userDoc.lemonSqueezyStatus as string | null | undefined
+
   // Determine effective plan
   // Trust the plan field in Firebase - webhooks keep it updated
   // Only check expiration if expiration date exists
   let effectivePlan: "free" | "creator" = planFromFirebase === "creator" ? "creator" : "free"
-  
+
   // If plan is creator and expiration date exists, check if expired
   if (effectivePlan === "creator" && planExpiresAt) {
     const now = new Date()
@@ -29,10 +29,10 @@ export async function GET(req: NextRequest) {
       effectivePlan = "free"
     }
   }
-  
+
   const usageLimitMonthly = effectivePlan === "creator" ? 100 : 5
-  
-  console.log(`[API /me] Firebase data: plan=${planFromFirebase}, expiresAt=${planExpiresAt?.toISOString()}, stripeStatus=${stripeStatus}, effectivePlan=${effectivePlan}`)
+
+  console.log(`[API /me] Firebase data: plan=${planFromFirebase}, expiresAt=${planExpiresAt?.toISOString()}, status=${lemonSqueezyStatus}, effectivePlan=${effectivePlan}`)
 
   return NextResponse.json({
     plan: effectivePlan,
@@ -40,7 +40,7 @@ export async function GET(req: NextRequest) {
     usageCount: userDoc.usageCount || 0,
     usageLimitMonthly,
     usageResetAt: userDoc.usageResetAt?.toDate().toISOString() || new Date().toISOString(),
-    stripeStatus: stripeStatus || null,
+    lemonSqueezyStatus: lemonSqueezyStatus || null,
     subscriptionPeriodStart: planStartsAt?.toISOString() || null,
     subscriptionPeriodEnd: planExpiresAt?.toISOString() || null,
   })

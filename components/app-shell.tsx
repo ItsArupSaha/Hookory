@@ -20,7 +20,7 @@ interface MeResponse {
     usageCount: number
     usageLimitMonthly: number
     usageResetAt: string
-    stripeStatus: string | null
+    lemonSqueezyStatus: string | null
 }
 
 interface AppShellContextType {
@@ -180,34 +180,59 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             url.searchParams.delete("session_id")
             window.history.replaceState({}, "", url.toString())
 
+            // TRIGGER IMMEDIATE SYNC (Fix for user issue: Firebase not updating fast enough)
+            if (firebaseUser) {
+                console.log("[AppShell] Triggering IMMEDIATE sync on payment success.")
+                firebaseUser.getIdToken().then(token => {
+                    fetch("/api/lemonsqueezy/sync", {
+                        method: "POST",
+                        headers: { "Authorization": `Bearer ${token}` }
+                    }).then(() => {
+                        console.log("[AppShell] Immediate sync completed.")
+                        refreshUserData()
+                    }).catch(e => console.error("[AppShell] Immediate sync failed:", e))
+                })
+            }
+
             // Set up Firebase real-time listener after 1 minute
-            localStorageTimeoutRef.current = setTimeout(() => {
-                console.log("[AppShell] 1 minute passed, setting up Firebase real-time listener")
+            // Sync with Lemon Squeezy after 1 minute (to handle localhost/webhook delays)
+            localStorageTimeoutRef.current = setTimeout(async () => {
+                console.log("[AppShell] 1 minute passed. Triggering manual sync and clearing local storage.")
+
+                // 1. Force Sync
+                if (firebaseUser) {
+                    try {
+                        const token = await firebaseUser.getIdToken()
+                        await fetch("/api/lemonsqueezy/sync", {
+                            method: "POST",
+                            headers: {
+                                "Authorization": `Bearer ${token}`
+                            }
+                        })
+                        console.log("[AppShell] Sync completed.")
+                    } catch (e) {
+                        console.error("[AppShell] Sync failed:", e)
+                    }
+                }
+
+                // 2. Clear local storage
                 clearLocalStoragePaymentStatus()
 
-                // Set up real-time listener for user document
+                // 3. Refresh data from Firebase (now updated)
+                refreshUserData()
+
+                // 4. Set up real-time listener for future updates
                 if (db) {
                     const userDocRef = doc(db, "users", firebaseUser.uid)
                     const unsubscribe = onSnapshot(userDocRef, (docSnapshot) => {
-                        if (docSnapshot.exists()) {
-                            const userData = docSnapshot.data()
-                            const planFromFirebase = userData.plan as "free" | "creator" | undefined
-                            const planExpiresAt = userData.planExpiresAt?.toDate?.() || userData.subscriptionPeriodEnd?.toDate?.() || null
-
-                            // Check if plan has expired
-                            const now = new Date()
-                            const isExpired = planExpiresAt ? planExpiresAt <= now : false
-                            const effectivePlan = planFromFirebase === "creator" && !isExpired ? "creator" : "free"
-
-                            // Refresh user data to get latest from API
-                            refreshUserData()
-                        }
+                        // Simply refreshing data on snapshot is enough as refreshUserData handles state
+                        refreshUserData()
                     }, (error) => {
                         console.error("[AppShell] Firebase real-time listener error:", error)
                     })
-
                     realtimeListenerRef.current = unsubscribe
                 }
+
             }, 60000) // 1 minute
         }
 
@@ -248,7 +273,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         setUpgrading(true)
         try {
             const token = await firebaseUser.getIdToken()
-            const res = await fetch("/api/stripe/checkout", {
+            const res = await fetch("/api/lemonsqueezy/checkout", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -279,7 +304,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         setPortalLoading(true)
         try {
             const token = await firebaseUser.getIdToken()
-            const res = await fetch("/api/stripe/portal", {
+            const res = await fetch("/api/lemonsqueezy/portal", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -522,17 +547,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                     </header>
 
                     {/* Email verification banner */}
-                    {me && !me.emailVerified && (
-                        <div className="border-b border-amber-200 bg-amber-50/80 px-6 py-2.5 text-xs font-medium text-amber-800 backdrop-blur-sm">
-                            <div className="mx-auto max-w-5xl flex items-center gap-2">
-                                <span className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" />
-                                <p>
-                                    Verify your email to generate content. Check your inbox for a
-                                    verification link.
-                                </p>
-                            </div>
-                        </div>
-                    )}
+
 
                     <main className="flex-1 px-4 py-8 sm:px-8">
                         <div className="mx-auto max-w-6xl">{children}</div>

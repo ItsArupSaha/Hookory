@@ -1,6 +1,6 @@
 import { getUserFromRequest } from "@/lib/auth-server"
 import { adminDb } from "@/lib/firebase/admin"
-import { checkStripeSubscriptionStatus, syncStripeToFirestore } from "@/lib/stripe-helpers"
+import { checkLemonSqueezySubscriptionStatus, syncLemonSqueezyToFirestore } from "@/lib/lemonsqueezy"
 import { NextRequest, NextResponse } from "next/server"
 
 // Force dynamic rendering since we access request headers for authentication
@@ -20,22 +20,22 @@ export async function GET(req: NextRequest, { params }: Params) {
     }
 
     const { uid, userDoc } = authed
-    
-    // ALWAYS check Stripe directly (source of truth)
+
+    // ALWAYS check Lemon Squeezy directly (source of truth)
     let subscriptionStatus
     try {
-      subscriptionStatus = await checkStripeSubscriptionStatus(userDoc.stripeCustomerId)
-    } catch (stripeError: any) {
-      console.error("[API /jobs/[id]] Stripe check failed:", stripeError)
-      // If Stripe check fails, deny access (fail secure)
+      subscriptionStatus = await checkLemonSqueezySubscriptionStatus(userDoc.email ?? undefined)
+    } catch (lsError: any) {
+      console.error("[API /jobs/[id]] Lemon Squeezy check failed:", lsError)
+      // If check fails, deny access (fail secure)
       return NextResponse.json(
         { error: "History is available on the Creator plan." },
         { status: 403 }
       )
     }
-    
+
     // Sync to Firestore in background (non-blocking)
-    syncStripeToFirestore(uid, subscriptionStatus).catch((err) => {
+    syncLemonSqueezyToFirestore(uid, subscriptionStatus).catch((err) => {
       console.error("[API /jobs/[id]] Background sync failed:", err)
     })
 
@@ -83,21 +83,21 @@ export async function DELETE(req: NextRequest, { params }: Params) {
     }
 
     const { uid, userDoc } = authed
-    
-    // ALWAYS check Stripe directly (source of truth)
+
+    // ALWAYS check Lemon Squeezy directly (source of truth)
     let subscriptionStatus
     try {
-      subscriptionStatus = await checkStripeSubscriptionStatus(userDoc.stripeCustomerId)
-    } catch (stripeError: any) {
-      console.error("[API /jobs/[id] DELETE] Stripe check failed:", stripeError)
+      subscriptionStatus = await checkLemonSqueezySubscriptionStatus(userDoc.email ?? undefined)
+    } catch (lsError: any) {
+      console.error("[API /jobs/[id] DELETE] Lemon Squeezy check failed:", lsError)
       return NextResponse.json(
         { error: "History is available on the Creator plan." },
         { status: 403 }
       )
     }
-    
+
     // Sync to Firestore in background (non-blocking)
-    syncStripeToFirestore(uid, subscriptionStatus).catch((err) => {
+    syncLemonSqueezyToFirestore(uid, subscriptionStatus).catch((err) => {
       console.error("[API /jobs/[id] DELETE] Background sync failed:", err)
     })
 
@@ -111,7 +111,7 @@ export async function DELETE(req: NextRequest, { params }: Params) {
     const db = adminDb
     const jobRef = db.collection("jobs").doc(params.id)
     const snap = await jobRef.get()
-    
+
     if (!snap.exists) {
       return NextResponse.json({ error: "Not found" }, { status: 404 })
     }

@@ -15,7 +15,7 @@ interface MeResponse {
     usageCount: number
     usageLimitMonthly: number
     usageResetAt: string
-    stripeStatus: string | null
+    lemonSqueezyStatus: string | null
 }
 
 export default function UsagePage() {
@@ -54,7 +54,7 @@ export default function UsagePage() {
             console.log("[Usage Page] Received data from /api/me:", {
                 plan: data.plan,
                 usageLimitMonthly: data.usageLimitMonthly,
-                stripeStatus: data.stripeStatus,
+                lemonSqueezyStatus: data.lemonSqueezyStatus,
                 subscriptionPeriodEnd: data.subscriptionPeriodEnd,
             })
             // Ensure plan and usageLimitMonthly are consistent
@@ -108,21 +108,21 @@ export default function UsagePage() {
         }
     }, [loadMe])
 
-    // Handle successful Stripe checkout redirect - store in localStorage immediately
+    // Handle successful Lemon Squeezy checkout redirect - store in localStorage immediately
     useEffect(() => {
-        const sessionId = searchParams.get("session_id")
-        if (!sessionId || !auth) return // Only proceed if session_id exists
+        const success = searchParams.get("success")
+        if (!success || !auth) return // Only proceed if success exists
 
-        // Prevent showing toast multiple times for the same session
-        if (toastShownRef.current === sessionId) return
+        // Prevent showing toast multiple times
+        if (toastShownRef.current === "success") return
 
         const user = auth.currentUser
         if (!user) return
 
-        console.log("[Usage Page] Payment successful detected, storing in localStorage:", sessionId)
+        console.log("[Usage Page] Payment successful detected, storing in localStorage")
 
-        // Mark this session as processed
-        toastShownRef.current = sessionId
+        // Mark this as processed
+        toastShownRef.current = "success"
 
         // Immediately store payment status in localStorage
         setLocalStoragePaymentStatus("creator")
@@ -139,12 +139,12 @@ export default function UsagePage() {
             loadMe()
         }
 
-        // Remove session_id from URL immediately
+        // Remove success from URL immediately
         const url = new URL(window.location.href)
-        url.searchParams.delete("session_id")
+        url.searchParams.delete("success")
         window.history.replaceState({}, "", url.toString())
 
-        // Show success toast (only once per session)
+        // Show success toast (only once)
         toast({
             title: "Upgrade successful! 🎉",
             description: "Your Creator plan is now active. You have 100 repurposes per month.",
@@ -162,7 +162,7 @@ export default function UsagePage() {
         setUpgrading(true)
         try {
             const token = await user.getIdToken()
-            const res = await fetch("/api/stripe/checkout", {
+            const res = await fetch("/api/lemonsqueezy/checkout", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -195,7 +195,7 @@ export default function UsagePage() {
         setPortalLoading(true)
         try {
             const token = await user.getIdToken()
-            const res = await fetch("/api/stripe/portal", {
+            const res = await fetch("/api/lemonsqueezy/portal", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

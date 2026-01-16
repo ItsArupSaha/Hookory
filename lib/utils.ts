@@ -29,21 +29,21 @@ export function getNextMonthStart(): Date {
  */
 export function getLocalStoragePaymentStatus(): "creator" | null {
   if (typeof window === "undefined") return null
-  
+
   try {
-    const stored = localStorage.getItem("stripePaymentStatus")
+    const stored = localStorage.getItem("paymentStatus")
     if (!stored) return null
-    
+
     const { plan, timestamp } = JSON.parse(stored)
     const now = Date.now()
     const elapsed = now - timestamp
-    
+
     // If within 1 minute (60000ms), return the stored plan
     if (elapsed < 60000 && plan === "creator") {
       return "creator"
     } else {
       // Clear expired status
-      localStorage.removeItem("stripePaymentStatus")
+      localStorage.removeItem("paymentStatus")
       return null
     }
   } catch (err) {
@@ -57,9 +57,9 @@ export function getLocalStoragePaymentStatus(): "creator" | null {
  */
 export function setLocalStoragePaymentStatus(plan: "creator"): void {
   if (typeof window === "undefined") return
-  
+
   try {
-    localStorage.setItem("stripePaymentStatus", JSON.stringify({
+    localStorage.setItem("paymentStatus", JSON.stringify({
       plan,
       timestamp: Date.now()
     }))
@@ -73,9 +73,9 @@ export function setLocalStoragePaymentStatus(plan: "creator"): void {
  */
 export function clearLocalStoragePaymentStatus(): void {
   if (typeof window === "undefined") return
-  
+
   try {
-    localStorage.removeItem("stripePaymentStatus")
+    localStorage.removeItem("paymentStatus")
   } catch (err) {
     console.error("Error clearing localStorage payment status:", err)
   }

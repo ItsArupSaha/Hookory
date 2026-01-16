@@ -14,9 +14,10 @@ export interface UserDoc {
   usageLimitMonthly: number
   usageResetAt: Timestamp
   lastGenerateAt?: Timestamp
-  stripeCustomerId?: string
-  stripeSubscriptionId?: string
-  stripeStatus?: string
+  lemonSqueezyCustomerId?: string
+  lemonSqueezySubscriptionId?: string
+  lemonSqueezyStatus?: string
+  lemonSqueezyCustomerEmail?: string
   subscriptionPeriodStart?: Timestamp | null
   subscriptionPeriodEnd?: Timestamp | null
   planStartsAt?: Timestamp | null

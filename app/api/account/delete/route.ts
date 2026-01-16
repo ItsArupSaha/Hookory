@@ -14,9 +14,9 @@ export async function POST(req: NextRequest) {
     const db = adminDb
     const userRef = db.collection("users").doc(uid)
     await userRef.update({
-      stripeCustomerId: null,
-      stripeSubscriptionId: null,
-      stripeStatus: null,
+      lemonSqueezyCustomerId: null,
+      lemonSqueezySubscriptionId: null,
+      lemonSqueezyStatus: null,
       plan: "free",
       usageLimitMonthly: 5,
       deletedAt: new Date(),

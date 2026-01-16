@@ -1,6 +1,6 @@
 import { getUserFromRequest } from "@/lib/auth-server"
 import { adminDb } from "@/lib/firebase/admin"
-import { checkStripeSubscriptionStatus, syncStripeToFirestore } from "@/lib/stripe-helpers"
+import { checkLemonSqueezySubscriptionStatus, syncLemonSqueezyToFirestore } from "@/lib/lemonsqueezy"
 import { NextRequest, NextResponse } from "next/server"
 
 // Force dynamic rendering since we access request headers for authentication
@@ -15,21 +15,21 @@ export async function GET(req: NextRequest) {
 
     const { uid, userDoc } = authed
 
-    // ALWAYS check Stripe directly (source of truth)
+    // ALWAYS check Lemon Squeezy directly (source of truth)
     let subscriptionStatus
     try {
-      subscriptionStatus = await checkStripeSubscriptionStatus(userDoc.stripeCustomerId)
-    } catch (stripeError: any) {
-      console.error("[API /jobs] Stripe check failed:", stripeError)
-      // If Stripe check fails, deny access (fail secure)
+      subscriptionStatus = await checkLemonSqueezySubscriptionStatus(userDoc.email ?? undefined)
+    } catch (lsError: any) {
+      console.error("[API /jobs] Lemon Squeezy check failed:", lsError)
+      // If Lemon Squeezy check fails, deny access (fail secure)
       return NextResponse.json(
         { error: "History is available on the Creator plan.", plan: "free" },
         { status: 403 }
       )
     }
-    
+
     // Sync to Firestore in background (non-blocking)
-    syncStripeToFirestore(uid, subscriptionStatus).catch((err) => {
+    syncLemonSqueezyToFirestore(uid, subscriptionStatus).catch((err) => {
       console.error("[API /jobs] Background sync failed:", err)
     })
 
