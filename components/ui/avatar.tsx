@@ -18,14 +18,21 @@ const Avatar = React.forwardRef<
 ))
 Avatar.displayName = "Avatar"
 
+import Image from "next/image"
+
 const AvatarImage = React.forwardRef<
     HTMLImageElement,
     React.ImgHTMLAttributes<HTMLImageElement>
->(({ className, ...props }, ref) => (
-    <img
-        ref={ref}
+>(({ className, alt, width, height, ...props }, ref) => (
+    // eslint-disable-next-line jsx-a11y/alt-text
+    <Image
+        fill
+        sizes="64px"
         className={cn("aspect-square h-full w-full object-cover", className)}
-        {...props}
+        alt={alt || "Avatar"}
+        {...(props as any)} // Cast to any to avoid strict type mismatch for other HTML attributes like 'crossOrigin' etc if they slightly differ
+        // We explicitly ignore width/height because we are using fill
+        src={props.src || ""}
     />
 ))
 AvatarImage.displayName = "AvatarImage"
