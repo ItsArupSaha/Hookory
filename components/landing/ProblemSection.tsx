@@ -19,7 +19,7 @@ export function ProblemSection() {
                 {/* Three problem blocks */}
                 <div className="grid gap-6 md:gap-8 md:grid-cols-3">
                     {/* Block 1: Attention */}
-                    <div className="group relative bg-gradient-to-br from-emerald-50 to-white rounded-2xl p-6 md:p-8 shadow-lg border border-emerald-100 hover:shadow-xl hover:border-emerald-200 transition-all duration-300 hover:-translate-y-1">
+                    <div className="group relative flex flex-col bg-gradient-to-br from-emerald-50 to-white rounded-2xl p-6 md:p-8 shadow-lg border border-emerald-100 hover:shadow-xl hover:border-emerald-200 transition-all duration-300 hover:-translate-y-1">
                         <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-100/50 rounded-full blur-2xl -z-10 group-hover:bg-emerald-200/50 transition-colors" />
 
                         <div className="flex items-center gap-3 mb-5">
@@ -50,7 +50,7 @@ export function ProblemSection() {
                             </li>
                         </ul>
 
-                        <div className="pt-4 border-t border-emerald-100">
+                        <div className="mt-auto pt-4 border-t border-emerald-100">
                             <p className="text-emerald-700 font-medium text-sm">
                                 → The solution starts with earning attention
                             </p>
@@ -58,7 +58,7 @@ export function ProblemSection() {
                     </div>
 
                     {/* Block 2: Cognitive Load */}
-                    <div className="group relative bg-gradient-to-br from-amber-50 to-white rounded-2xl p-6 md:p-8 shadow-lg border border-amber-100 hover:shadow-xl hover:border-amber-200 transition-all duration-300 hover:-translate-y-1">
+                    <div className="group relative flex flex-col bg-gradient-to-br from-amber-50 to-white rounded-2xl p-6 md:p-8 shadow-lg border border-amber-100 hover:shadow-xl hover:border-amber-200 transition-all duration-300 hover:-translate-y-1">
                         <div className="absolute top-0 right-0 w-24 h-24 bg-amber-100/50 rounded-full blur-2xl -z-10 group-hover:bg-amber-200/50 transition-colors" />
 
                         <div className="flex items-center gap-3 mb-5">
@@ -89,7 +89,7 @@ export function ProblemSection() {
                             </li>
                         </ul>
 
-                        <div className="pt-4 border-t border-amber-100">
+                        <div className="mt-auto pt-4 border-t border-amber-100">
                             <p className="text-amber-700 font-medium text-sm">
                                 → The solution removes thinking friction
                             </p>
@@ -97,7 +97,7 @@ export function ProblemSection() {
                     </div>
 
                     {/* Block 3: Generic AI Output */}
-                    <div className="group relative bg-gradient-to-br from-rose-50 to-white rounded-2xl p-6 md:p-8 shadow-lg border border-rose-100 hover:shadow-xl hover:border-rose-200 transition-all duration-300 hover:-translate-y-1">
+                    <div className="group relative flex flex-col bg-gradient-to-br from-rose-50 to-white rounded-2xl p-6 md:p-8 shadow-lg border border-rose-100 hover:shadow-xl hover:border-rose-200 transition-all duration-300 hover:-translate-y-1">
                         <div className="absolute top-0 right-0 w-24 h-24 bg-rose-100/50 rounded-full blur-2xl -z-10 group-hover:bg-rose-200/50 transition-colors" />
 
                         <div className="flex items-center gap-3 mb-5">
@@ -128,7 +128,7 @@ export function ProblemSection() {
                             </li>
                         </ul>
 
-                        <div className="pt-4 border-t border-rose-100">
+                        <div className="mt-auto pt-4 border-t border-rose-100">
                             <p className="text-rose-700 font-medium text-sm">
                                 → The solution is opinionated and platform-aware
                             </p>

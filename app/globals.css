@@ -102,3 +102,31 @@
 .animate-marquee {
   animation: marquee 20s linear infinite;
 }
+
+@keyframes gradient-shift {
+
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.animate-gradient-text {
+  background: linear-gradient(90deg,
+      #d1fae5,
+      #a7f3d0,
+      #6ee7b7,
+      #a7f3d0,
+      #d1fae5,
+      #a7f3d0,
+      #6ee7b7);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradient-shift 4s ease-in-out infinite;
+}

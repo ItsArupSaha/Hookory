@@ -35,7 +35,7 @@ export function HeroSection({ user, loading, navLoading, setNavLoading, navigate
                     <div className="space-y-3">
                         <h1 className="text-4xl font-semibold tracking-tight text-white drop-shadow-2xl sm:text-5xl lg:text-6xl animate-fade-in-up">
                             Turn long content into LinkedIn posts{" "}
-                            <span className="text-emerald-200">
+                            <span className="animate-gradient-text">
                                 people actually stop to read
                             </span>
                         </h1>
