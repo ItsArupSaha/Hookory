@@ -5,7 +5,7 @@ import { BLOG_TEXT, GENERATED_POSTS } from "@/lib/data/landing-examples"
 
 export function FeaturesSection() {
     return (
-        <section className="pt-8 pb-16 px-4 md:px-6 lg:px-8">
+        <section className="pt-8 pb-16 px-4 md:px-6 lg:px-8 bg-stone-50">
             <div className="max-w-4xl mx-auto space-y-8 px-4 md:px-6 lg:px-0">
                 {/* Section Headline */}
                 <div className="text-center mb-8">

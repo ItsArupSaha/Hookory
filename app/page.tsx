@@ -70,7 +70,7 @@ export default function LandingPage() {
         handleScrollToPricing={handleScrollToPricing}
       />
 
-      <div className="mx-auto pb-16 md:pb-24">
+      <div className="mx-auto">
         <HeroSection
           user={user}
           loading={loading}

@@ -21,7 +21,7 @@ export function Navbar({ user, loading, navLoading, setNavLoading, navigateWithF
 
     return (
         <nav className="fixed top-6 left-0 right-0 max-w-[95%] mx-auto rounded-full bg-white/80 backdrop-blur-xl border border-stone-300 shadow-sm z-50 transition-all duration-300">
-            <div className="container mx-auto flex items-center justify-between px-6 py-3">
+            <div className="container mx-auto flex items-center justify-between px-4 md:px-6 py-3">
                 <Link href="/" className="flex items-center gap-3 group">
                     <Image
                         src="/hookory_Logo_light_nobg.png"
@@ -59,16 +59,7 @@ export function Navbar({ user, loading, navLoading, setNavLoading, navigateWithF
                         </Button>
                     ) : (
                         <>
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    setNavLoading("login")
-                                    router.push("/login")
-                                }}
-                                className="text-sm text-slate-600 transition-colors hover:text-emerald-700 font-medium"
-                            >
-                                {navLoading === "login" ? "Loading..." : "Log in"}
-                            </button>
+                            {/* Log in removed as requested */}
                             <button
                                 type="button"
                                 onClick={() => {

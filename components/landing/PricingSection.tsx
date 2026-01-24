@@ -190,8 +190,8 @@ export function PricingSection({ user }: PricingSectionProps) {
 
                                 {/* CTA */}
                                 <div className="mt-auto pt-4">
-                                    <Link href="/signup" className="w-full inline-flex h-12 items-center justify-center rounded-full bg-emerald-600 px-8 text-base font-semibold text-white shadow-lg hover:bg-emerald-700 hover:scale-[1.02] transition-all duration-200">
-                                        Upgrade my LinkedIn presence <ArrowRight className="ml-2 h-4 w-4" />
+                                    <Link href="/signup" className="w-full inline-flex h-auto py-3 items-center justify-center rounded-full bg-emerald-600 px-6 text-base font-semibold text-white shadow-lg hover:bg-emerald-700 hover:scale-[1.02] transition-all duration-200 text-center">
+                                        Upgrade my LinkedIn presence <ArrowRight className="ml-2 h-4 w-4 shrink-0" />
                                     </Link>
                                     <p className="text-xs text-stone-400 text-center mt-3">
                                         Cancel anytime · No long-term commitment

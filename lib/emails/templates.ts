@@ -40,7 +40,7 @@ const wrapEmail = (title: string, content: string) => `
       <div class="footer">
         <div class="footer-name">Arup Saha</div>
         <div class="footer-role">CEO, Hookory</div>
-        <a href="mailto:growwitharup@gmail.com" class="footer-email">growwitharup@gmail.com</a>
+        <a href="mailto:help.hookory@gmail.com" class="footer-email">help.hookory@gmail.com</a>
         <div class="copyright">
           &copy; ${new Date().getFullYear()} Hookory. All rights reserved.
         </div>

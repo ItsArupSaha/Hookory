@@ -3,7 +3,7 @@ import Link from "next/link"
 export default function SiteFooter() {
   return (
     <footer
-      className="border-t border-stone-200 px-4 pt-8 text-xs text-stone-500 md:px-6 lg:px-8"
+      className="border-t border-emerald-200 bg-emerald-50 px-4 py-12 text-xs text-stone-500 md:px-6 lg:px-8"
     >
       <div className="mx-auto max-w-6xl">
         <div className="grid gap-8 md:grid-cols-3">
@@ -16,10 +16,10 @@ export default function SiteFooter() {
               <p>
                 Email:{" "}
                 <a
-                  href="mailto:growwitharup@gmail.com"
+                  href="mailto:help.hookory@gmail.com"
                   className="text-emerald-700 hover:text-emerald-800"
                 >
-                  growwitharup@gmail.com
+                  help.hookory@gmail.com
                 </a>
               </p>
             </div>
