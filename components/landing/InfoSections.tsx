@@ -1,87 +1,151 @@
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Linkedin, Layers, Rocket } from "lucide-react"
 
 export function WhyDifferentSection() {
     return (
-        <section className="mt-0 py-16 px-4 md:px-6 lg:px-8 space-y-8 bg-gradient-to-b from-white via-stone-50 to-stone-100">
-            <div className="text-center max-w-3xl mx-auto">
-                <p className="inline-flex items-center gap-2 rounded-full bg-emerald-100/70 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-emerald-700">
-                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                    Purpose-built for LinkedIn
-                </p>
-                <h2 className="mt-3 text-2xl font-semibold text-slate-900">
-                    Why this is different
-                </h2>
-                <p className="mt-2 text-sm text-slate-600">
-                    Hookory doesn&apos;t try to write everything. It specializes in turning long-form content
-                    into posts that actually get read, saved, and replied to on LinkedIn.
-                </p>
-            </div>
+        <section className="pt-10 pb-20 md:pt-14 md:pb-28 px-4 md:px-6 lg:px-8 bg-gradient-to-b from-stone-50 to-stone-100">
+            <div className="max-w-6xl mx-auto">
+                {/* Section intro */}
+                <div className="text-center mb-14 md:mb-20">
+                    {/* Badge */}
+                    <p className="inline-flex items-center gap-2 rounded-full bg-stone-100 border border-stone-200 px-4 py-1.5 text-xs font-medium text-stone-600 mb-6">
+                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                        Built for how LinkedIn actually works
+                    </p>
 
-            <div className="grid gap-5 md:grid-cols-3">
-                <Card className="border border-stone-200 bg-white shadow-sm transition-transform duration-150 hover:-translate-y-1 hover:shadow-md">
-                    <CardHeader className="pb-3">
-                        <CardTitle className="flex items-center justify-center gap-2 text-sm text-slate-900">
-                            <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-emerald-50 text-[11px] font-semibold text-emerald-600">
-                                1
-                            </span>
-                            LinkedIn-first engine
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-1.5 text-xs text-slate-600">
-                        <p>
-                            Prompts, formatting, and structure are all tuned for LinkedIn&apos;s fast-scrolling feed —
-                            not blogs, emails, or generic &quot;social posts.&quot;
-                        </p>
-                        <p>
-                            Hooks, line breaks, and punchy sentences are baked in so your posts don&apos;t read like
-                            AI essays.
-                        </p>
-                    </CardContent>
-                </Card>
+                    {/* Main heading */}
+                    <h2 className="text-2xl md:text-3xl font-semibold text-stone-900">
+                        Writing well isn&apos;t the hard part.<br />
+                        <span className="text-emerald-600">Writing for the feed is.</span>
+                    </h2>
 
-                <Card className="border border-stone-200 bg-white shadow-sm transition-transform duration-150 hover:-translate-y-1 hover:shadow-md">
-                    <CardHeader className="pb-3">
-                        <CardTitle className="flex items-center justify-center gap-2 text-sm text-slate-900">
-                            <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-emerald-50 text-[11px] font-semibold text-emerald-600">
-                                2
-                            </span>
-                            Crafted, not copy-pasted
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-1.5 text-xs text-slate-600">
-                        <p>
-                            Each format has its own structure (story, carousel, hook-first, thought leadership) so
-                            you don&apos;t get one bland template repeated four times.
-                        </p>
-                        <p>
-                            Posts are organized into clear sections with flow, tension, and payoff — ready to tweak,
-                            not rewrite.
-                        </p>
-                    </CardContent>
-                </Card>
+                    {/* Subheading */}
+                    <p className="mt-5 text-base md:text-lg text-stone-600 max-w-2xl mx-auto leading-relaxed">
+                        LinkedIn isn&apos;t a blog. It&apos;s not email. It&apos;s a fast-scrolling feed where structure, hooks, and pacing decide whether anyone stops to read.
+                    </p>
+                </div>
 
-                <Card className="border border-stone-200 bg-white shadow-sm transition-transform duration-150 hover:-translate-y-1 hover:shadow-md">
-                    <CardHeader className="pb-3">
-                        <CardTitle className="flex items-center justify-center gap-2 text-sm text-slate-900">
-                            <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-emerald-50 text-[11px] font-semibold text-emerald-600">
-                                3
-                            </span>
-                            Ready to post in minutes
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-1.5 text-xs text-slate-600">
-                        <p>
-                            You paste a link or blog, Hookory returns 4 LinkedIn-ready drafts — with hooks, body,
-                            and CTA already in place.
-                        </p>
-                        <p>
-                            Edit a few lines to add your voice, then paste into LinkedIn. No wrestling with empty
-                            text boxes.
-                        </p>
-                    </CardContent>
-                </Card>
+                {/* Three cards */}
+                <div className="grid gap-6 md:gap-8 md:grid-cols-3">
+                    {/* Card 1: LinkedIn-first thinking */}
+                    <div className="group relative flex flex-col bg-gradient-to-br from-cyan-50 to-white rounded-2xl p-6 md:p-8 shadow-lg border border-cyan-100 hover:shadow-xl hover:border-cyan-200 transition-all duration-300 hover:-translate-y-1">
+                        <div className="absolute top-0 right-0 w-24 h-24 bg-cyan-100/50 rounded-full blur-2xl -z-10 group-hover:bg-cyan-200/50 transition-colors" />
+
+                        <div className="flex items-center gap-3 mb-5">
+                            <div className="p-2.5 rounded-xl bg-cyan-100 text-cyan-600">
+                                <Linkedin className="h-5 w-5" />
+                            </div>
+                            <h3 className="text-lg font-semibold text-stone-900">
+                                LinkedIn-first thinking
+                            </h3>
+                        </div>
+
+                        <ul className="space-y-3 text-stone-600 text-[15px] mb-6">
+                            <li className="flex items-start gap-2">
+                                <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 mt-2 shrink-0" />
+                                <span>Blog structure doesn&apos;t translate to scrolling feeds</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                                <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 mt-2 shrink-0" />
+                                <span>Email tone feels off in a professional network</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                                <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 mt-2 shrink-0" />
+                                <span>Hooks, line breaks, and pacing define readability</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                                <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 mt-2 shrink-0" />
+                                <span>LinkedIn rewards clarity, not cleverness</span>
+                            </li>
+                        </ul>
+
+                        <div className="mt-auto pt-4 border-t border-cyan-100">
+                            <p className="text-cyan-700 font-medium text-sm">
+                                → Being LinkedIn-first changes outcomes
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Card 2: Crafted, not copy-pasted */}
+                    <div className="group relative flex flex-col bg-gradient-to-br from-fuchsia-50 to-white rounded-2xl p-6 md:p-8 shadow-lg border border-fuchsia-100 hover:shadow-xl hover:border-fuchsia-200 transition-all duration-300 hover:-translate-y-1">
+                        <div className="absolute top-0 right-0 w-24 h-24 bg-fuchsia-100/50 rounded-full blur-2xl -z-10 group-hover:bg-fuchsia-200/50 transition-colors" />
+
+                        <div className="flex items-center gap-3 mb-5">
+                            <div className="p-2.5 rounded-xl bg-fuchsia-100 text-fuchsia-600">
+                                <Layers className="h-5 w-5" />
+                            </div>
+                            <h3 className="text-lg font-semibold text-stone-900">
+                                Crafted, not copy-pasted
+                            </h3>
+                        </div>
+
+                        <ul className="space-y-3 text-stone-600 text-[15px] mb-6">
+                            <li className="flex items-start gap-2">
+                                <span className="h-1.5 w-1.5 rounded-full bg-fuchsia-400 mt-2 shrink-0" />
+                                <span>One template repeated looks like one template repeated</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                                <span className="h-1.5 w-1.5 rounded-full bg-fuchsia-400 mt-2 shrink-0" />
+                                <span>Posts need internal flow, tension, and payoff</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                                <span className="h-1.5 w-1.5 rounded-full bg-fuchsia-400 mt-2 shrink-0" />
+                                <span>Editing should feel like refinement, not starting over</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                                <span className="h-1.5 w-1.5 rounded-full bg-fuchsia-400 mt-2 shrink-0" />
+                                <span>Readers notice when something was actually written</span>
+                            </li>
+                        </ul>
+
+                        <div className="mt-auto pt-4 border-t border-fuchsia-100">
+                            <p className="text-fuchsia-700 font-medium text-sm">
+                                → Structure makes posts feel intentional
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Card 3: Ready to post, not start from scratch */}
+                    <div className="group relative flex flex-col bg-gradient-to-br from-orange-50 to-white rounded-2xl p-6 md:p-8 shadow-lg border border-orange-100 hover:shadow-xl hover:border-orange-200 transition-all duration-300 hover:-translate-y-1">
+                        <div className="absolute top-0 right-0 w-24 h-24 bg-orange-100/50 rounded-full blur-2xl -z-10 group-hover:bg-orange-200/50 transition-colors" />
+
+                        <div className="flex items-center gap-3 mb-5">
+                            <div className="p-2.5 rounded-xl bg-orange-100 text-orange-600">
+                                <Rocket className="h-5 w-5" />
+                            </div>
+                            <h3 className="text-lg font-semibold text-stone-900">
+                                Ready to post, not start from scratch
+                            </h3>
+                        </div>
+
+                        <ul className="space-y-3 text-stone-600 text-[15px] mb-6">
+                            <li className="flex items-start gap-2">
+                                <span className="h-1.5 w-1.5 rounded-full bg-orange-400 mt-2 shrink-0" />
+                                <span>An empty text box kills momentum</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                                <span className="h-1.5 w-1.5 rounded-full bg-orange-400 mt-2 shrink-0" />
+                                <span>Iteration matters more than perfection</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                                <span className="h-1.5 w-1.5 rounded-full bg-orange-400 mt-2 shrink-0" />
+                                <span>&quot;Almost ready&quot; is still friction</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                                <span className="h-1.5 w-1.5 rounded-full bg-orange-400 mt-2 shrink-0" />
+                                <span>Posting consistently beats waiting for perfect</span>
+                            </li>
+                        </ul>
+
+                        <div className="mt-auto pt-4 border-t border-orange-100">
+                            <p className="text-orange-700 font-medium text-sm">
+                                → Momentum beats motivation
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
     )
@@ -89,7 +153,7 @@ export function WhyDifferentSection() {
 
 export function WhoItsForSection() {
     return (
-        <section className="mt-12 py-12 px-4 md:px-6 lg:px-8">
+        <section className="pt-8 pb-12 px-4 md:px-6 lg:px-8">
             <div className="max-w-4xl mx-auto text-center">
                 <h2 className="text-xl font-semibold text-slate-900">Who it&apos;s for</h2>
                 <p className="mt-2 text-sm text-slate-600">

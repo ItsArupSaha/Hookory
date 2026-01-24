@@ -12,7 +12,7 @@ interface PricingSectionProps {
 
 export function PricingSection({ user }: PricingSectionProps) {
     return (
-        <section id="pricing" className="py-20 md:py-28 px-4 md:px-6 lg:px-8 bg-gradient-to-br from-emerald-50 via-stone-50 to-teal-50 border-y border-emerald-100/50">
+        <section id="pricing" className="pt-10 pb-20 md:pt-14 md:pb-28 px-4 md:px-6 lg:px-8 bg-gradient-to-br from-emerald-50 via-stone-50 to-teal-50 border-y border-emerald-100/50">
             <div className="max-w-5xl mx-auto">
                 {/* Section Header */}
                 <div className="text-center mb-14 md:mb-20">

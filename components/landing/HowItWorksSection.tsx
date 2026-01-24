@@ -138,7 +138,7 @@ export function HowItWorksSection() {
     }, [])
 
     return (
-        <section className="py-20 px-4 md:px-6 lg:px-8 bg-white" ref={stepsRef}>
+        <section className="pt-10 pb-20 px-4 md:px-6 lg:px-8 bg-white" ref={stepsRef}>
             <div className="container mx-auto">
                 <div className="text-center mb-16">
                     <h2 className="text-3xl font-bold text-slate-900">How Hookory Works</h2>

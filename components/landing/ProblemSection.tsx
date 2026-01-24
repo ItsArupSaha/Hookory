@@ -4,7 +4,7 @@ import { Eye, Brain, Sparkles } from "lucide-react"
 
 export function ProblemSection() {
     return (
-        <section className="py-20 md:py-28 px-4 md:px-6 lg:px-8 bg-gradient-to-b from-stone-50 to-stone-100">
+        <section className="pt-10 pb-20 md:pt-14 md:pb-28 px-4 md:px-6 lg:px-8 bg-white">
             <div className="max-w-6xl mx-auto">
                 {/* Section intro */}
                 <div className="text-center mb-14 md:mb-20">
