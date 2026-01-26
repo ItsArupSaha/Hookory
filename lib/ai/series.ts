@@ -117,7 +117,9 @@ STRUCTURE (after hook):
 - CONTEXT: 2-4 lines setting up the tension.
 - MEAT: 3-6 lines delivering the core insight with specifics.
 - PAYOFF: 1-3 lines with takeaway or question.
-- Vary paragraph lengths naturally. Monotony = robotic.`
+- Vary paragraph lengths naturally. Monotony = robotic.
+
+HASHTAGS: 3-5 relevant hashtags at the end.`
             case "story-based":
                 return `STORY FORMAT:
 FIRST 2 LINES = HOOK (MANDATORY):
@@ -130,7 +132,9 @@ STRUCTURE (after hook):
 - Build tension naturally: assumption vs. reality.
 - Turning point: the insight, the shift.
 - Resolution: grounded outcome, no fake metrics.
-- Let the story breathe. Some paragraphs can be 3-4 sentences.`
+- Let the story breathe. Some paragraphs can be 3-4 sentences.
+
+HASHTAGS: 3-5 relevant hashtags at the end.`
             case "carousel":
                 return `CONCEPTUAL CAROUSEL:
 Target length: 400–700 characters total.
@@ -171,7 +175,9 @@ STRUCTURE (after hook):
 TONE:
 - This format is about IMPACT, not depth.
 - Every word earns its place. Cut ruthlessly.
-- Think tweet energy, LinkedIn packaging.`
+- Think tweet energy, LinkedIn packaging.
+
+HASHTAGS: 3-5 relevant hashtags at the end.`
             default:
                 return `Standard LinkedIn post with natural rhythm and varied paragraph lengths.`
         }

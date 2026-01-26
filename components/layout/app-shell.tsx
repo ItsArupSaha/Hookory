@@ -8,7 +8,7 @@ import { auth, db } from "@/lib/firebase/client"
 import { clearLocalStoragePaymentStatus, cn, getLocalStoragePaymentStatus, setLocalStoragePaymentStatus } from "@/lib/utils"
 import { onAuthStateChanged, signOut, User } from "firebase/auth"
 import { doc, onSnapshot } from "firebase/firestore"
-import { Loader2, MessageSquare, Star } from "lucide-react"
+import { Loader2, Menu, MessageSquare, Star, X } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
@@ -406,6 +406,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     const initials =
         (firebaseUser?.email && firebaseUser.email[0]?.toUpperCase()) || "U"
     const [profileOpen, setProfileOpen] = useState(false)
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
     if (loading) {
         return (
@@ -532,12 +533,136 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                     )}
                 </aside>
 
+                {/* Mobile Sidebar Overlay */}
+                {mobileMenuOpen && (
+                    <div className="fixed inset-0 z-50 sm:hidden">
+                        {/* Backdrop */}
+                        <div
+                            className="fixed inset-0 bg-black/50 backdrop-blur-sm"
+                            onClick={() => setMobileMenuOpen(false)}
+                        />
+                        {/* Sidebar */}
+                        <aside className="fixed left-0 top-0 h-full w-72 bg-white shadow-xl px-4 py-6 flex flex-col animate-in slide-in-from-left duration-300">
+                            <div className="flex items-center justify-between mb-6 px-1">
+                                <Link href="/dashboard" className="flex items-center" onClick={() => setMobileMenuOpen(false)}>
+                                    <Image
+                                        src="/hookory_Logo_light_nobg.png"
+                                        alt="Hookory"
+                                        width={120}
+                                        height={120}
+                                        className="h-28 w-28 -my-10 -ml-4 object-contain"
+                                    />
+                                </Link>
+                                <button
+                                    onClick={() => setMobileMenuOpen(false)}
+                                    className="p-2 rounded-lg hover:bg-stone-100 transition-colors"
+                                >
+                                    <X className="h-5 w-5 text-stone-600" />
+                                </button>
+                            </div>
+                            <nav className="flex flex-1 flex-col gap-1.5 text-sm">
+                                <Link
+                                    href="/dashboard"
+                                    onClick={() => setMobileMenuOpen(false)}
+                                    className={cn(
+                                        "rounded-xl px-3 py-2.5 text-stone-600 transition-all duration-200 hover:bg-emerald-50 hover:text-emerald-700 flex items-center gap-2",
+                                        isActive("/dashboard") && "bg-emerald-50 text-emerald-700 font-semibold shadow-sm ring-1 ring-emerald-100"
+                                    )}
+                                >
+                                    New Repurpose
+                                </Link>
+                                <Link
+                                    href="/history"
+                                    onClick={() => setMobileMenuOpen(false)}
+                                    className={cn(
+                                        "rounded-xl px-3 py-2.5 text-stone-600 transition-all duration-200 hover:bg-emerald-50 hover:text-emerald-700 flex items-center gap-2",
+                                        isActive("/history") && "bg-emerald-50 text-emerald-700 font-semibold shadow-sm ring-1 ring-emerald-100"
+                                    )}
+                                >
+                                    History
+                                    {(!me || me.plan === "free") && (
+                                        <span className="ml-auto rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-emerald-700">
+                                            Pro
+                                        </span>
+                                    )}
+                                </Link>
+                                <Link
+                                    href="/usage"
+                                    onClick={() => setMobileMenuOpen(false)}
+                                    className={cn(
+                                        "rounded-xl px-3 py-2.5 text-stone-600 transition-all duration-200 hover:bg-emerald-50 hover:text-emerald-700 flex items-center gap-2",
+                                        isActive("/usage") && "bg-emerald-50 text-emerald-700 font-semibold shadow-sm ring-1 ring-emerald-100"
+                                    )}
+                                >
+                                    Usage
+                                </Link>
+                                <Link
+                                    href="/settings"
+                                    onClick={() => setMobileMenuOpen(false)}
+                                    className={cn(
+                                        "rounded-xl px-3 py-2.5 text-stone-600 transition-all duration-200 hover:bg-emerald-50 hover:text-emerald-700 flex items-center gap-2",
+                                        isActive("/settings") && "bg-emerald-50 text-emerald-700 font-semibold shadow-sm ring-1 ring-emerald-100"
+                                    )}
+                                >
+                                    Settings
+                                </Link>
+
+                                <div className="mt-1 pt-1 border-t border-stone-100 flex flex-col gap-1.5">
+                                    <FeedbackDialog>
+                                        <button className="w-full flex items-center gap-2 rounded-xl px-3 py-2.5 text-stone-600 transition-all duration-200 hover:bg-emerald-50 hover:text-emerald-700 text-left">
+                                            <MessageSquare className="h-4 w-4" />
+                                            Feedback
+                                        </button>
+                                    </FeedbackDialog>
+
+                                    <ReviewDialog>
+                                        <button className="w-full flex items-center gap-2 rounded-xl px-3 py-2.5 text-stone-600 transition-all duration-200 hover:bg-emerald-50 hover:text-emerald-700 text-left">
+                                            <Star className="h-4 w-4" />
+                                            Review
+                                        </button>
+                                    </ReviewDialog>
+                                </div>
+                            </nav>
+                            {me && (
+                                <div className="mt-auto pt-4 border-t border-stone-100">
+                                    <div className="rounded-2xl border border-stone-100 bg-white/50 p-4 shadow-sm">
+                                        <div className="flex items-center justify-between text-xs font-medium text-stone-600 mb-2">
+                                            <span>Monthly Usage</span>
+                                            <span className={usagePercent > 90 ? "text-red-500" : "text-emerald-600"}>
+                                                {me.usageCount}/{me.usageLimitMonthly}
+                                            </span>
+                                        </div>
+                                        <div className="h-2 overflow-hidden rounded-full bg-stone-100">
+                                            <div
+                                                className={cn(
+                                                    "h-full rounded-full transition-all duration-500",
+                                                    usagePercent > 90 ? "bg-red-500" : "bg-emerald-500"
+                                                )}
+                                                style={{ width: `${usagePercent}%` }}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </aside>
+                    </div>
+                )}
+
                 {/* Main */}
                 <div className="flex min-h-screen flex-1 flex-col relative z-10">
-                    <header className="sticky top-0 z-20 flex items-center justify-between border-b border-stone-200 bg-white/80 px-6 py-4 backdrop-blur-xl transition-all">
+                    <header className="sticky top-0 z-20 flex items-center justify-between border-b border-stone-200 bg-white/80 px-4 sm:px-6 py-4 backdrop-blur-xl transition-all">
                         <div className="flex items-center gap-3">
+                            {/* Mobile Menu Button */}
+                            <button
+                                onClick={() => setMobileMenuOpen(true)}
+                                className="sm:hidden p-2 -ml-2 rounded-lg hover:bg-stone-100 transition-colors"
+                            >
+                                <Menu className="h-5 w-5 text-stone-600" />
+                            </button>
+
+                            {/* Plan Badge - Condensed on mobile */}
                             <span className="inline-flex items-center gap-2 rounded-full border border-stone-200 bg-white/50 px-3 py-1 text-xs font-medium text-stone-600 shadow-sm">
-                                Current Plan:
+                                <span className="hidden sm:inline">Current Plan:</span>
                                 <span className={cn(
                                     "rounded-full px-2 py-0.5 text-white",
                                     me?.plan === "creator" ? "bg-emerald-500" : "bg-stone-500"

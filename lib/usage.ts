@@ -9,7 +9,9 @@ export interface UserUsage {
   lastGenerateAt?: Timestamp
 }
 
-const COOLDOWN_SECONDS = 45
+// Plan-based cooldowns
+const COOLDOWN_CREATOR = 30
+const COOLDOWN_FREE = 45
 
 export async function checkAndResetUsage(userId: string): Promise<UserUsage> {
   const userRef = adminDb.collection("users").doc(userId)
@@ -62,9 +64,13 @@ export async function checkCooldown(userId: string): Promise<{ allowed: boolean;
     return { allowed: true, secondsRemaining: 0 }
   }
 
+  // Use plan-based cooldown
+  const plan = userData.plan || "free"
+  const cooldownSeconds = plan === "creator" ? COOLDOWN_CREATOR : COOLDOWN_FREE
+
   const now = new Date()
   const secondsSince = Math.floor((now.getTime() - lastGenerateAt.getTime()) / 1000)
-  const secondsRemaining = COOLDOWN_SECONDS - secondsSince
+  const secondsRemaining = cooldownSeconds - secondsSince
 
   return {
     allowed: secondsRemaining <= 0,
