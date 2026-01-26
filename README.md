@@ -9,92 +9,70 @@
 
 Instead of staring at a blank page, Hookory allows you to take existing long-form content—like a blog post, news article, or a rough draft—and instantly transform it into a polished, high-engagement LinkedIn post tailored to your unique voice.
 
-It’s not just a summarizer; it’s a strategic writing partner that understands the nuances of social media engagement, from hook writing to formatting for mobile readability.
+It’s not just a summarizer; it’s a strategic writing partner that understands the nuances of social media engagement.
 
 ---
 
-## How It Works: The End-to-End Workflow
+## How It Works: The Simplified Workflow
 
-Creating high-quality content with Hookory is a simple, four-step process:
+Creating high-quality content with Hookory is a streamlined, three-step process:
 
 ### 1. **Input Your Source**
 You don't need to write new ideas to post new content.
 *   **Paste a URL**: Have a great blog post or saw an interesting industry article? Just paste the link. Hookory reads the content directly.
 *   **Paste Text**: Have some rough notes, a partial draft, or a transcript? Paste the raw text directly into the editor.
 
-### 2. **Intelligent Analysis**
-Once you submit your content, Hookory’s AI engine goes to work. It reads through the noise to identify the core value proposition, key insights, and actionable takeaways. It strips away fluff and focuses on what will actually resonate with a professional audience.
+### 2. **Set Context & Angle**
+We stripped away complex settings. Just tell Hookory three things:
+*   **Who is it for?** (Reader Context): Peers, Learners, Decision-makers, or General Audience. You can even type a custom audience.
+*   **What is the focus?** (Angle): Should the post focus on a "Common Mistake", a "Lesson Learned", or a "Strong Opinion"? Hookory will ignore fluff and focus entirely on your chosen angle.
+*   **Tone & Style**: Choose from Professional, Conversational, or Bold. Toggle Emojis on or off.
 
-### 3. **Customize Your Strategy**
-A generic post gets generic results. Hookory lets you tailor the output to fit your specific goals:
-*   **Select Your Format**: Choose *how* you want to present the idea (e.g., a story, a lesson, or a carousel).
-*   **Define Your Audience**: Who are you talking to? CEOs? Developers? General professionals?
-*   **Set Your Goal**: Do you want more comments (Engagement), potential clients (Leads), or industry respect (Authority)?
-*   **Tune the Tone**: Make it "Professional & Crisp" or "Conversational & Friendly."
-
-### 4. **Generate & Publish**
-In seconds, you get a fully formatted LinkedIn post ready for the feed.
+### 3. **Generate & Publish**
+Select your desired output format (Main Post, Story, Carousel, or Hook) and generate.
+In seconds, you get a fully formatted LinkedIn post ready for the feed:
 *   **The Hook**: Every post starts with a scroll-stopping first line.
 *   **The Body**: Clean, punchy sentences with mobile-optimized line breaks.
-*   **The CTA**: A clear Call to Action to drive your specific goal.
-*   **Hashtags**: Relevant, searchable tags included automatically.
-
-Don't like the first result? Use the **Regenerate** feature to get a completely fresh angle in seconds.
+*   **Alternative Hooks**: Every generation includes **5 bonus hooks** at the bottom so you can A/B test your opening line.
 
 ---
 
-## Intelligent features & Modes
+## Intelligent Output Formats
 
 Hookory offers specialized writing modes to match different content strategies:
 
-### 🧠 Thought Leadership Mode
-*Best for: Establishing authority and sharing opinions.*
-This mode focuses on a single, strong insight or contrarian view. It uses a confident tone to challenge common beliefs or share deep expertise.
-*   **Structure**: Strong Hook → Challenge/Insight → Evidence → Reflective Conclusion.
+### 📝 Main Post
+*Best for: Daily updates and thought leadership.*
+A balanced, high-performing LinkedIn structure. It delivers one clear insight supported by strong reasoning, ending with a reflective takeaway.
+*   **Structure**: Strong Hook → Clear Insight → Supporting Points → Discussion CTA.
 
-### 📖 Story-Based Mode
+### 📖 Story Post
 *Best for: Building connection and trust.*
 Humans connect with stories, not just facts. This mode transforms dry experiences into a narrative arc, focusing on a specific struggle, a turning point, and a valuable lesson learned.
-*   **Structure**: The Struggle → The Realization → The Transformation → The Takeaway.
+*   **Structure**: The Struggle → The Realization → The Transformation → The Lesson.
 
-### 🎠 Educational Carousel Mode
+### 🎠 Carousel Text
 *Best for: Teaching complex topics.*
 Perfect for breaking down "How-to" guides or listicles. This mode generates slide-by-slide text that you can copy directly into a PDF or image carousel design.
 *   **Structure**: Slide 1 (Title) → Slides 2-5 (One tip per slide) → Final Slide (Summary).
 
-### ⚡ Short Viral Hook Mode
+### ⚡ Short Viral Hook
 *Best for: Maximum reach and readability.*
 Minimalist and punchy. This mode strips away all explanations and focuses entirely on the impact. Great for quick tips or sharp observations that people want to repost.
-*   **Structure**: 3-4 punchy lines → One clear truth.
-
----
-
-## Smart Customization & History
-
-### Precision Targeting
-Hookory understands that a post for a *CTO* needs to sound different than a post for a *Junior Developer*. By setting your **Target Audience** and **Tone**, the AI adjusts its vocabulary and sentence structure to match.
-
-### Goals That Matter
-Tell Hookory what you want to achieve with the **Goal** selector:
-*   **Engagement**: Asks questions and invites debate.
-*   **Leads**: Focuses on pain points and solutions.
-*   **Authority**: Focuses on expertise and unique insights.
-
-### Content History
-Never lose a great idea. Hookory automatically saves your generated posts in your **History** tab. You can seamlessly revisit, edit, or copy past posts whenever you're ready to schedule them.
+*   **Structure**: Single sharp insight → Broken lines → Fast pacing.
 
 ---
 
 ## Why Choose Hookory?
+
+### ✅ Angle-First Intelligence
+Most AI tools just summarize. Hookory's new engine focuses on your chosen **Angle**. If you select "Common Mistake", it will read your entire blog post solely to find and highlight the mistakes, ignoring everything else. This creates posts that feel opinionated and human.
 
 ### ✅ Stop Writing From Scratch
 The hardest part of writing is the blank page. Hookory gives you a 90% complete draft in seconds, so you only spend time on the final 10% of personal polish.
 
 ### ✅ Consistency is Key
 Growth on LinkedIn requires showing up every day. By repurposing one blog post into 3-4 different LinkedIn posts (a story, a thought piece, a carousel), you can plan a week's worth of content in minutes.
-
-### ✅ Agency Quality for Less
-Hiring a ghostwriter or agency costs $1,000+ per month. Hookory gives you the same strategic, high-quality output for the price of a coffee.
 
 ---
 
@@ -110,8 +88,8 @@ Perfect for trying out the power of AI repurposing.
 For the serious professional ready to grow.
 *   **100 Credits per month** (enough for daily posting).
 *   **Priority Processing**: Faster generation times.
+*   **URL Extraction**: Directly repurpose content from any public link.
 *   **Premium Support**: Get help when you need it.
-*   **Unlocks Full History**: Access all your past generations.
 
 ---
 
