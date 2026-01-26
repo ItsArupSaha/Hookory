@@ -51,7 +51,7 @@ export class UserService {
         return { limited: false }
     }
 
-    static async incrementUsage(uid: string) {
-        return incrementUsage(uid)
+    static async incrementUsage(uid: string, amount: number = 1) {
+        return incrementUsage(uid, amount)
     }
 }

@@ -5,6 +5,7 @@ import { User } from "firebase/auth"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { FormatKey, ToneType } from "@/components/dashboard/types"
+import { useSharedCooldown } from "./use-shared-cooldown"
 
 export function useRepurpose() {
     const { refreshUserData } = useAppShell()
@@ -28,7 +29,9 @@ export function useRepurpose() {
     const [editingFormats, setEditingFormats] = useState<Record<string, boolean>>({})
 
     const [loading, setLoading] = useState(false)
-    const [cooldown, setCooldown] = useState(0)
+
+    // Shared cooldown (syncs across single post and series)
+    const { cooldown, startCooldown } = useSharedCooldown()
     const [results, setResults] = useState<Record<FormatKey, string>>({
         "main-post": "",
         "story-based": "",
@@ -167,7 +170,7 @@ export function useRepurpose() {
                         variant: "destructive",
                     })
                     if (typeof data.secondsRemaining === "number") {
-                        setCooldown(data.secondsRemaining)
+                        startCooldown(data.secondsRemaining)
                     }
                     return
                 }
@@ -244,16 +247,7 @@ export function useRepurpose() {
                     setUsageLimitMonthly(meData.usageLimitMonthly ?? 5)
                 }
             }
-            setCooldown(plan === "creator" ? 30 : 45)
-            const interval = setInterval(() => {
-                setCooldown((prev) => {
-                    if (prev <= 1) {
-                        clearInterval(interval)
-                        return 0
-                    }
-                    return prev - 1
-                })
-            }, 1000)
+            startCooldown(plan === "creator" ? 30 : 45)
         } catch (err: any) {
             toast({
                 title: "Error",
@@ -328,7 +322,7 @@ export function useRepurpose() {
                         variant: "destructive",
                     })
                     if (typeof data.secondsRemaining === "number") {
-                        setCooldown(data.secondsRemaining)
+                        startCooldown(data.secondsRemaining)
                     }
                     return
                 }
@@ -408,16 +402,7 @@ export function useRepurpose() {
                     setUsageLimitMonthly(meData.usageLimitMonthly ?? 5)
                 }
             }
-            setCooldown(plan === "creator" ? 30 : 45)
-            const interval = setInterval(() => {
-                setCooldown((prev) => {
-                    if (prev <= 1) {
-                        clearInterval(interval)
-                        return 0
-                    }
-                    return prev - 1
-                })
-            }, 1000)
+            startCooldown(plan === "creator" ? 30 : 45)
         } catch (err: any) {
             toast({
                 title: "Error",

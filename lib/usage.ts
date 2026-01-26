@@ -13,10 +13,10 @@ const COOLDOWN_SECONDS = 45
 
 export async function checkAndResetUsage(userId: string): Promise<UserUsage> {
   const userRef = adminDb.collection("users").doc(userId)
-  
+
   return adminDb.runTransaction(async (transaction) => {
     const userDoc = await transaction.get(userRef)
-    
+
     if (!userDoc.exists) {
       throw new Error("User not found")
     }
@@ -32,7 +32,7 @@ export async function checkAndResetUsage(userId: string): Promise<UserUsage> {
     if (now >= resetAt) {
       usageCount = 0
       usageResetAt = getNextMonthStart()
-      
+
       transaction.update(userRef, {
         usageCount: 0,
         usageResetAt: usageResetAt,
@@ -50,7 +50,7 @@ export async function checkAndResetUsage(userId: string): Promise<UserUsage> {
 
 export async function checkCooldown(userId: string): Promise<{ allowed: boolean; secondsRemaining: number }> {
   const userDoc = await adminDb.collection("users").doc(userId).get()
-  
+
   if (!userDoc.exists) {
     return { allowed: true, secondsRemaining: 0 }
   }
@@ -72,12 +72,12 @@ export async function checkCooldown(userId: string): Promise<{ allowed: boolean;
   }
 }
 
-export async function incrementUsage(userId: string): Promise<void> {
+export async function incrementUsage(userId: string, amount: number = 1): Promise<void> {
   const userRef = adminDb.collection("users").doc(userId)
-  
+
   await adminDb.runTransaction(async (transaction) => {
     const userDoc = await transaction.get(userRef)
-    
+
     if (!userDoc.exists) {
       throw new Error("User not found")
     }
@@ -86,12 +86,12 @@ export async function incrementUsage(userId: string): Promise<void> {
     const now = new Date()
     const resetAt = userData.usageResetAt?.toDate() || getNextMonthStart()
 
-    let usageCount = (userData.usageCount || 0) + 1
+    let usageCount = (userData.usageCount || 0) + amount
     let usageResetAt = resetAt
 
     // Reset if past reset date
     if (now >= resetAt) {
-      usageCount = 1
+      usageCount = amount // Reset to just the current usage amount
       usageResetAt = getNextMonthStart()
     }
 

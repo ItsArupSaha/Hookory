@@ -71,10 +71,17 @@ NON-NEGOTIABLES:
 - Stay grounded in the SOURCE. Use at least 2 concrete details from it (tools, steps, numbers, terms, constraints).
 - Do not invent facts. If the source is technical/instructional, do NOT fabricate a personal launch story or fake "my project" narrative.
 - Pick ONE central angle and keep every paragraph aligned to it (no multi-topic summaries).
-- Write for how LinkedIn is read: short lines, clear beats, zero filler.
-- Emojis are acceptable when explicitly requested by context and should be treated as part of tone, not decoration.
 - Reading level: simple, direct, grade 6–8. Prefer short common words.
 - Avoid generic moralizing (e.g., "human side", "connection", "crucial", "unlock", "game-changer") unless the source explicitly supports it.
+
+LINKEDIN WRITING STYLE (HUMAN-CENTRIC):
+- RHYTHM OVER RULES: Vary paragraph lengths naturally. Mix punchy 1-liners with 2-3 sentence flowing thoughts. Monotonous short lines = robotic.
+- THE "BREATH" TEST: If it sounds like a list of fortune cookies, add connective tissue. If it feels like a wall, break it up.
+- WHITESPACE: Use blank lines for visual breaks, but group related ideas together. Not after EVERY sentence.
+- AUTHENTIC VOICE: Write like you're explaining to a smart friend. Not a TED talk. Not a textbook.
+- SCROLL-STOPPING STRUCTURE: Hook (2 lines max) → Context (2-4 lines) → Meat (your key insight) → Payoff (1-2 lines).
+- NO MARKDOWN: Raw text only.
+- Emojis only when explicitly requested; treat them as tone, not decoration.
 
 HOOK QUALITY:
 - The first 2 lines must create tension using a concrete element from the source (not generic life advice).
@@ -82,7 +89,12 @@ HOOK QUALITY:
 
 ENDING:
 - End with a specific, high-signal question that fits the angle and audience (no "thoughts?").
-- 3–5 relevant hashtags max, only if truly relevant to the source.`
+- 3–5 relevant hashtags max, only if truly relevant to the source.
+
+BANNED OPENERS (NEVER USE):
+- "Picture this:", "Imagine this:", "Here's the thing:", "Let me tell you something"
+- "In this post...", "Let's talk about...", "I want to share..."
+- Any phrase that sounds like a writing template, not a real person.`
 }
 
 /**
@@ -93,41 +105,88 @@ function getFormatRules(format: LinkedInFormat): string {
     "main-post": `
 OUTPUT TYPE: MAIN POST
 Target length: 900–1600 characters.
-Body shape:
-- After the hook, state the core point fast (1–2 short lines).
-- Add 2–4 tight supporting lines (evidence/steps/contrast), grounded in the source.
-- End with a specific question tied to the core point.
+
+FIRST 2 LINES = HOOK (MANDATORY):
+- The very first 2 lines of the post MUST be the hook.
+- CRITICAL: Keep hook under 140 characters total (before LinkedIn's "see more" fold).
+- Create a "wait, what?" moment using something specific from the source.
+- No intro, no setup — hook first, always.
+
+STRUCTURE (after hook):
+- CONTEXT: 2-4 lines. Set up the tension or the "old way" of thinking.
+- MEAT: Your core insight. Can be 3-6 lines. This is where you deliver value — be specific, use examples.
+- PAYOFF: 1-3 lines. The takeaway or a thought-provoking question.
+
+TONE:
+- Write like you're sharing a realization with a peer, not lecturing.
+- Vary paragraph lengths. Some punchy. Some flowing. Monotony = robotic.
+- No "In today's world..." or "Let me share..." — just start.
 `,
     "story-based": `
 OUTPUT TYPE: STORY-STYLE POST
 Target length: 1100–1900 characters.
-Body shape:
-- Open with a concrete failure / contradiction / surprise from the source.
-- Build tension: what people assume vs what happens.
-- Turning point: the key insight (still grounded in the source).
-- Outcome: what changes when you apply it (keep realistic, no fake metrics).
-- End with a sharp decision question.
-Important:
-- If the source is not personal, write as: "I used to assume..." only if it can be reasonably inferred.
-  Otherwise write as an observer: "Here's the trap…" / "Most teams do X…"
+
+FIRST 2 LINES = HOOK (MANDATORY):
+- The very first 2 lines of the post MUST be the hook.
+- CRITICAL: Keep hook under 140 characters total (before LinkedIn's "see more" fold).
+- Create a "wait, what?" moment using something specific from the source.
+- No intro, no setup — hook first, always.
+
+STRUCTURE (after hook):
+- TENSION: What was the assumption? What went wrong? Build the conflict naturally.
+- TURNING POINT: The insight, the shift, the "aha."
+- RESOLUTION: What changed? Keep it grounded — no fake metrics or exaggerated outcomes.
+- CTA: A sharp question that makes the reader reflect on their own situation.
+
+TONE:
+- If the source is personal: write in first person with vulnerability.
+- If the source is not personal: write as an observer ("Here's what I noticed..." / "Most people assume...").
+- Let the story breathe. Some paragraphs can be 3-4 sentences if they flow well.
 `,
     "carousel": `
-OUTPUT TYPE: CAROUSEL TEXT (SLIDES)
-Target length: 1200–2200 characters.
-Rules:
-- Write as SLIDES with clear separators (e.g., "Slide 1:", "Slide 2:", etc.)
-- Slide 1: big cover title only (6–10 words).
-- Slides 2–5: ONE concrete point each. Max 30 words per slide.
-- Final slide: short recap + one strong question.
+OUTPUT TYPE: CAROUSEL (CONCEPTUAL SLIDES)
+Target length: 400–700 characters total.
+
+OUTPUT FORMAT (MANDATORY):
+- Write as SLIDES with separators: "Slide 1:", "Slide 2:", etc.
+- 5-7 slides total.
+
+SLIDE TEXT RULES (CRITICAL):
+- MAX 15-25 words per slide. NO PARAGRAPHS.
+- Each slide = 1-2 short punchy lines. That's it.
+- Think billboard, not blog post.
+- NO HASHTAGS on carousel slides (they go in the post caption, not here).
+- NO emojis clutter — max 1 per slide if any.
+
+SLIDE STRUCTURE:
+- Slide 1 (Hook): Bold claim or counter-intuitive statement. 8-12 words max.
+- Slides 2–5: ONE insight per slide. Keep it incomplete to force swipe.
+- Final Slide: The new perspective + a question. Short.
+
+CONSTRAINTS:
+- NO tech stacks, NO tool names, NO step-by-step instructions.
+- Focus on insight, psychology, or strategy.
+- If it reads like a blog post, you've failed.
 `,
     "short-viral-hook": `
 OUTPUT TYPE: SHORT HOOK POST
 Target length: 450–850 characters.
-Body shape:
-- Hook (2 lines) based on a concrete source detail.
-- 2–3 short lines expanding the single insight.
-- Optional bullets (max 3) if it improves clarity.
-- End with a sharp question.
+
+FIRST 2 LINES = HOOK (MANDATORY):
+- The very first 2 lines of the post MUST be the hook.
+- CRITICAL: Keep hook under 140 characters total (before LinkedIn's "see more" fold).
+- Punchy. Based on ONE specific detail from the source.
+- No intro — hook first, always.
+
+STRUCTURE (after hook):
+- EXPANSION: 2-4 lines. Unpack the hook with context or contrast.
+- OPTIONAL BULLETS: Max 3, only if they add clarity.
+- CTA: 1-2 lines. A sharp question or challenge.
+
+TONE:
+- This format is about IMPACT, not depth.
+- Every word earns its place. Cut ruthlessly.
+- Think tweet energy, LinkedIn packaging.
 `
   }
   return rules[format]
@@ -157,16 +216,27 @@ function getInstructionPrompt(
    * - selects concrete anchors so it cannot drift into generic advice
    * - keeps the "angle" enforced without repeating "the mistake is..."
    */
-  const process = `PROCESS (silent, do not output):
+  let process = ``
+
+  if (format === 'carousel') {
+    process = `PROCESS (silent, do not output):
+1) Identify the "Old Way" vs "New Way" thinking in the source.
+2) Extract the underlying principle (the "Why"), stripping away the "How" (tools/steps).
+3) Map out a 5-6 slide journey that leads the reader to the sudden realization of the New Way.
+4) Ensure the "Gap" between slides pulls the reader forward (curiosity gap).`
+  } else {
+    process = `PROCESS (silent, do not output):
 1) Pick ONE failure pattern from the source (assumption → consequence). If angle is provided, use it as the lens.
 2) Extract 3 "SOURCE ANCHORS" (specific terms/steps/tools/numbers). You must use at least 2 in the post.
-3) Decide the best reader takeaway for the chosen reader context.
+3) Decide the best reader takeaway for the chosen reader context.`
+  }
 
-WRITE (output only the post):
+  const writeInstructions = `WRITE (output only the post):
 - Do NOT name the angle explicitly with template phrases (avoid "the common mistake is...").
-- Instead, make the angle obvious through examples, contrast, and repeated reinforcement in different wording.
-- Keep paragraphs to max 2 lines each.
-- No markdown styling.`
+- Make the angle obvious through examples, contrast, and natural reinforcement.
+- Vary paragraph lengths. Mix punchy 1-liners with 2-3 sentence thoughts. Monotony = robotic.
+- Group related ideas. Use whitespace to create visual flow, not after every sentence.
+- No markdown styling. Raw text only.`
 
   // Reader context guidance (lightweight, not persona-theatre)
   const readerGuidance = (() => {
@@ -205,6 +275,8 @@ ${readerGuidance}
 ${regenerationInstruction}
 
 ${process}
+
+${writeInstructions}
 
 ${formatRules}
 
