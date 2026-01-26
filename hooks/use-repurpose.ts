@@ -47,6 +47,14 @@ export function useRepurpose() {
         "short-viral-hook": [],
     })
 
+    const [jobId, setJobId] = useState<string | null>(null)
+    const [regenCounts, setRegenCounts] = useState<Record<FormatKey, number>>({
+        "main-post": 0,
+        "story-based": 0,
+        "carousel": 0,
+        "short-viral-hook": 0,
+    })
+
     const [regeneratingFormat, setRegeneratingFormat] = useState<FormatKey | null>(null)
 
     useEffect(() => {
@@ -166,22 +174,51 @@ export function useRepurpose() {
                 throw new Error(data.error || "Failed to generate")
             }
 
+
+            // Capture Job ID for future regenerations
+            if (data.jobId) {
+                setJobId(data.jobId)
+                // Reset counts for new job
+                setRegenCounts({
+                    "main-post": 0,
+                    "story-based": 0,
+                    "carousel": 0,
+                    "short-viral-hook": 0,
+                })
+            }
+
             const outputs = data.outputs as Record<string, string>
             const ParsedResults = { ...results }
             const ParsedHooks = { ...responseHooks }
 
             Object.entries(outputs).forEach(([k, text]) => {
                 const key = k as FormatKey
-                if (text.includes("---EXTRA_HOOKS---")) {
-                    const parts = text.split("---EXTRA_HOOKS---")
+                // More robust separator check (case insensitive, optional spaces)
+                const separatorRegex = /--- ?EXTRA_HOOKS ?---/i
+
+                if (separatorRegex.test(text)) {
+                    const parts = text.split(separatorRegex)
                     ParsedResults[key] = parts[0].trim()
 
                     const hookSection = parts[1].trim()
                     const hooks = hookSection
                         .split("\n")
                         .map(line => line.trim())
-                        .filter(line => /^\d+\./.test(line))
-                        .map(line => line.replace(/^\d+\.\s*/, "").replace(/^"/, "").replace(/"$/, "").trim())
+                        // Allow digits (1.), bullets (*, -), or just text if it looks like a hook
+                        .filter(line => line.length > 5 && (
+                            /^\d+\./.test(line) ||
+                            /^[-*]/.test(line) ||
+                            line.toLowerCase().includes("hook:")
+                        ))
+                        .map(line => {
+                            // Clean up leading numbers/bullets and quotes
+                            return line
+                                .replace(/^[\d\.\-\*]+\s*/, "") // Remove "1. ", "- ", etc
+                                .replace(/^"|"$/g, "")          // Remove surrounding quotes
+                                .replace(/^\*\*/, "")           // Remove bolding if present
+                                .replace(/\*\*$/, "")
+                                .trim()
+                        })
                         .slice(0, 5)
 
                     ParsedHooks[key] = hooks
@@ -233,6 +270,17 @@ export function useRepurpose() {
 
     async function handleRegenerate(format: FormatKey) {
         if (!auth) return
+
+        // Check local limit first (UI Feedback)
+        if (regenCounts[format] >= 5) {
+            toast({
+                title: "Limit Reached",
+                description: "Too many regeneration attempts. Please generate a new one.",
+                variant: "destructive"
+            })
+            return
+        }
+
         const userInfo = await getUserAndToken()
         if (!userInfo) return
         setLoading(true)
@@ -256,7 +304,8 @@ export function useRepurpose() {
                     },
                     formats: [format],
                     regenerate: true,
-                    saveHistory: true,
+                    saveHistory: false, // Don't need to save history log for regen unless we want revision tracking
+                    jobId: jobId || undefined // Pass the Job ID
                 }),
             })
 
@@ -295,30 +344,60 @@ export function useRepurpose() {
 
             Object.entries(outputs).forEach(([k, text]) => {
                 const key = k as FormatKey
-                if (text.includes("---EXTRA_HOOKS---")) {
-                    const parts = text.split("---EXTRA_HOOKS---")
+                // More robust separator check (case insensitive, optional spaces)
+                const separatorRegex = /--- ?EXTRA_HOOKS ?---/i
+
+                if (separatorRegex.test(text)) {
+                    const parts = text.split(separatorRegex)
                     ParsedResults[key] = parts[0].trim()
 
-                    const hookSection = parts[1].trim()
-                    const hooks = hookSection
-                        .split("\n")
-                        .map(line => line.trim())
-                        .filter(line => /^\d+\./.test(line))
-                        .map(line => line.replace(/^\d+\.\s*/, "").replace(/^"/, "").replace(/"$/, "").trim())
-                        .slice(0, 5)
+                    // User Request: "Hooks should not be changed on regeneration"
+                    // If we already have hooks, keep them. Only parse if we have none.
+                    if (!ParsedHooks[key] || ParsedHooks[key].length === 0) {
+                        const hookSection = parts[1].trim()
+                        const hooks = hookSection
+                            .split("\n")
+                            .map(line => line.trim())
+                            .filter(line => line.length > 5 && (
+                                /^\d+\./.test(line) ||
+                                /^[-*]/.test(line) ||
+                                line.toLowerCase().includes("hook:")
+                            ))
+                            .map(line => {
+                                return line
+                                    .replace(/^[\d\.\-\*]+\s*/, "")
+                                    .replace(/^"|"$/g, "")
+                                    .replace(/^\*\*/, "")
+                                    .replace(/\*\*$/, "")
+                                    .trim()
+                            })
+                            .slice(0, 5)
 
-                    ParsedHooks[key] = hooks
+                        ParsedHooks[key] = hooks
+                    }
                 } else {
                     ParsedResults[key] = text
-                    ParsedHooks[key] = []
+                    // Do NOT clear hooks. Keep existing ones if AI fails to return new ones.
+                    if (!ParsedHooks[key]) {
+                        ParsedHooks[key] = []
+                    }
                 }
             })
 
             setResults((prev) => ({ ...prev, ...ParsedResults }))
             setResponseHooks((prev) => ({ ...prev, ...ParsedHooks }))
+            setResults((prev) => ({ ...prev, ...ParsedResults }))
+            setResponseHooks((prev) => ({ ...prev, ...ParsedHooks }))
+
+            // Increment local count
+            setRegenCounts(prev => ({
+                ...prev,
+                [format]: (prev[format] || 0) + 1
+            }))
+
             toast({
                 title: "Regenerated",
-                description: "Updated LinkedIn format is ready.",
+                description: `Updated LinkedIn format is ready. (${regenCounts[format] + 1}/10 tries used)`,
             })
             refreshUserData()
 
@@ -443,6 +522,7 @@ export function useRepurpose() {
         handleGenerate,
         handleRegenerate,
         handleSwapHook,
-        handleCopy
+        handleCopy,
+        regenCounts // Export counts so UI can disable button if needed
     }
 }

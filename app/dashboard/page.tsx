@@ -41,7 +41,9 @@ export default function NewRepurposePage() {
         handleGenerate,
         handleRegenerate,
         handleSwapHook,
-        handleCopy
+
+        handleCopy,
+        regenCounts
     } = useRepurpose()
 
     return (
@@ -94,6 +96,7 @@ export default function NewRepurposePage() {
                     responseHooks={responseHooks}
                     setResults={setResults}
                     user={user}
+                    regenCounts={regenCounts}
                 />
             </div>
         </div>

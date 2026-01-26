@@ -13,6 +13,7 @@ export const GenerateBodySchema = z.object({
     formats: z.array(z.string()).min(1, "At least one format is required"),
     regenerate: z.boolean().optional(),
     saveHistory: z.boolean().optional(),
+    jobId: z.string().optional(),
 })
 
 export type GenerateBody = z.infer<typeof GenerateBodySchema>

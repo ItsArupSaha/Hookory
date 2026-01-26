@@ -21,6 +21,7 @@ interface ResultsSectionProps {
     responseHooks: Record<FormatKey, string[]>
     setResults: React.Dispatch<React.SetStateAction<Record<FormatKey, string>>>
     user: User | null
+    regenCounts: Record<FormatKey, number>
 }
 
 export function ResultsSection({
@@ -36,7 +37,8 @@ export function ResultsSection({
     handleCopy,
     responseHooks,
     setResults,
-    user
+    user,
+    regenCounts
 }: ResultsSectionProps) {
     const selectedFormats = (Object.keys(formats) as FormatKey[]).filter(
         (k) => formats[k]
@@ -61,6 +63,8 @@ export function ResultsSection({
                     }
                     const value = results[key] || ""
                     const charCount = value.length
+                    const count = regenCounts?.[key] || 0
+                    const isMaxRegen = count >= 5
 
                     // Don't show anything for this format if no content generated yet
                     if (!value) return null
@@ -74,21 +78,33 @@ export function ResultsSection({
                                 <div className="flex items-center gap-2">
                                     <span className="text-[10px] font-medium text-stone-400 mr-2">{charCount} chars</span>
                                     {plan === "creator" && (
-                                        <button
-                                            type="button"
-                                            onClick={() => handleRegenerate(key)}
-                                            disabled={(!value || value.trim().length === 0) || loading}
-                                            className="rounded-lg border border-stone-200 bg-white px-3 py-1.5 text-[11px] font-medium text-stone-600 shadow-sm transition-all hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700 disabled:opacity-50 flex items-center gap-1.5 min-w-[85px] justify-center"
-                                        >
-                                            {regeneratingFormat === key ? (
-                                                <>
-                                                    <Loader2 className="h-3 w-3 animate-spin" />
-                                                    <span>Regenerating...</span>
-                                                </>
-                                            ) : (
-                                                <span>Regenerate</span>
+                                        <div className="flex flex-col items-end">
+                                            <button
+                                                type="button"
+                                                onClick={() => handleRegenerate(key)}
+                                                disabled={(!value || value.trim().length === 0) || loading || isMaxRegen}
+                                                className={`rounded-lg border px-3 py-1.5 text-[11px] font-medium shadow-sm transition-all flex items-center gap-1.5 min-w-[85px] justify-center
+                                                    ${isMaxRegen
+                                                        ? "bg-stone-100 text-stone-400 border-stone-200 cursor-not-allowed"
+                                                        : "bg-white text-stone-600 border-stone-200 hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700 disabled:opacity-50"
+                                                    }`}
+                                                title={isMaxRegen ? "Limit reached (5/5)" : `Regenerate (${count}/5 used)`}
+                                            >
+                                                {regeneratingFormat === key ? (
+                                                    <>
+                                                        <Loader2 className="h-3 w-3 animate-spin" />
+                                                        <span>Regenerating...</span>
+                                                    </>
+                                                ) : isMaxRegen ? (
+                                                    <span>Limit Reached</span>
+                                                ) : (
+                                                    <span>Regenerate</span>
+                                                )}
+                                            </button>
+                                            {count > 0 && !isMaxRegen && (
+                                                <span className="text-[9px] text-stone-400 mt-0.5">{count}/10 used</span>
                                             )}
-                                        </button>
+                                        </div>
                                     )}
                                 </div>
                             </div>

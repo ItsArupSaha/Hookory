@@ -22,9 +22,9 @@ export function LinkedInPostPreview({
     const [isTruncated, setIsTruncated] = useState(false)
     const textRef = useRef<HTMLParagraphElement>(null)
 
-    // LinkedIn typically truncates around 210 chars or 3-5 lines.
-    // We'll use a precise character limit similar to LinkedIn's specific visual break.
-    const TRUNCATION_LIMIT = 210
+    // LinkedIn typically truncates around 140 chars.
+    // We stick strictly to character limit as requested.
+    const TRUNCATION_LIMIT = 140
 
     useEffect(() => {
         if (content.length > TRUNCATION_LIMIT) {

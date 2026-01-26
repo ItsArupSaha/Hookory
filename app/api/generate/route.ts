@@ -46,7 +46,8 @@ export async function POST(req: NextRequest) {
       context,
       formats,
       regenerate = false,
-      saveHistory = false
+      saveHistory = false,
+      jobId
     } = result.data
 
     // 4. Plan & Validation Logic
@@ -67,17 +68,34 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const { limited } = await UserService.checkUsageLimit(uid)
-    if (limited) {
-      return NextResponse.json(
-        { error: "Monthly limit reached. Upgrade to increase your limit.", upgradeRequired: true },
-        { status: 402 }
-      )
+    // Only check monthly limit if NOT regenerating (regenerations are free)
+    if (!regenerate) {
+      const { limited } = await UserService.checkUsageLimit(uid)
+      if (limited) {
+        return NextResponse.json(
+          { error: "Monthly limit reached. Upgrade to increase your limit.", upgradeRequired: true },
+          { status: 402 }
+        )
+      }
+    } else {
+      // If regenerating, we MUST have a jobId to track limits against
+      if (!jobId) {
+        return NextResponse.json({ error: "Job ID required for regeneration" }, { status: 400 })
+      }
+      try {
+        // Check regeneration limit (10 max)
+        // We use the first format key as proxy since regeneration usually happens one by one
+        await HistoryService.validateAndIncrementRegeneration(uid, jobId, formats[0])
+      } catch (e: any) {
+        return NextResponse.json({ error: e.message }, { status: 403 })
+      }
     }
 
     // 6. Content Extraction
     let finalInputText = ""
     try {
+      // If regenerating, we might not need to extract again if we stored it? 
+      // But simpler to just extract/use input again. Client sends it.
       finalInputText = await ContentService.extract(inputType, inputText, url, isPaid)
     } catch (err: any) {
       return NextResponse.json({ error: err.message }, { status: 400 })
@@ -92,14 +110,22 @@ export async function POST(req: NextRequest) {
         regenerate
       )
 
-      // 8. Usage & History
-      await UserService.incrementUsage(uid)
+      let newJobId = jobId
 
-      if (saveHistory) {
-        await HistoryService.log(uid, finalInputText, context, formats, outputs, isPaid)
+      // 8. Usage & History
+      if (!regenerate) {
+        // Charge credit only for new generations
+        await UserService.incrementUsage(uid)
+
+        // Create new job to track this generation (and future limit)
+        // Always create job now, to support regeneration tracking even for free users
+        newJobId = await HistoryService.createJob(uid, finalInputText, context, formats, outputs, isPaid)
+      } else {
+        // For regeneration, we already validated and incremented above.
+        // We assume client keeps the same jobId.
       }
 
-      return NextResponse.json({ outputs, fromCache })
+      return NextResponse.json({ outputs, fromCache, jobId: newJobId })
 
     } catch (err: any) {
       return NextResponse.json(
