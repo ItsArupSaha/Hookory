@@ -72,124 +72,302 @@ NON-NEGOTIABLES:
 - Do not invent facts. If the source is technical/instructional, do NOT fabricate a personal launch story or fake "my project" narrative.
 - Pick ONE central angle and keep every paragraph aligned to it (no multi-topic summaries).
 - Reading level: simple, direct, grade 6–8. Prefer short common words.
-- Avoid generic moralizing (e.g., "human side", "connection", "crucial", "unlock", "game-changer") unless the source explicitly supports it.
+
+CONVICTION INJECTION (NON-NEGOTIABLE):
+Every post must contain at least ONE of these:
+1. A CONTRARIAN CLAIM: "Most people misunderstand X. Here's the truth."
+2. A BOLD PREDICTION: "This will be obsolete in 2 years."
+3. AN UNCOMFORTABLE TRUTH: "Nobody tells you this, but..."
+4. A POLARIZING STANCE: "I'd rather X than Y. And here's why."
+
+VOICE VARIATION (ANTI-ROBOT MODE):
+To prevent "AI Tone", you must adopt ONE of these voice archetypes (pick the best fit):
+1. THE ANALYST (Cold, Precise): "Let's look at the data. Ignore the hype." Structure: Data -> Logic -> Conclusion.
+2. THE REALIST (Blunt, Experienced): "Stop doing X. It doesn't work. Do Y." Structure: Myth -> Reality -> Action.
+3. THE ARCHITECT (System-Focused): "I built this. It broke. Here's the fix." Structure: Failure -> System -> Result.
+- CRITICAL: DO NOT use the "Old Way -> New Way" transition explicitly ("The old way is X. The new way is Y"). It is too repetitive. Just state the better way.
+
+BANNED SAFE CONCLUSIONS:
+- "Things are changing. You should adapt."
+- "This is important for the future."
+- "Balance is key."
+- "It depends on your situation."
+- Any conclusion that could apply to 100 different topics.
+
+THE "DISAGREE" TEST:
+If a reasonable person couldn't disagree with your main claim, it's too weak. Rewrite.
+
+PRE-WRITING LOGIC (EXECUTE BEFORE WRITING - MANDATORY):
+
+[STEP 0: FRAMEWORK SELECTION] (EXECUTE FIRST - ALL FORMATS)
+Before writing ANY content, you MUST analyze the source and COMMIT to ONE framework:
+
+ANALYZE THE SOURCE:
+- Does it raise a QUESTION readers want answered? → Use QUESTION framework
+- Does it contain SURPRISING DATA or statistics? → Use STATISTIC framework  
+- Does it describe a PERSONAL EXPERIENCE or journey? → Use STORY framework
+- Does it make a CONTRARIAN or surprising claim? → Use BOLD CLAIM framework
+- Does it address a PAIN POINT with a solution? → Use PROBLEM-SOLUTION framework
+- Does it provide ACTIONABLE steps? → Use HOW-TO framework
+
+THE ANTI-DEFAULT RULE:
+- "Most people think..." / "Most people believe..." / "Many assume..." are BANNED
+- The myth-bust pattern is the LAZY DEFAULT. You must EARN your framework.
+- If your opening could work for ANY topic, it's too generic. Rewrite.
+
+THE VARIETY RULE:
+You are generating content for a $20/month tool. If users generate 5 outputs and all 5 start the same way, they cancel. EVERY output must use a DIFFERENT opening approach based on what the SOURCE text EARNS.
+
+[STEP 1: SOURCE NOUN EXTRACTION] (For Story-Based Posts Only)
+Before writing a story opener:
+1. SCAN the source text for 3-5 SPECIFIC NOUNS unique to this content.
+2. SELECT ONE noun the protagonist can physically INTERACT with.
+3. GENERATE an action where the protagonist DOES something to that noun.
+4. BANNED GENERIC NOUNS: laptop, computer, screen, desk, chair, coffee, phone.
+5. BANNED VERBS: staring, looking, gazing, sitting, wondering, thinking, pondering.
+
+[STEP 2: THE STAT AUDITOR] (ZERO TOLERANCE)
+BEFORE writing any number:
+- IF a number EXISTS in the source: You MAY use it.
+- IF NO number exists: FORBIDDEN from using digits (0-9) or "%" symbols.
+- Use qualitative language instead.
+
+[STEP 3: THE ANGLE BRIDGE] (When Angle ≠ Source Topic)
+If the user's angle doesn't match the source topic, CREATE a conceptual bridge.
+
+[STEP 4: EMOTIONAL TRIGGER SELECTION] (MANDATORY - NO GENERIC EMOTIONS)
+Before writing, identify which HIGH-AROUSAL emotion this content should trigger.
+BANNED EMOTIONS: "Inspiration", "Motivation", "Calm", "Professional", "Reflective".
+ALLOWED EMOTIONS (PICK ONE):
+- AWE: "I had no idea this was possible"
+- ANGER: "This is broken and no one is talking about it"
+- FEAR/URGENCY: "If you don't act, you'll be left behind"
+- SURPRISE: "This contradicts everything I believed"
+- AMUSEMENT: "I can't believe this actually works"
+
+[STEP 5: BELIEF VIOLATION CHECK] (COGNITIVE DISSONANCE)
+Every post MUST challenge ONE specific belief the reader holds:
+- What does the reader currently believe that this content proves wrong?
+- What "obvious truth" does this content flip on its head?
+- What "best practice" does this content reveal as harmful?
+If you cannot identify a belief being violated, the content is too safe. Find the friction.
+
+[STEP 6: CURIOSITY GAP] (INFORMATION ASYMMETRY)
+The hook must CREATE a gap between what the reader knows and what they NEED to know:
+- PROMISE a revelation but WITHHOLD the answer until the end.
+- BANNED: Giving the main insight in the first 3 lines.
+- BANNED: Summarizing the takeaway in the hook.
+- Make the reader feel INCOMPLETE until they swipe/click "see more".
+
+[STEP 7: HOOK TOURNAMENT] (INTERNAL SELECTION)
+Before writing, silently generate 3 hook options.
+1. Statistic-based
+2. Contrarian Claim
+3. Specific Situation
+Select the one that passes the SCROLL-STOP TEST.
+
+SCROLL-STOP TEST (THE THUMB MUST STOP):
+Ask: "If someone was scrolling at 2AM, half-asleep, would this line make them STOP?"
+- If NO → The hook is too weak. Rewrite.
+- If YES → Proceed.
+
+SO WHAT? FILTER (STAKES VALIDATION):
+Every claim must have implicit stakes.
+- If the reader could say "Okay, and?" → Add the consequence.
+- If the reader could say "That affects me how?" → Make it personal.
+
+STATUS THREAT (PROFESSIONAL ANXIETY):
+Where appropriate, trigger the reader's fear of falling behind:
+- "Your competitors already know this" 
+- "If you're still doing X, you're already behind"
+
+QUOTABILITY CHECK (SCREENSHOT-WORTHY):
+Every post MUST contain at least ONE line that is bold, specific, and memorable enough to be screenshotted.
+
+RHYTHM BREAKER (AI DETECTION AVOIDANCE):
+To avoid sounding like AI, you MUST vary your sentence structure:
+- Mix 3-word sentences with 20-word sentences.
+- Include fragments. Like this.
+- Use mid-thought pivots: "Actually, that's not quite right—"
+
+HUMAN FINGERPRINT (MANDATORY - 2 PER POST):
+You MUST include at least TWO of these specific punctuation marks per post:
+1. Parenthetical aside '(like this)' to add conversational texture.
+2. Em-dash interruption '—' to break the rhythm.
+3. Self-correction: "Wait, let me rephrase that."
+
+If the post lacks these, it fails.
+
+NUCLEAR BANS (INSTANT REJECTION PHRASES):
+If any of these strings appear, the generation is FAILED:
+- "uncomfortable truth" (BANNED)
+- "knee deep" (BANNED)
+- "buried under" (BANNED)
+- "It's about transformation" (BANNED)
+- "It's about connection" (BANNED)
+- "delve" (BANNED)
+- "tapestry" (BANNED)
+- "landscape is shifting" (BANNED)
+
+BANNED CADENCE PATTERNS (INSTANT REJECTION):
+- "Many people assume..." / "Most people think..." / "The common belief is..."
+- "But here's the thing..." / "The reality is..."
+- "The key is..." / "The secret is..."
+- "Let me explain..." / "Here's why..."
+- "In today's world..." / "In this era..."
+
+TENSION INJECTION (MANDATORY):
+Every post must have ONE moment of friction. No safe, balanced takes.
 
 LINKEDIN WRITING STYLE (HUMAN-CENTRIC):
-- RHYTHM OVER RULES: Vary paragraph lengths naturally. Mix punchy 1-liners with 2-3 sentence flowing thoughts. Monotonous short lines = robotic.
-- THE "BREATH" TEST: If it sounds like a list of fortune cookies, add connective tissue. If it feels like a wall, break it up.
-- WHITESPACE: Use blank lines for visual breaks, but group related ideas together. Not after EVERY sentence.
-- AUTHENTIC VOICE: Write like you're explaining to a smart friend. Not a TED talk. Not a textbook.
-- SCROLL-STOPPING STRUCTURE: Hook (2 lines max) → Context (2-4 lines) → Meat (your key insight) → Payoff (1-2 lines).
-- NO MARKDOWN: Raw text only.
-- Emojis only when explicitly requested; treat them as tone, not decoration.
+- RHYTHM OVER RULES.
+- THE "BREATH" TEST.
+- WHITESPACE.
+- AUTHENTIC VOICE.
+- NO MARKDOWN.
 
 HOOK QUALITY:
-- The first 2 lines must create tension using a concrete element from the source (not generic life advice).
-- A great hook makes the reader feel: "Wait—how can that be true?"
+- First 2 lines must create tension.
+- NEVER open with a yes/no question.
 
-ENDING:
-- End with a specific, high-signal question that fits the angle and audience (no "thoughts?").
-- 3–5 relevant hashtags max, only if truly relevant to the source.
+BANNED OPENERS:
+- "Picture this:", "Imagine this:", "Here's the thing:"
+- "In this post...", "Let's talk about..."
+- "Have you ever wondered..."
+- Any template phrase.
 
-BANNED OPENERS (NEVER USE):
-- "Picture this:", "Imagine this:", "Here's the thing:", "Let me tell you something"
-- "In this post...", "Let's talk about...", "I want to share..."
-- Any phrase that sounds like a writing template, not a real person.`
+`
 }
 
-/**
- * Format rules (BODY behavior only). Hooks are enforced globally in system/process.
- */
 function getFormatRules(format: LinkedInFormat): string {
-  const rules: Record<LinkedInFormat, string> = {
-    "main-post": `
-OUTPUT TYPE: MAIN POST
-Target length: 900–1600 characters.
+  switch (format) {
+    case "main-post":
+      return `MAIN POST FORMAT (INSIGHT-FIRST):
+DNA: "Here's what I learned: [claim]. Here's why: [evidence]."
 
-FIRST 2 LINES = HOOK (MANDATORY):
-- The very first 2 lines of the post MUST be the hook.
-- CRITICAL: Keep hook under 140 characters total (before LinkedIn's "see more" fold).
-- Create a "wait, what?" moment using something specific from the source.
-- No intro, no setup — hook first, always.
+FIRST 2 LINES = HOOK (APPLY FRAMEWORK SELECTION):
+Apply STEP 0 from the system prompt. Analyze the source and CHOOSE:
 
-STRUCTURE (after hook):
-- CONTEXT: 2-4 lines. Set up the tension or the "old way" of thinking.
-- MEAT: Your core insight. Can be 3-6 lines. This is where you deliver value — be specific, use examples.
-- PAYOFF: 1-3 lines. The takeaway or a thought-provoking question.
+IF source has surprising data → Lead with the specific number
+IF source makes a contrarian point → State the bold claim directly
+IF source solves a problem → Name the pain point first
+IF source has a key insight → State the insight as a declaration
+IF source is instructional → State what the reader will achieve
 
-TONE:
-- Write like you're sharing a realization with a peer, not lecturing.
-- Vary paragraph lengths. Some punchy. Some flowing. Monotony = robotic.
-- No "In today's world..." or "Let me share..." — just start.
-`,
-    "story-based": `
-OUTPUT TYPE: STORY-STYLE POST
-Target length: 1100–1900 characters.
+HOOK VARIETY TEST:
+Could this hook be used for a DIFFERENT source on a different topic?
+- If YES → You defaulted to a generic pattern. Rewrite with source-specific content.
+- If NO → You earned this hook.
 
-FIRST 2 LINES = HOOK (MANDATORY):
-- The very first 2 lines of the post MUST be the hook.
-- CRITICAL: Keep hook under 140 characters total (before LinkedIn's "see more" fold).
-- Create a "wait, what?" moment using something specific from the source.
-- No intro, no setup — hook first, always.
+BANNED MAIN-POST OPENERS:
+- "Most people think..." / "Everyone believes..." / "The common belief..."
+- Generic questions / Yes-no questions
+- Template phrases: "Picture this", "Here's the thing", "Let me explain"
+
+HOOK REQUIREMENTS:
+- Keep under 140 characters (before LinkedIn's "see more")
+- Open with a CLAIM, not a question
+- The claim must be SPECIFIC to this source
 
 STRUCTURE (after hook):
-- TENSION: What was the assumption? What went wrong? Build the conflict naturally.
-- TURNING POINT: The insight, the shift, the "aha."
-- RESOLUTION: What changed? Keep it grounded — no fake metrics or exaggerated outcomes.
-- CTA: A sharp question that makes the reader reflect on their own situation.
+- EVIDENCE: 3-5 lines. Back up the claim with source details.
+- FRICTION: 1-2 lines. The hard trade-off or uncomfortable truth.
+- PAYOFF: 1-2 lines. The new perspective or reframe.
 
-TONE:
-- If the source is personal: write in first person with vulnerability.
-- If the source is not personal: write as an observer ("Here's what I noticed..." / "Most people assume...").
-- Let the story breathe. Some paragraphs can be 3-4 sentences if they flow well.
-`,
-    "carousel": `
-OUTPUT TYPE: CAROUSEL (CONCEPTUAL SLIDES)
+HASHTAGS: 3-5 relevant hashtags at the end.`
+
+    case "story-based":
+      return `OUTPUT TYPE: STORY-STYLE POST (IN MEDIA RES)
+DNA: "Physical Action → Conflict → Transformation → Insight."
+
+THE "PHYSICS" RULE (MANDATORY OPENER):
+The first sentence MUST contain:
+1. A specific PHYSICAL OBJECT (e.g., laptop, phone, door, checkbook, whiteboard).
+2. An ACTIVE VERB of interaction (e.g., slammed, stared at, tore up, froze, clicked).
+- BANNED VERBS (ZOMBIE CHECK): thinking, wondering, realizing, feeling, staring, looking.
+- BANNED OPENERS: "I was frustrated", "I was overwhelmed", "I was knee-deep".
+
+IN MEDIA RES (START IN THE MIDDLE):
+- Do NOT explain the context first. Drop the reader into the specific moment of failure or action.
+- BAD: "I was struggling with my marketing strategy." (Telling)
+- GOOD: "I printed my marketing plan and threw it in the trash." (Showing)
+
+SOURCE NOUN EXTRACTION:
+- Scan the source for specific nouns. If the source mentions "code", the object is "keyboard". If it mentions "sales", the object is "phone" or "CRM".
+- Anchor the story in these physical details.
+
+STRUCTURE:
+1. THE SCENE (In Media Res): The physical moment of conflict.
+2. THE REALIZATION: The internal shift or "aha" moment.
+3. THE STRATEGY: What you did differently (the source content).
+4. THE RESULT: The specific outcome.
+
+COST OF FAILURE:
+- You must quantify what was at risk. Money? Time? Reputation?
+- "I almost lost the client." / "I wasted 6 months."
+
+Tone: Vulnerable but competent. Not "heroic."`
+
+    case "carousel":
+      return `OUTPUT TYPE: CAROUSEL (OPEN LOOP METHOD)
 Target length: 400–700 characters total.
+DNA: "Hook → Build Tension → Twist → Resolution → CTA"
 
 OUTPUT FORMAT (MANDATORY):
 - Write as SLIDES with separators: "Slide 1:", "Slide 2:", etc.
 - 5-7 slides total.
+- MAX 25-35 words per slide. Each slide = 1-2 short sentences ONLY.
 
-SLIDE TEXT RULES (CRITICAL):
-- MAX 15-25 words per slide. NO PARAGRAPHS.
-- Each slide = 1-2 short punchy lines. That's it.
-- Think billboard, not blog post.
-- NO HASHTAGS on carousel slides (they go in the post caption, not here).
-- NO emojis clutter — max 1 per slide if any.
+THE OPEN LOOP TECHNIQUE (CRITICAL):
+Each slide must END with an incomplete thought that FORCES the reader to swipe.
+- NEVER give the full answer on one slide.
+- NEVER let a slide feel "complete" by itself.
+- Think of each slide as a Netflix episode cliffhanger.
 
-SLIDE STRUCTURE:
-- Slide 1 (Hook): Bold claim or counter-intuitive statement. 8-12 words max.
-- Slides 2–5: ONE insight per slide. Keep it incomplete to force swipe.
-- Final Slide: The new perspective + a question. Short.
+NARRATIVE ARC ENFORCER:
+1. HOOK (Slide 1): Create curiosity gap - reader MUST know more
+2. RISING ACTION (Slides 2-3): Build tension, introduce conflict/problem
+3. CLIMAX (Slide 4): The "aha" moment, the unexpected insight
+4. FALLING ACTION (Slides 5-6): Show proof, reveal payoff
+5. RESOLUTION (Final): Satisfying close + call to action
 
-CONSTRAINTS:
-- NO tech stacks, NO tool names, NO step-by-step instructions.
-- Focus on insight, psychology, or strategy.
-- If it reads like a blog post, you've failed.
-`,
-    "short-viral-hook": `
-OUTPUT TYPE: SHORT HOOK POST
-Target length: 450–850 characters.
+SLIDE 1 (HOOK):
+- Apply STEP 0 (Framework Selection).
+- Must contain specific source element.
+- BANNED: "Most people think..." (Myth-Bust default).
+
+SLIDE-BY-SLIDE:
+- Slide 3 is the "Turn" or "Disruption".
+- Final slide is the CTA.
+
+BANNED PHRASES:
+- "But here's the weird part"
+- "But here's the thing"
+- "Wait." / "Stop."`
+
+    case "short-viral-hook":
+      return `OUTPUT TYPE: SHORT VIRAL HOOK (PUNCHY)
+Target length: 400–600 characters.
+DNA: "[Sharp claim]. [One sentence of evidence]. [Challenge]."
 
 FIRST 2 LINES = HOOK (MANDATORY):
-- The very first 2 lines of the post MUST be the hook.
-- CRITICAL: Keep hook under 140 characters total (before LinkedIn's "see more" fold).
-- Punchy. Based on ONE specific detail from the source.
-- No intro — hook first, always.
+- This is the SHARPEST statement you can make. No warmup.
+- Use a blunt claim or a jarring number from the source.
+- Example: "96.55% of pages get zero traffic. Yours might be one of them."
+- CRITICAL: Keep hook under 140 characters.
 
-STRUCTURE (after hook):
-- EXPANSION: 2-4 lines. Unpack the hook with context or contrast.
+STRUCTURE:
+- VALIDATION: 2-3 lines. Just enough context to make the claim believable.
 - OPTIONAL BULLETS: Max 3, only if they add clarity.
-- CTA: 1-2 lines. A sharp question or challenge.
+- CHALLENGE: 1-2 lines. A sharp question or provocative statement.
 
 TONE:
-- This format is about IMPACT, not depth.
-- Every word earns its place. Cut ruthlessly.
-- Think tweet energy, LinkedIn packaging.
-`
+- High impact, low word count.
+- No storytelling. Just the insight.`
+
+    default:
+      return ""
   }
-  return rules[format]
 }
 
 function getInstructionPrompt(
@@ -220,15 +398,18 @@ function getInstructionPrompt(
 
   if (format === 'carousel') {
     process = `PROCESS (silent, do not output):
-1) Identify the "Old Way" vs "New Way" thinking in the source.
-2) Extract the underlying principle (the "Why"), stripping away the "How" (tools/steps).
-3) Map out a 5-6 slide journey that leads the reader to the sudden realization of the New Way.
-4) Ensure the "Gap" between slides pulls the reader forward (curiosity gap).`
+1) POV FINDER: Scan source for the strongest opinion. Formulate a conviction: "Most people think X, but the truth is Y."
+2) RISKY BET CHECK: Does this POV risk being wrong? If not, sharpen it. (e.g., "AI is good" -> "AI is overrated for X")
+3) SURPRISE PLANNER: What is the "Twist" on Slide 3? It must be a moment of "Oh, I didn't expect that."
+4) MAP THE GAP: Ensure Slide 1 creates a question that only Slide 6 answers.`
   } else {
     process = `PROCESS (silent, do not output):
-1) Pick ONE failure pattern from the source (assumption → consequence). If angle is provided, use it as the lens.
-2) Extract 3 "SOURCE ANCHORS" (specific terms/steps/tools/numbers). You must use at least 2 in the post.
-3) Decide the best reader takeaway for the chosen reader context.`
+1) POV EXTRACTION (CRITICAL):
+   - Find the single strongest belief in the source.
+   - Formulate it as a convicted statement: "Most people misunderstand X. The real leverage is Y."
+   - DISAGREEMENT CHECK: If a reasonable expert can't disagree with this ('Things are changing' = WEAK), then SHARPEN it.
+2) ANCHOR SELECTION: Pick 3 concrete details (numbers, names, steps) to prove this exact POV.
+3) STRUCTURE MAPPING: Plan where you will arguably disagree with conventional wisdom.`
   }
 
   const writeInstructions = `WRITE (output only the post):
@@ -287,15 +468,53 @@ OUTPUT CONSTRAINTS:
 
 BONUS OUTPUT (Mandatory):
 After the post, add a separator "---EXTRA_HOOKS---" and list exactly 5 alternative hooks.
-Rules for extra hooks:
+
+HOOK QUALITY RULES (CRITICAL):
+- NEVER write a simple yes/no question (e.g., "Blocking Google?"). These are weak and easy to scroll past.
+- NEVER invent statistics. Only use numbers EXPLICITLY in the source.
+- PRIORITIZE these hook types (in order of preference):
+  1. HIGH-STAKES STATEMENT: "Blocking Google from your site means zero traffic—forever."
+  2. CONTRARIAN CLAIM: "The best SEO strategy? Stop chasing keywords."
+  3. SPECIFIC NUMBER/STAT (only if in source): "96.55% of pages get zero traffic. Here's why."
+  4. PROVOCATIVE QUESTION (open-ended, not yes/no): "What if your biggest SEO win is hiding in plain sight?"
 - Each hook must be grounded in a concrete source anchor (no generic life advice).
 - Each hook must be 1–2 lines max.
+- Write hooks that make the reader feel: "Wait—I need to know more."
+
 Format exactly (just the text, no labels):
 1. ...
 2. ...
 3. ...
 4. ...
-5. ...`
+5. ...
+
+CTA RULES v2 (UPGRADED - DISAGREEMENT-INVITING):
+The closing question of the post must follow these rules:
+
+BANNED CTA PATTERNS:
+- "What steps are you taking..."
+- "How are you approaching..."
+- "Are you prepared for..."
+- "What's your experience with..."
+- "What would you choose?"
+- "Are you ready?"
+- "What's one thing you'd prioritize?"
+- Any question answerable with "yes", "no", or "I agree"
+- Any question answerable in under 5 words
+
+REQUIRED CTA TYPES (pick one):
+1. HOT TAKE CHALLENGE: "Change my mind: X is overrated."
+2. CONFESSION PROMPT: "What's the worst mistake you made doing X?"
+3. POLARIZING EITHER/OR: "Would you rather lose your audience or your integrity?"
+4. PREDICTION PROBE: "In 2 years, will X or Y win? I say X."
+5. SPECIFIC STORY REQUEST: "What's the one time this backfired on you?"
+
+THE "COMMENT MAGNET" TEST:
+If the CTA can be answered in under 5 words, it's too weak. Rewrite.
+
+The goal: Make the reader WANT to comment, not FEEL OBLIGATED to.
+
+3–5 relevant hashtags at the end, only if truly relevant to the source.`
 }
 
 function getUserPrompt(inputText: string): string {
@@ -335,8 +554,9 @@ async function generateWithOpenAI(options: GenerateOptions): Promise<string> {
         { role: "system", content: systemPrompt },
         { role: "user", content: `${instructionPrompt}\n\n${userPrompt}` }
       ],
-      // Slightly lower temp = less generic motivational drift
-      temperature: 0.6,
+      // Temperature 0.75: Research shows 0.6 causes mode collapse (repetitive patterns).
+      // 0.75 balances creativity with coherence for diverse, human-like outputs.
+      temperature: 0.75,
       max_tokens: 1800
     })
 

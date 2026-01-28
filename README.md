@@ -5,91 +5,119 @@
 
 ## What is Hookory?
 
-**Hookory** is an intelligent content repurposing engine designed for professionals, founders, and creators who want to build a personal brand on LinkedIn but don't have hours to spend writing from scratch.
+**Hookory** is a creator-grade content repurposing engine for professionals, founders, and creators who want to build a personal brand on LinkedIn without spending hours writing from scratch.
 
-Instead of staring at a blank page, Hookory allows you to take existing long-form content—like a blog post, news article, or a rough draft—and instantly transform it into a polished, high-engagement LinkedIn post tailored to your unique voice.
-
-It’s not just a summarizer; it’s a strategic writing partner that understands the nuances of social media engagement.
+Unlike generic AI summarizers, Hookory transforms source content into **opinionated, scroll-stopping posts** with real conviction and human-like voice. Every output is designed to make readers stop, think, and engage.
 
 ---
 
-## How It Works: The Simplified Workflow
-
-Creating high-quality content with Hookory is a streamlined, three-step process:
+## How It Works
 
 ### 1. **Input Your Source**
-You don't need to write new ideas to post new content.
-*   **Paste a URL**: Have a great blog post or saw an interesting industry article? Just paste the link. Hookory reads the content directly.
-*   **Paste Text**: Have some rough notes, a partial draft, or a transcript? Paste the raw text directly into the editor.
+- **Paste a URL**: Blog post, news article, research paper—just paste the link.
+- **Paste Text**: Raw notes, transcripts, or partial drafts work too.
 
 ### 2. **Set Context & Angle**
-We stripped away complex settings. Just tell Hookory three things:
-*   **Who is it for?** (Reader Context): Peers, Learners, Decision-makers, or General Audience. You can even type a custom audience.
-*   **What is the focus?** (Angle): Should the post focus on a "Common Mistake", a "Lesson Learned", or a "Strong Opinion"? Hookory will ignore fluff and focus entirely on your chosen angle.
-*   **Tone & Style**: Choose from Professional, Conversational, or Bold. Toggle Emojis on or off.
+- **Who is it for?** (Reader Context): Peers, Learners, Decision-makers, or custom audience.
+- **What is the focus?** (Angle): "Common Mistake", "Lesson Learned", or "Strong Opinion".
+- **Tone & Style**: Professional, Conversational, or Bold. Emojis on/off.
 
 ### 3. **Generate & Publish**
-Select your desired output format (Main Post, Story, Carousel, or Hook) and generate.
-In seconds, you get a fully formatted LinkedIn post ready for the feed:
-*   **The Hook**: Every post starts with a scroll-stopping first line.
-*   **The Body**: Clean, punchy sentences with mobile-optimized line breaks.
-*   **Alternative Hooks**: Every generation includes **5 bonus hooks** at the bottom so you can A/B test your opening line.
+Select your output format and get a fully polished LinkedIn post in seconds:
+- **The Hook**: Scroll-stopping first line with conviction.
+- **The Body**: Clean, punchy sentences with mobile-optimized formatting.
+- **5 Bonus Hooks**: A/B test your opening line.
 
 ---
 
-## Intelligent Output Formats
+## Output Formats
 
-Hookory offers specialized writing modes to match different content strategies:
-
-### 📝 Main Post
+### 📝 Main Post (Insight-First)
 *Best for: Daily updates and thought leadership.*
-A balanced, high-performing LinkedIn structure. It delivers one clear insight supported by strong reasoning, ending with a reflective takeaway.
-*   **Structure**: Strong Hook → Clear Insight → Supporting Points → Discussion CTA.
 
-### 📖 Story Post
-*Best for: Building connection and trust.*
-Humans connect with stories, not just facts. This mode transforms dry experiences into a narrative arc, focusing on a specific struggle, a turning point, and a valuable lesson learned.
-*   **Structure**: The Struggle → The Realization → The Transformation → The Lesson.
+**DNA**: "Here's what I learned: [claim]. Here's why: [evidence]."
 
-### 🎠 Carousel Text
-*Best for: Teaching complex topics.*
-Perfect for breaking down "How-to" guides or listicles. This mode generates slide-by-slide text that you can copy directly into a PDF or image carousel design.
-*   **Structure**: Slide 1 (Title) → Slides 2-5 (One tip per slide) → Final Slide (Summary).
-
-### ⚡ Short Viral Hook
-*Best for: Maximum reach and readability.*
-Minimalist and punchy. This mode strips away all explanations and focuses entirely on the impact. Great for quick tips or sharp observations that people want to repost.
-*   **Structure**: Single sharp insight → Broken lines → Fast pacing.
+Opens with a bold claim, backs it up with source details, includes a hard trade-off or uncomfortable truth, and ends with a new perspective.
 
 ---
 
-## Why Choose Hookory?
+### 📖 Story Post (Protagonist-First)
+*Best for: Building connection and trust.*
 
-### ✅ Angle-First Intelligence
-Most AI tools just summarize. Hookory's new engine focuses on your chosen **Angle**. If you select "Common Mistake", it will read your entire blog post solely to find and highlight the mistakes, ignoring everything else. This creates posts that feel opinionated and human.
+**DNA**: "[Person] was stuck. Then [event]. Now [outcome]."
 
-### ✅ Stop Writing From Scratch
-The hardest part of writing is the blank page. Hookory gives you a 90% complete draft in seconds, so you only spend time on the final 10% of personal polish.
+Features a real protagonist (not "most people"), a specific struggle with sensory details, a turning point, and a resolution. Every story passes the "movie scene" test—if you can't visualize it, it's too abstract.
 
-### ✅ Consistency is Key
-Growth on LinkedIn requires showing up every day. By repurposing one blog post into 3-4 different LinkedIn posts (a story, a thought piece, a carousel), you can plan a week's worth of content in minutes.
+---
+
+### 🎠 Carousel (Revelation Arc)
+*Best for: Teaching complex topics with swipe urgency.*
+
+**DNA**: "You think X. But actually Y. Here's what changes."
+
+Each slide creates an incomplete thought that forces the swipe. No listicle energy. No predictable "Problem → Solution" patterns. Every slide ends with a cliffhanger.
+
+---
+
+### ⚡ Short Viral Hook (Punch-First)
+*Best for: Maximum reach and impact.*
+
+**DNA**: "[Sharp claim]. [One sentence of evidence]. [Challenge]."
+
+The sharpest possible opening. Minimal words. Maximum punch. Think tweet energy, LinkedIn packaging.
+
+---
+
+## What Makes Hookory Different
+
+### ✅ Conviction Injection
+Every post contains at least one of:
+- A **contrarian claim**: "Most people misunderstand X."
+- A **bold prediction**: "This will be obsolete in 2 years."
+- An **uncomfortable truth**: "Nobody tells you this, but..."
+- A **polarizing stance**: "I'd rather X than Y."
+
+If a reasonable person couldn't disagree with your main claim, it's too weak.
+
+---
+
+### ✅ Stat Integrity (Zero Tolerance)
+- **Never invents statistics.** Only uses numbers explicitly in the source.
+- Instead of fake percentages, uses qualitative anchors: "I've seen this fail firsthand."
+
+---
+
+### ✅ Emotional Anchoring
+- No generic "I struggled" or "It was hard."
+- Every story includes a **specific moment** you can visualize like a movie scene.
+- Uses verbs like "flinched", "hesitated", "froze", "realized at 2AM".
+
+---
+
+### ✅ Disagreement-Inviting CTAs
+No more "What steps are you taking?" or "Are you ready?"
+
+Instead:
+- **Hot Take Challenge**: "Change my mind: X is overrated."
+- **Confession Prompt**: "What's the worst mistake you made doing X?"
+- **Polarizing Either/Or**: "Would you rather lose your audience or your integrity?"
+
+If the CTA can be answered in under 5 words, it's too weak.
 
 ---
 
 ## Membership Tiers
 
 ### **Free Plan**
-Perfect for trying out the power of AI repurposing.
-*   5 Credits per month.
-*   Access to all basic writing modes.
-*   Standard generation speed.
+- 5 Credits per month
+- Access to all writing modes
+- Standard generation speed
 
 ### **Creator Plan ($9.99/mo)**
-For the serious professional ready to grow.
-*   **100 Credits per month** (enough for daily posting).
-*   **Priority Processing**: Faster generation times.
-*   **URL Extraction**: Directly repurpose content from any public link.
-*   **Premium Support**: Get help when you need it.
+- **100 Credits per month** (enough for daily posting)
+- **Priority Processing**: Faster generation times
+- **URL Extraction**: Repurpose content from any public link
+- **Premium Support**
 
 ---
 
