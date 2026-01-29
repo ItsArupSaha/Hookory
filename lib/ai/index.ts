@@ -1,12 +1,8 @@
 import OpenAI from "openai"
 import {
   getVariationSet,
-  detectDomain,
-  getDomainNouns,
-  HOOK_STRUCTURES,
-  VOICE_ARCHETYPES,
-  EMOTIONAL_TONES,
-  CTA_ENDINGS
+  STORY_CONSTRAINTS,
+  getRandomPhysicalExamples
 } from "./variations"
 
 /**
@@ -90,11 +86,11 @@ Every post must contain at least ONE of these:
 4. A POLARIZING STANCE: "I'd rather X than Y. And here's why."
 
 VOICE VARIATION (ANTI-ROBOT MODE):
-To prevent "AI Tone", you must adopt ONE of these voice archetypes (pick the best fit):
-1. THE ANALYST (Cold, Precise): "Let's look at the data. Ignore the hype." Structure: Data -> Logic -> Conclusion.
-2. THE REALIST (Blunt, Experienced): "Stop doing X. It doesn't work. Do Y." Structure: Myth -> Reality -> Action.
-3. THE ARCHITECT (System-Focused): "I built this. It broke. Here's the fix." Structure: Failure -> System -> Result.
-- CRITICAL: DO NOT use the "Old Way -> New Way" transition explicitly ("The old way is X. The new way is Y"). It is too repetitive. Just state the better way.
+You will be ASSIGNED a specific voice archetype for this post. EMBODY IT COMPLETELY.
+- Read the assigned archetype's description and style.
+- Let it color every sentence: word choice, rhythm, energy.
+- CRITICAL: DO NOT mix voices. One archetype per post.
+- The variation assignment is provided separately in the prompt.
 
 BANNED SAFE CONCLUSIONS:
 - "Things are changing. You should adapt."
@@ -145,14 +141,11 @@ BEFORE writing any number:
 If the user's angle doesn't match the source topic, CREATE a conceptual bridge.
 
 [STEP 4: EMOTIONAL TRIGGER SELECTION] (MANDATORY - NO GENERIC EMOTIONS)
-Before writing, identify which HIGH-AROUSAL emotion this content should trigger.
+You will be ASSIGNED a specific emotional tone for this post. INFUSE IT THROUGHOUT.
 BANNED EMOTIONS: "Inspiration", "Motivation", "Calm", "Professional", "Reflective".
-ALLOWED EMOTIONS (PICK ONE):
-- AWE: "I had no idea this was possible"
-- ANGER: "This is broken and no one is talking about it"
-- FEAR/URGENCY: "If you don't act, you'll be left behind"
-- SURPRISE: "This contradicts everything I believed"
-- AMUSEMENT: "I can't believe this actually works"
+- The assigned emotion tells you the FEELING readers should experience.
+- Let it guide your word choice, sentence intensity, and closing energy.
+- The variation assignment is provided separately in the prompt.
 
 [STEP 5: BELIEF VIOLATION CHECK] (COGNITIVE DISSONANCE)
 Every post MUST challenge ONE specific belief the reader holds:
@@ -240,6 +233,22 @@ LINKEDIN WRITING STYLE (HUMAN-CENTRIC):
 - AUTHENTIC VOICE.
 - NO MARKDOWN.
 
+DWELL TIME OPTIMIZATION (LINKEDIN ALGORITHM 2024):
+LinkedIn's algorithm prioritizes posts that keep readers engaged for 15+ seconds.
+- Structure the post with 3-4 "micro-cliffhangers" that prevent early exit.
+- End sections with incomplete thoughts before resolving.
+- Use pattern interrupts mid-post to recapture attention.
+- Make the reader feel INCOMPLETE until they reach the CTA.
+- Goal: 15+ second read time.
+
+LINKEDIN ALGORITHM COMPLIANCE:
+- NEVER mention "link in bio" or "link in comments"
+- NEVER reference external URLs in the post body
+- NEVER prompt readers to leave LinkedIn
+- Keep engagement ON-PLATFORM
+- Use contractions: "don't", "won't", "can't" (not "do not", "will not")
+- Use sentence fragments for punch: "Seriously." "Not even close."
+
 HOOK QUALITY:
 - First 2 lines must create tension.
 - NEVER open with a yes/no question.
@@ -301,16 +310,26 @@ Before writing the first line, execute this extraction:
 2. SELECT the noun that represents the CORE DELIVERABLE or ARTIFACT of this topic
 3. CREATE an opening where the protagonist PHYSICALLY INTERACTS with this extracted noun
 
-ANCHOR OBJECT EXTRACTION LOGIC:
-- If source is about BLOCKCHAIN → wallet, ledger, node dashboard, smart contract, gas fee receipt
-- If source is about MARKETING → campaign brief, analytics dashboard, client feedback email, ad mockup
-- If source is about SALES → proposal deck, quota sheet, pipeline report, contract, objection log
-- If source is about CODING → pull request, deployment log, error stack, test suite, API docs
-- If source is about STRATEGY → roadmap document, board presentation, competitor analysis, org chart
-- If source is about CONTENT → draft document, editorial calendar, engagement report, style guide
+DYNAMIC SCENE ANCHORING (THE "EVIDENCE" RULE):
+Instead of picking a random object, IDENTIFY THE PHYSICAL EVIDENCE of the conflict.
+
+1. DETERMINE the specific conflict or realization in the hook.
+2. SELECT the specific digital/physical object that PROVES this conflict.
+
+EXAMPLES OF EVIDENCE-MAPPING (LOGIC, NOT A LIST):
+- If conflict is "Revenue/Sales" → Evidence: Stripe Dashboard, Commission Slip, Bank Notification.
+- If conflict is "Traffic/Growth" → Evidence: Analytics Graph, Search Console, Follower Count.
+- If conflict is "Code/Product" → Evidence: Terminal Error, Figma Canvas, User Bug Report.
+- If conflict is "Strategy/Plan" → Evidence: The Whiteboard, The Roadmap Doc, The Kickoff Deck.
+- If conflict is "Communication" → Evidence: The Email Draft, The Slack Thread, The Loom Video.
+
+CRITICAL CONTEXT CHECK:
+- The object must match the ACTIVITY, not the Job Title.
+- (e.g., A Founder fixing a bug looks at a Terminal. A Developer selling an app looks at Stripe).
+- NEVER use "deployment log" (Use "Terminal" or "Error Message").
 
 NUCLEAR BANNED OBJECTS (NEVER USE):
-- laptop, computer, screen, monitor, phone, keyboard, mouse, desk, coffee, chair
+- laptop, computer, screen, monitor, phone, keyboard, mouse, desk, coffee, chair, deployment log
 - These are the LAZY DEFAULTS that make every story sound the same.
 
 VERB EXTRACTION (DOMAIN-DERIVED):
@@ -320,12 +339,19 @@ Instead of generic verbs, derive from the source's emotional tone:
 - BUILDING tone → assembled, shipped, deployed, wired, connected
 - CONFLICT tone → confronted, refused, pushed back, escalated, walked out
 
-BANNED VERBS: thinking, wondering, staring, looking, gazing, sitting, feeling, realizing
+BANNED VERBS: thinking, wondering, staring, looking, gazing, sitting, feeling, realizing, watching, observing
 
 IN MEDIA RES (START IN THE ACTION):
 - Drop the reader into the SPECIFIC moment of failure/action.
-- The first sentence must be a PHYSICAL ACTION with the extracted noun.
+- The first sentence must be a KINETIC ACTION (Hands/Body moving).
+- DO NOT use visual-only verbs (watched, stared, saw, looked).
 - NO emotional setup. NO context explanation. ACTION FIRST.
+
+PHYSICAL STAKES RULE (CRITICAL):
+When describing digital work, anchor actions to physical manifestations of stress/stakes:
+- BANNED: ${STORY_CONSTRAINTS.PHYSICAL_STAKES.BANNED_EXAMPLES.map(ex => `"${ex}"`).join(', ')}.
+- REQUIRED: ${getRandomPhysicalExamples(5).map(ex => `"${ex}"`).join(', ')}.
+- The physical object must represent the STAKES, not just the task.
 
 STRUCTURE:
 1. THE SCENE: The physical moment with the extracted anchor object.
@@ -423,9 +449,7 @@ function getInstructionPrompt(
   // GET SHUFFLED VARIATIONS for this generation (no repeats until list exhausted)
   const variationSet = getVariationSet()
 
-  // Detect domain from source to get relevant nouns
-  const domain = detectDomain(inputText)
-  const domainNouns = getDomainNouns(domain)
+  // Detect domain logic REMOVED to allow dynamic extraction
 
   // Build variation instructions for AI
   const voiceInfo = typeof variationSet.voice === 'object' ? variationSet.voice : { name: 'DEFAULT', description: '', style: '' }
@@ -440,9 +464,7 @@ VOICE ARCHETYPE: ${voiceInfo.name} - "${voiceInfo.description}"
   Style: ${voiceInfo.style}
 EMOTIONAL UNDERCURRENT: ${emotionInfo.name} - "${emotionInfo.trigger}"
 CTA ENDING: "${variationSet.cta}"
-DETECTED DOMAIN: ${domain.toUpperCase()}
-DOMAIN-SPECIFIC NOUNS (use for story anchors):
-${domainNouns.map(n => `  - ${n}`).join('\n')}
+
 ═══════════════════════════════════════════════════════════════════
 
 YOUR TASK: Adapt the hook structure, voice, emotion, and CTA above to fit the source content.

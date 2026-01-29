@@ -44,11 +44,21 @@ export const HOOK_STRUCTURES = [
     "I made a $[X] mistake. Here's what I learned.",
     "I got fired from my job. Best thing that ever happened.",
     "I've been lying to you. Here's the truth.",
-    "My biggest failure taught me [lesson].",
     "I almost quit [thing]. Then this happened.",
-    "I was wrong about [thing]. Completely wrong.",
-    "I spent [X] years doing [thing] wrong.",
     "The mistake that cost me [specific loss].",
+    "I was wrong about [topic]. Completely wrong.",
+    "I used to believe [myth]. Not anymore.",
+    "My biggest regret in [X] years? Ignoring [thing].",
+    "I wasted [timeframe] doing [thing].",
+    "Please, stop doing [common practice].",
+    "I owe you an apology.",
+    "I'm done with [industry norm]. Here's why.",
+    "I have a confession to make.",
+    "I nearly lost everything because of [thing].",
+    "Allow me to be brutally honest.",
+    "I'm embarrassed to admit this, but [truth].",
+    "I ignored the warning signs. Don't make my mistake.",
+    "I failed at [thing] for [timeframe]. Until I realized [insight].",
 
     // === BOLD PREDICTION HOOKS (Fear of Missing Out) ===
     "[Thing] will be obsolete by [year].",
@@ -90,21 +100,45 @@ export const HOOK_STRUCTURES = [
     "I went from [starting point] to [end point].",
     "Zero to [impressive number] in [timeframe].",
 
-    // === PATTERN INTERRUPT HOOKS (Novelty) ===
-    "This will sound crazy, but...",
+    // === PATTERN INTERRUPT HOOKS (Novelty) - Trimmed to non-filler ===
     "I know this is controversial.",
-    "This might offend some people.",
-    "What I'm about to say isn't popular.",
     "Here's something nobody wants to admit.",
     "You're going to disagree with me.",
+
+    // === OBSERVATION HOOKS (Data + Pattern Recognition) - NEW ===
+    "I noticed a pattern in [X] [things]. It explains everything.",
+    "I observed [surprising trend] across [X] [group]. Here's what it means.",
+    "After watching [X] [people/companies], one thing became obvious.",
+    "I tracked [metric] for [timeframe]. The pattern was unexpected.",
+    "I studied [X] [cases]. The outliers all had one thing in common.",
+    "I compared [X] [successful] vs [Y] [failing]. The difference is subtle.",
+
+    // === SPECIFICITY HOOKS (Weirdly Specific Details) - NEW ===
+    "At 3:47am on a Tuesday, I realized [insight].",
+    "It took exactly [X] failed attempts before I learned [lesson].",
+    "The 47th email in my inbox changed my perspective on [topic].",
+    "On page 23 of a random [book/report], I found [insight].",
+
+    // === DIRECT CALL-OUT HOOKS (Audience Targeting) - NEW ===
+    "If you're a [role] struggling with [problem], read this.",
+    "This is for the [X]% of [group] who feel stuck at [level].",
+    "[Role], you need to hear this. [Statement].",
 
     // === DIALOGUE DROP HOOKS (Narrative Immersion) ===
     "'You're making a huge mistake,' my mentor said.",
     "'This will never work,' they told me.",
     "My client called me at 2am. '[Quote].'",
+    "'We have a problem,' the text read.",
+    "'Stop everything,' my boss emailed.",
+    "The notification dinged at 11pm. '[Quote].'",
+    "'Is this a joke?' the client asked.",
+    "'You need to see this,' my co-founder whispered.",
+    "My phone buzzed. It was the CEO.",
+    "'Can we talk?' The message I dreaded.",
     "'Why would you do that?' everyone asked.",
     "The investor looked at me and said:",
     "'You're not ready.' That's what I heard.",
+    "'I can't believe you did that,' she said.",
 
     // === LIST TEASE HOOKS (Completeness Desire) ===
     "[X] things nobody tells you about [topic].",
@@ -124,6 +158,52 @@ export const HOOK_STRUCTURES = [
 // STORY OPENERS - 35+ In Media Res Templates
 // ═══════════════════════════════════════════════════════════════════
 // Domain-specific physical actions that drop readers into the moment
+
+
+export const STORY_CONSTRAINTS = {
+    PHYSICAL_STAKES: {
+        BANNED_EXAMPLES: [
+            "I opened the Google Analytics tab",
+            "I clicked deploy",
+            "I pulled up the logs",
+            "I scrolled through the feed",
+            "I logged into the dashboard",
+            "I checked my emails",
+            "I looked at the screen"
+        ],
+        // Research-backed "Show, Don't Tell" physical anchors
+        REQUIRED_EXAMPLES: [
+            // STRESS (Drumming, clenching, repetitive motion)
+            "I drummed a frantic rhythm on my desk with a pen",
+            "My knuckles turned white as I gripped the coffee mug",
+            "I adjusted the same frame on my desk three times",
+            "I shredded the printed draft into tiny strips",
+
+            // BURNOUT (Physical exhaustion signs)
+            "I buried my face in my hands and exhaled",
+            "My untouched coffee grew cold beside the keyboard",
+            "I slumped back, letting the report slide off my lap",
+            "I rubbed my temples until they throbbed",
+
+            // REALIZATION (Sudden stillness, sharp movements)
+            "I froze, my hand hovering halfway to the mouse",
+            "I slammed the laptop shut to stop the noise",
+            "I circled the error in red marker until the paper tore",
+            "I pushed the keyboard away and closed my eyes",
+
+            // FOCUS/INTENSITY (Leaning in, tunnel vision)
+            "I leaned in until my nose nearly touched the screen",
+            "The office noise faded as I traced the data line by line",
+            "I wrote the number on a sticky note and slapped it on my monitor",
+            "I paced the empty conference room, talking to myself",
+            "I took off my glasses and rubbed the bridge of my nose",
+            "I tapped my pen against the desk, faster and faster",
+            "I leaned back in my chair and stared at the ceiling",
+            "I put my headphones on and turned the volume up to max",
+            "I cracked my knuckles and hovered over the keyboard"
+        ]
+    }
+}
 
 export const STORY_OPENERS = [
     // === ACTION-FIRST (Subject acts on object) ===
@@ -150,6 +230,18 @@ export const STORY_OPENERS = [
     "In the middle of the meeting, I deleted the [domain-noun].",
     "On day 47, I finally understood the [domain-noun].",
     "Last Tuesday, my [domain-noun] broke everything.",
+    "7pm on a Friday. Everyone else had left.",
+    "Sunday night. The dread set in.",
+    "Monday morning, 5 minutes before the standup.",
+    "On the train home, it hit me.",
+    "While waiting for my coffee, I realized something.",
+    "In the airport lounge, looking at the departure board.",
+    "During my daughter's soccer game (I shouldn't have been checking),",
+    "Sitting in the parking lot for an hour.",
+    "Just as I was about to hit 'send'.",
+    "Three hours into the meeting. We were getting nowhere.",
+    "It was 11pm. My pizza was cold.",
+    "Ten minutes before the presentation.",
 
     // === DIALOGUE OPENERS ===
     "'This [domain-noun] is garbage,' my mentor said.",
@@ -665,4 +757,19 @@ export function getStoryOpenerWithNoun(sourceText: string): string {
     const noun = nouns[Math.floor(Math.random() * nouns.length)]
 
     return opener.replace('[domain-noun]', noun)
+}
+
+/**
+ * Get N random physical stake examples
+ */
+export function getRandomPhysicalExamples(count: number): string[] {
+    const examples = [...STORY_CONSTRAINTS.PHYSICAL_STAKES.REQUIRED_EXAMPLES]
+
+    // Fisher-Yates shuffle
+    for (let i = examples.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [examples[i], examples[j]] = [examples[j], examples[i]];
+    }
+
+    return examples.slice(0, count)
 }

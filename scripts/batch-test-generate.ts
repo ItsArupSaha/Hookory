@@ -9,9 +9,13 @@ dotenv.config({ path: ".env.local" })
 
 // Test URLs for verification after prompt changes
 const URLS = [
+    "https://medium.com/write-a-catalyst/5-habits-from-atomic-habits-that-improved-my-life-in-6-months-efd911d364fd",
+    "https://ahrefs.com/blog/what-ai-means-for-seo/",
     "https://medium.com/@karancodes0207/the-blockchains-blind-spot-what-is-the-oracle-problem-bdc76febfbe5",
     "https://blog.n8n.io/agentic-rag/",
     "https://ahrefs.com/blog/seo-content-strategy/",
+    "https://blog.n8n.io/ai-workflow-builder-best-practices/",
+    "https://openai.com/research/planning-for-agi-and-beyond"
 ]
 
 // All 4 formats for each URL

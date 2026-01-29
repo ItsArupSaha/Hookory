@@ -9,7 +9,9 @@ import {
     VOICE_ARCHETYPES,
     EMOTIONAL_TONES,
     CTA_ENDINGS,
-    POWER_WORDS
+    POWER_WORDS,
+    STORY_CONSTRAINTS,
+    getRandomPhysicalExamples
 } from "./variations"
 
 // Maximum characters for the input text (same as single post for consistency)
@@ -157,11 +159,11 @@ Every post must contain at least ONE friction point DERIVED from the source:
 4. A POLARIZING STANCE that the source takes
 
 VOICE VARIATION (ANTI-ROBOT MODE):
-Adopt the voice that MATCHES the source's author persona:
-- If source is DATA-DRIVEN → Be THE ANALYST (Cold, Precise)
-- If source is EXPERIENCE-BASED → Be THE REALIST (Blunt, Experienced)
-- If source is SYSTEM-FOCUSED → Be THE ARCHITECT (Builder, Fixer)
-- CRITICAL: DO NOT use the "Old Way -> New Way" transition explicitly. Just state the better way.
+Each post will be ASSIGNED a unique voice archetype from the variations system.
+- Read the assigned archetype's description and style.
+- Let it color every sentence: word choice, rhythm, energy.
+- CRITICAL: Each of the 4 posts MUST use its assigned voice—no duplicates.
+- The variation assignments are provided separately in the prompt.
 
 ═══════════════════════════════════════════════════════════════════
 PRE-WRITING EXTRACTION CHECKLIST (MANDATORY)
@@ -287,6 +289,20 @@ LINKEDIN WRITING STYLE (HUMAN-CENTRIC)
 4. AUTHENTIC VOICE: Write like you're explaining to a smart friend over coffee. Not a TED talk. Not a textbook.
 5. NO MARKDOWN: Raw text only. No **bold** or *italics*.
 
+DWELL TIME OPTIMIZATION (LINKEDIN ALGORITHM 2024):
+LinkedIn's algorithm prioritizes posts that keep readers engaged for 15+ seconds.
+- Structure each post with 2-3 "micro-cliffhangers" that prevent early exit.
+- End sections with incomplete thoughts before resolving.
+- Use pattern interrupts mid-post to recapture attention.
+- Goal: 15+ second read time per post.
+
+LINKEDIN ALGORITHM COMPLIANCE:
+- NEVER mention "link in bio" or "link in comments"
+- NEVER reference external URLs in the post body
+- NEVER prompt readers to leave LinkedIn
+- Use contractions: "don't", "won't", "can't" (not "do not", "will not")
+- Use sentence fragments for punch: "Seriously." "Not even close."
+
 CTA RULES v2 (DIVERSITY ENFORCED):
 
 CLOSING STYLES (ROTATE THESE - EACH POST USES A DIFFERENT ONE):
@@ -317,9 +333,9 @@ function getSeriesUserPrompt(inputText: string, options: SeriesGenerationOptions
     // GET SHUFFLED VARIATIONS for this series (no repeats across 4 posts)
     const variationSet = getSeriesVariationSet()
 
-    // Detect domain from source to get relevant nouns
-    const domain = detectDomain(inputText)
-    const domainNouns = getDomainNouns(domain)
+    // Detect domain from source (Removed injection to allow dynamic extraction)
+    // const domain = detectDomain(inputText)
+    // const domainNouns = getDomainNouns(domain)
 
     // Map the 4 steps to their specific instructions with UNIQUE variations
     const steps = [
@@ -409,19 +425,28 @@ Before writing the first line, execute this extraction:
 2. SELECT the noun that represents the CORE DELIVERABLE or ARTIFACT of this topic
 3. CREATE an opening where the protagonist PHYSICALLY INTERACTS with this extracted noun
 
-ANCHOR OBJECT EXTRACTION LOGIC:
-- If source is about BLOCKCHAIN → wallet, ledger, node dashboard, smart contract, gas fee receipt
-- If source is about MARKETING → campaign brief, analytics dashboard, client feedback email, ad mockup
-- If source is about SALES → proposal deck, quota sheet, pipeline report, contract, objection log
-- If source is about CODING → pull request, deployment log, error stack, test suite, API docs
-- If source is about STRATEGY → roadmap document, board presentation, competitor analysis, org chart
-- If source is about CONTENT → draft document, editorial calendar, engagement report, style guide
+DYNAMIC SCENE ANCHORING (THE "EVIDENCE" RULE):
+Instead of picking a random object, IDENTIFY THE PHYSICAL EVIDENCE of the conflict.
 
-DOMAIN-SPECIFIC NOUNS FOR THIS SOURCE:
-${domainNouns.map(n => `- ${n}`).join('\n')}
+1. DETERMINE the specific conflict or realization in the hook.
+2. SELECT the specific digital/physical object that PROVES this conflict.
+
+EXAMPLES OF EVIDENCE-MAPPING (LOGIC, NOT A LIST):
+- If conflict is "Revenue/Sales" → Evidence: Stripe Dashboard, Commission Slip, Bank Notification.
+- If conflict is "Traffic/Growth" → Evidence: Analytics Graph, Search Console, Follower Count.
+- If conflict is "Code/Product" → Evidence: Terminal Error, Figma Canvas, User Bug Report.
+- If conflict is "Strategy/Plan" → Evidence: The Whiteboard, The Roadmap Doc, The Kickoff Deck.
+- If conflict is "Communication" → Evidence: The Email Draft, The Slack Thread, The Loom Video.
+
+CRITICAL CONTEXT CHECK:
+- The object must match the ACTIVITY, not the Job Title.
+- (e.g., A Founder fixing a bug looks at a Terminal. A Developer selling an app looks at Stripe).
+- NEVER use "deployment log" (Use "Terminal" or "Error Message").
+
+
 
 NUCLEAR BANNED OBJECTS (NEVER USE):
-- laptop, computer, screen, monitor, phone, keyboard, mouse, desk, coffee, chair
+- laptop, computer, screen, monitor, phone, keyboard, mouse, desk, coffee, chair, deployment log
 - These are the LAZY DEFAULTS that make every story sound the same.
 
 VERB EXTRACTION (DOMAIN-DERIVED):
@@ -431,12 +456,19 @@ Instead of generic verbs, derive from the source's emotional tone:
 - BUILDING tone → assembled, shipped, deployed, wired, connected
 - CONFLICT tone → confronted, refused, pushed back, escalated, walked out
 
-BANNED VERBS: thinking, wondering, staring, looking, gazing, sitting, feeling, realizing
+BANNED VERBS: thinking, wondering, staring, looking, gazing, sitting, feeling, realizing, watching, observing
 
 IN MEDIA RES (START IN THE ACTION):
 - Drop the reader into the SPECIFIC moment of failure/action.
-- The first sentence must be a PHYSICAL ACTION with the extracted noun.
+- The first sentence must be a KINETIC ACTION (Hands/Body moving).
+- DO NOT use visual-only verbs (watched, stared, saw, looked).
 - NO emotional setup. NO context explanation. ACTION FIRST.
+
+PHYSICAL STAKES RULE (CRITICAL):
+When describing digital work, anchor actions to physical manifestations of stress/stakes:
+- BANNED: ${STORY_CONSTRAINTS.PHYSICAL_STAKES.BANNED_EXAMPLES.map(ex => `"${ex}"`).join(', ')}.
+- REQUIRED: ${getRandomPhysicalExamples(5).map(ex => `"${ex}"`).join(', ')}.
+- The physical object must represent the STAKES, not just the task.
 
 STRUCTURE:
 1. THE SCENE: The physical moment with the extracted anchor object.
@@ -544,7 +576,6 @@ CONTEXT:
 - Reader: ${readerContext || "General LinkedIn Professional"}
 - Tone: ${tonePreset || "professional"}
 - Emojis: ${emojiInstruction}
-- Domain Detected: ${domain.toUpperCase()}
 
 INSTRUCTIONS:
 1. SILENTLY process the source using this logic (do not output this):
