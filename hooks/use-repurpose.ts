@@ -197,7 +197,7 @@ export function useRepurpose() {
             Object.entries(outputs).forEach(([k, text]) => {
                 const key = k as FormatKey
                 // More robust separator check (case insensitive, optional spaces)
-                const separatorRegex = /--- ?EXTRA_HOOKS ?---/i
+                const separatorRegex = /[\r\n\s-]*EXTRA[_ ]HOOKS[\r\n\s-:]*/i
 
                 if (separatorRegex.test(text)) {
                     const parts = text.split(separatorRegex)
@@ -336,7 +336,7 @@ export function useRepurpose() {
             Object.entries(outputs).forEach(([k, text]) => {
                 const key = k as FormatKey
                 // More robust separator check (case insensitive, optional spaces)
-                const separatorRegex = /--- ?EXTRA_HOOKS ?---/i
+                const separatorRegex = /[\r\n\s-]*EXTRA[_ ]HOOKS[\r\n\s-:]*/i
 
                 if (separatorRegex.test(text)) {
                     const parts = text.split(separatorRegex)

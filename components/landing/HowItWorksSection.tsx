@@ -206,7 +206,7 @@ export function HowItWorksSection() {
                                 <span className="absolute inset-0 rounded-full bg-teal-200 animate-ping opacity-75" />
                             )}
                         </div>
-                        <h3 className="font-semibold text-lg mb-2 text-slate-900">AI Analyzes</h3>
+                        <h3 className="font-semibold text-lg mb-2 text-slate-900">Strategic Extraction</h3>
                         {/* Processing Animation */}
                         {animationState === 'step2' && (
                             <div className="w-full mt-3 mb-2 space-y-2">
@@ -217,7 +217,7 @@ export function HowItWorksSection() {
                                     />
                                 </div>
                                 <p className="text-xs text-teal-600 font-medium animate-pulse">
-                                    Analyzing content... {processingProgress}%
+                                    Mining for hooks... {processingProgress}%
                                 </p>
                             </div>
                         )}
@@ -227,11 +227,11 @@ export function HowItWorksSection() {
                                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                     </svg>
-                                    <span className="text-xs font-medium">Analysis complete</span>
+                                    <span className="text-xs font-medium">Angles Secured</span>
                                 </div>
                             </div>
                         ) : null}
-                        <p className="text-sm text-stone-500">AI extracts the &quot;Golden Nuggets&quot; and removes the fluff.</p>
+                        <p className="text-sm text-stone-500">We don't just summarize. We hunt for the dormant viral hooks hidden inside your content.</p>
                     </div>
 
                     {/* Step 3 - Results Generation */}

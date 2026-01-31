@@ -1,7 +1,8 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import { Copy, Edit2, Globe, ThumbsUp, MessageSquare, Share2, Send, Bookmark, Heart, Lightbulb } from "lucide-react"
+import { Copy, Edit2, Globe, ThumbsUp, MessageSquare, Share2, Send, Bookmark, Heart, Lightbulb, Linkedin } from "lucide-react"
+import { useToast } from "@/components/ui/use-toast"
 import { useState, useRef, useEffect } from "react"
 import { User } from "firebase/auth"
 
@@ -21,6 +22,7 @@ export function LinkedInPostPreview({
     const [isExpanded, setIsExpanded] = useState(false)
     const [isTruncated, setIsTruncated] = useState(false)
     const textRef = useRef<HTMLParagraphElement>(null)
+    const { toast } = useToast()
 
     // LinkedIn typically truncates around 140 chars.
     // We stick strictly to character limit as requested.
@@ -82,6 +84,23 @@ export function LinkedInPostPreview({
                         title="Copy to Clipboard"
                     >
                         <Copy className="h-4 w-4" />
+                    </Button>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => {
+                            navigator.clipboard.writeText(content)
+                            toast({
+                                title: "Copied to clipboard!",
+                                description: "Opening LinkedIn... Paste your post!",
+                                duration: 3000,
+                            })
+                            window.open("https://www.linkedin.com/feed/", "_blank")
+                        }}
+                        className="h-8 w-8 rounded-full text-gray-600 hover:bg-[#0a66c2]/10 hover:text-[#0a66c2]"
+                        title="Post to LinkedIn"
+                    >
+                        <Linkedin className="h-4 w-4" />
                     </Button>
                 </div>
             </div>

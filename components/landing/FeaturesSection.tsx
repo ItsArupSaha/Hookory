@@ -44,11 +44,11 @@ export function FeaturesSection() {
                 </div>
 
                 <div className="grid gap-6 md:grid-cols-2">
-                    {/* Format 1: Thought Leadership (Forest) */}
+                    {/* Format 1: Main LinkedIn Post (Forest) */}
                     <Card className="border border-emerald-100 bg-white shadow-sm transition-transform duration-200 hover:-translate-y-1 hover:shadow-md">
                         <CardHeader className="pb-3">
                             <CardTitle className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-emerald-800">
-                                Format 1: Thought Leadership
+                                Format 1: Main LinkedIn Post
                                 <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-medium text-emerald-800 border border-emerald-200">
                                     Generated
                                 </span>
@@ -56,19 +56,9 @@ export function FeaturesSection() {
                         </CardHeader>
                         <CardContent className="space-y-3">
                             <div className="rounded-md border border-emerald-50 bg-emerald-50/20 px-3 py-2 text-[12px] text-slate-800 whitespace-pre-wrap leading-relaxed max-h-[200px] overflow-y-auto">
-                                {GENERATED_POSTS["thought-leadership"].content}
+                                {GENERATED_POSTS["main-post"].content}
                             </div>
-                            <div className="space-y-1.5 pt-2 border-t border-emerald-50">
-                                <p className="text-[10px] font-semibold text-emerald-700">Why this works:</p>
-                                <ul className="space-y-1 text-[10px] text-slate-600">
-                                    {GENERATED_POSTS["thought-leadership"].improvements.map((imp, i) => (
-                                        <li key={i} className="flex items-start gap-1.5">
-                                            <span className="text-emerald-500 mt-0.5">✓</span>
-                                            <span>{imp}</span>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
+
                         </CardContent>
                     </Card>
 
@@ -86,25 +76,15 @@ export function FeaturesSection() {
                             <div className="rounded-md border border-amber-50 bg-amber-50/20 px-3 py-2 text-[12px] text-slate-800 whitespace-pre-wrap leading-relaxed max-h-[200px] overflow-y-auto">
                                 {GENERATED_POSTS["story-based"].content}
                             </div>
-                            <div className="space-y-1.5 pt-2 border-t border-amber-50">
-                                <p className="text-[10px] font-semibold text-amber-700">Why this works:</p>
-                                <ul className="space-y-1 text-[10px] text-slate-600">
-                                    {GENERATED_POSTS["story-based"].improvements.map((imp, i) => (
-                                        <li key={i} className="flex items-start gap-1.5">
-                                            <span className="text-amber-500 mt-0.5">✓</span>
-                                            <span>{imp}</span>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
+
                         </CardContent>
                     </Card>
 
-                    {/* Format 3: Educational Carousel (Sky) */}
+                    {/* Format 3: Carousel (Sky) */}
                     <Card className="border border-sky-100 bg-white shadow-sm transition-transform duration-200 hover:-translate-y-1 hover:shadow-md">
                         <CardHeader className="pb-3">
                             <CardTitle className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-sky-800">
-                                Format 3: Educational Carousel
+                                Format 3: Carousel
                                 <span className="rounded-full bg-sky-100 px-2 py-0.5 text-[10px] font-medium text-sky-800 border border-sky-200">
                                     Generated
                                 </span>
@@ -112,19 +92,9 @@ export function FeaturesSection() {
                         </CardHeader>
                         <CardContent className="space-y-3">
                             <div className="rounded-md border border-sky-50 bg-sky-50/20 px-3 py-2 text-[12px] text-slate-800 whitespace-pre-wrap leading-relaxed max-h-[200px] overflow-y-auto">
-                                {GENERATED_POSTS["educational-carousel"].content}
+                                {GENERATED_POSTS["carousel"].content}
                             </div>
-                            <div className="space-y-1.5 pt-2 border-t border-sky-50">
-                                <p className="text-[10px] font-semibold text-sky-700">Why this works:</p>
-                                <ul className="space-y-1 text-[10px] text-slate-600">
-                                    {GENERATED_POSTS["educational-carousel"].improvements.map((imp, i) => (
-                                        <li key={i} className="flex items-start gap-1.5">
-                                            <span className="text-sky-500 mt-0.5">✓</span>
-                                            <span>{imp}</span>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
+
                         </CardContent>
                     </Card>
 
@@ -142,17 +112,7 @@ export function FeaturesSection() {
                             <div className="rounded-md border border-rose-50 bg-rose-50/20 px-3 py-2 text-[12px] text-slate-800 whitespace-pre-wrap leading-relaxed">
                                 {GENERATED_POSTS["short-viral-hook"].content}
                             </div>
-                            <div className="space-y-1.5 pt-2 border-t border-rose-50">
-                                <p className="text-[10px] font-semibold text-rose-700">Why this works:</p>
-                                <ul className="space-y-1 text-[10px] text-slate-600">
-                                    {GENERATED_POSTS["short-viral-hook"].improvements.map((imp, i) => (
-                                        <li key={i} className="flex items-start gap-1.5">
-                                            <span className="text-rose-500 mt-0.5">✓</span>
-                                            <span>{imp}</span>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
+
                         </CardContent>
                     </Card>
                 </div>
